@@ -1,4 +1,4 @@
-** Funcionalidades/Páginas do site**
+**Funcionalidades/Páginas do site**
 
 - Homepage
 - Login/Registo
@@ -16,7 +16,7 @@ Médico:
 - Dashboard com funcionalidades
 
 
-** Vulnerabilidades **
+**Vulnerabilidades**
 
 - [SQL Injection - CWE 89](https://cwe.mitre.org/data/definitions/89.html)
   - Form para login
@@ -47,7 +47,7 @@ Médico:
 - [Out of bound reads - CWE 175](https://cwe.mitre.org/data/definitions/125.html)
 
 
-** Deteção de Vulnerabilidades**
+**Deteção de Vulnerabilidades**
 
 - SQLMap
 - Nikto
