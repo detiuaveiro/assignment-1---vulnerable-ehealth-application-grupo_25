@@ -1,0 +1,57 @@
+/* Login Form Label */
+.form-label{
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    transition: all 0.15s ease;
+    padding: 10px 20px;
+    letter-spacing: 0.3px;
+
+}
+
+.form-input{
+    border: 2px solid transparent;
+    border-radius: 4px;
+    border-color: #45484b;
+    font-size: 16px;
+}
+
+.login-button {
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    transition: all 0.15s ease;
+    padding: 10px 20px;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    will-change: transform;
+    color: #3ea1ec;
+}
+
+.create-button {
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    transition: all 0.15s ease;
+    padding: 10px 20px;
+    letter-spacing: 0.3px;
+    text-transform: none;
+    will-change: transform;
+    color: #3ea1ec;
+}
+

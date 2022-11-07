@@ -1,0 +1,42 @@
+<!-- Loopple Templates: https://www.loopple.com/templates | Copyright Loopple (https://www.loopple.com) | This copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+
+
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-12">
+                    <h3 class="mb-5" spellcheck="false">Login</h3>
+                </div>
+                <div class="col-12">
+                    <form class="modal-content animate" action="{{ url_for('logged') }}">
+                        <div class="col-12">
+                          <label class="form-label" for="uname"><b>Username</b></label>
+                          <input class="form-input" type="text" placeholder="Enter Username" name="uname" required>
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label" for="psw"><b>Password</b></label>
+                          <input class="form-input" type="password" placeholder="Enter Password" name="psw" required>
+                        </div>
+                        <div class="col-12">
+                            <span class="psw"><a href="#">Forgot password?</a></span>
+                        </div>
+                        <div class="col-12">
+                            <button class="login-button" type="submit">Login</button>
+                        </div>
+                    </form>
+                    <div class="col-12">
+                            or
+                        </div>
+                    <div class="col-12">
+                            <button class="login-button" type="submit">Create New Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
