@@ -27,6 +27,7 @@
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 4px;
+    border-bottom: 2px;
     text-align: center;
     vertical-align: middle;
     position: relative;
@@ -36,6 +37,10 @@
     text-transform: none;
     will-change: transform;
     color: #3ea1ec;
+}
+
+.button-container{
+    padding: 10px 20px;
 }
 
 .create-button {
