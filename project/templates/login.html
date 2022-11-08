@@ -1,6 +1,5 @@
 <!-- Loopple Templates: https://www.loopple.com/templates | Copyright Loopple (https://www.loopple.com) | This copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
-
-
+<!--done-->
 {% extends "layout.html" %}
 
 {% block content %}
@@ -35,7 +34,9 @@
                     </div>
                     <div class="col-12">
                         <div class="button-container">
-                            <button class="login-button" type="submit">Create New Account</button>   
+                            <a href="{{ url_for('createacc') }}">
+                                <button class="login-button" type="submit">Create New Account</button> 
+                            </a>
                         </div>
                     </div>
                 </div>

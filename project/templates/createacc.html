@@ -1,0 +1,46 @@
+<!--done-->
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-12">
+                <h3 class="mb-5" spellcheck="false">Start by creating an account</h3>
+            </div>
+            <div class="col-12">
+                <form class="modal-content animate" action="{{ url_for('logged') }}">      <!--change this action to a confirmation page -> needs to be connected to db??-->
+                    <div class="form-container">
+                        <div class="input">
+                            <label class="form-labelca" for="fname" id="labelca"><b>Name</b></label>
+                            <input class="form-inputcah" type="text" placeholder="First Name" name="uname" required>
+                            <input class="form-inputcah" type="text" placeholder="Last Name" name="uname" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="uname" id="labelca"><b>E-mail</b></label>
+                            <input class="form-inputca" type="text" placeholder="E-mail" name="uname" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="uname" id="labelca"><b>Social Security Number</b></label>
+                            <input class="form-inputca" type="text" placeholder="Social Security Number" name="uname" required>
+                        </div>
+                        <div class="col-xs-6">
+                        <label class="form-labelca" for="psw" id="labelca"><b>Insert password</b></label>
+                        <input class="form-inputca" id="inputca" type="password" placeholder="Password" name="psw" required>
+                        </div>
+                        <div class="col-xs-6">
+                            <label class="form-labelca" for="psw" id="labelca"><b>Confirm password</b></label>
+                            <input class="form-inputca" type="password" placeholder="Password" name="pswc" required>
+                        </div>
+                    </div>
+                    <div class="col-12 butaoc">
+                        <div class="button-containerc">
+                            <button class="login-button" type="submit">Create account</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
