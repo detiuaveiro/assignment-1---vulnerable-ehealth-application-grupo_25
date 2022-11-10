@@ -31,7 +31,7 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <!-- CSS Files -->
-    <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='css/soft-ui-dashboard.css') }}" />
+    <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='/css/soft-ui-dashboard.css') }}" />
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -67,7 +67,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for('doctor_dashboard_patients') }}">
+          <a class="nav-link" href="{{ url_for('doctor_dashboard_patients') }}">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -87,7 +87,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="{{ url_for('doctor_dashboard_appointments') }}">
+          <a class="nav-link active" href="{{ url_for('doctor_dashboard_appointments') }}">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>credit-card</title>
@@ -132,71 +132,32 @@
   </aside>
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <div class="container-fluid py-4">
+        <a href="{{ url_for('doctor_dashboard_appointments') }}"><p style="padding-top: 10px; padding-left: 5px ;font-size: 14px; font-weight: bold"><i class="fa fa-arrow-left"></i> Go Back</p></a>
       <div class="row my-4">
         <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
           <div class="card">
             <div class="card-header pb-4">
               <div class="row">
                 <div class="col-lg-6 col-7">
-                  <h5>List of Patients</h5>
-                    <p>Total patients: {{ params.total_patients }}</p>
+                <h5>Appointment Details</h5>
+                  <h6>Date: {{ params.date }}</h6>
+                    <h6>Hour: {{ params.hour }}</h6>
+                    <h6>Specialty: {{ params.description }}</h6>
+                    <h6>Doctor: {{ params.doctor }}</h6>
+                    <h6>Patient: {{ params.patient }}</h6>
+                    <ul>
+                        {% for prescription in params.prescriptions %}
+                            <li>{{ prescription }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
-                  <div class="col-lg-6 col-7">
-                      <div>
-                          <form class="bg-white border-radius-lg d-flex me-2">
-                             <input type="text" class="form-control ps-3" name="filter" style="width: 300px; margin-right: 10px" placeholder="Search for patient">
-                             <input type="submit"  value="Search" class="btn my-1 me-1" style="background: #61CBFD; color: white ">
-                          </form>
-
-                      </div>
-                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Patient Name</th>
-                      <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">NISS</th>
-                      <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Last appointment</th>
-                      <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">More details</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {% for patient in params.patients %}
-                    <tr>
-                      <td>
-                        <div class="d-flex px-2 py-1">
-                          <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{ patient.name }}</h6>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group mt-2">
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alfredo">
-                            <h6 class="mb-0 text-sm">{{ patient.niss }}</h6>
-                          </a>
-                        </div>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"> {{ patient.last_appointment }} </span>
-                      </td>
-                        <td class="align-middle text-center text-sm">
-                                <a href={{ url_for('doctor_dashboard_patient_info', **patient.id) }}><i class="fa fa-search"></i></a>
-                        </td>
-                    </tr>
-                  {% endfor %}
-                  </tbody>
-                </table>
               </div>
             </div>
           </div>
         </div>
 
-      <footer class="footer pt-3  ">
+        <footer class="footer pt-3  ">
         <div class="container-fluid">
           <div class="row align-items-center justify-content-lg-between">
             <div class="col-lg-12 mb-lg-0 mb-4">
