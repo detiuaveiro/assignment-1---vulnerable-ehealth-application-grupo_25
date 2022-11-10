@@ -1,15 +1,16 @@
-<!--done-->
+<!--done ew-->
 {% extends "layout.html" %}
 
 {% block content %}
-<section class="py-5">
+<!--isto esta muito horrivel so -> ver a parte das background images-->
+<section class="py-5 background-img">
     <div class="container">
         <div class="row text-center">
             <div class="col-12">
-                <h3 class="mb-5" spellcheck="false">Start by creating an account</h3>
+                <h3 class="mb-5 text-gradient text-info greeting-title text-title-c" spellcheck="false">Start by creating an account</h3>
             </div>
             <div class="col-12">
-                <form class="modal-content animate" action="{{ url_for('logged') }}">      <!--change this action to a confirmation page -> needs to be connected to db??-->
+                <form class="modal-content animate background form-back" action="{{ url_for('logged') }}">      <!--change this action to a confirmation page -> needs to be connected to db??-->
                     <div class="form-container">
                         <div class="input">
                             <label class="form-labelca" for="fname" id="labelca"><b>Name</b></label>

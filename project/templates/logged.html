@@ -1,9 +1,38 @@
-<!--this speaks for itself-->
+<!--this speaks for itself -> user logged-->
 
 {% extends "layout-logged.html" %}
 
 {% block content %}
+<section>
+    <div class="container-title">
+        <div class="text-gradient text-info">
+        <h3>Welcome, {user}</h3>
+        <!--<h4>Here are you next appointments...</h4> ainda nao sei se adiciono isto ou nao-->
+        </div>
+    </div>
 
-Hello
+    <div class="background-main-c">
+        <div class="profile-div">
+            <div class = "list">
+                <nav>
+                    <ul>
+                    <li><a href="#">London</a></li>
+                    <li><a href="#">Paris</a></li>
+                    <li><a href="#">Tokyo</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="columno2">
+                <h1>London</h1>
+                <p>London is the capital city of England. It is the most populous city in the  United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
+                <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.</p>
+            </div>
+            <div class="columno3">
+                <p>ola</p>
+            </div>
+        </div>  
+    </div>
+    </section>
+</section>
 
 {% endblock %}
