@@ -13,7 +13,6 @@ db = mysql.connector.connect(
 cur = db.cursor()
 
 
-
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -26,8 +25,7 @@ def login():
         if len(users) == 0:
             flash("This account doesn't exist!")
         else:
-            if:
-                pass
+            pass
 
 
         if found_user:

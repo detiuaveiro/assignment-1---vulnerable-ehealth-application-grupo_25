@@ -1,7 +1,17 @@
 from flask import Flask, render_template, request, flash, redirect, url_for
+import mysql.connector
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
+
+db = mysql.connector.connect(
+    host="localhost",
+    port=3307,
+    user="root",
+    password="1904",
+    database="eHealthCorp"
+)
+
 
 @app.route('/')
 def index():
@@ -167,6 +177,11 @@ def doctor_dashboard_prescription_form():
 
 @app.route('/admin')
 def admin():
+
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Medico LEFT JOIN Utilizador ON Medico.ID = Utilizador.ID")
+    for medico in cursor.fetchall():
+        print(medico)
 
     return render_template('admin-dashboard.html', params={})
 
