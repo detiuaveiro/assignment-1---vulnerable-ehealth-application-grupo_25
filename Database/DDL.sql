@@ -23,7 +23,7 @@ CREATE TABLE `Especialidade` (
   PRIMARY KEY (`Codigo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `Médico` (
+CREATE TABLE `Medico` (
   `ID` int NOT NULL AUTO_INCREMENT,
   `Num_Medico` char(4) NOT NULL,
   `Cod_Esp` int DEFAULT NULL,
