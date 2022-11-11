@@ -138,13 +138,15 @@
             <div class="card-header pb-0">
               <div class="row">
                 <div class="col-lg-6 col-7">
-                  <h6>List of Prescriptions</h6>
+                  <h5>List of Prescriptions</h5>
                     <p>Total prescriptions: {{ params.total_prescriptions }}</p>
                 </div>
                 <div class="col-lg-2 col-5 my-auto text-center">
-                          <button type="button" class="btn bg-gradient-success text-xs"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <a href="{{ url_for('doctor_dashboard_prescription_form') }}">
+                          <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">
                                 Make Prescription
                           </button>
+                            </a>
                   </div>
                 </div>
               </div>

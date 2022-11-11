@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, flash, redirect, url_for
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'mysecretkey'
 
 @app.route('/')
 def index():
@@ -28,9 +28,11 @@ def createacc():
     return render_template('createacc.html')
 
 
+# doctor-dashboard
 @app.route('/doctor-dashboard')
 def doctor_dashboard():
-    return render_template('doctor-dashboard.html')
+    # to be completed, doctor-dashboard.html is prepared to receive params
+    return render_template('doctor-dashboard.html', params={})
 
 
 @app.route('/doctor-dashboard/patients/')
@@ -124,6 +126,7 @@ def doctor_dashboard_prescriptions():
 
 @app.route('/doctor-dashboard/prescriptions/<_id>')
 def doctor_dashboard_prescription_info(_id):
+    print(_id)
     _id = int(_id)
     if _id == 1:
         params_dict = {"date": "10/11/2022", "name": "Bruffen", "id": 1,
@@ -137,6 +140,35 @@ def doctor_dashboard_prescription_info(_id):
         params_dict = None
     return render_template('doctor-dashboard-prescription-info.html', params=params_dict)
 
+
+@app.route('/doctor-dashboard/prescriptions/form', methods=('GET', 'POST'))
+def doctor_dashboard_prescription_form():
+    if request.method == "POST":
+        appointment_id = request.form.get('appointmentID')
+        medic_id = request.form.get("medicID")
+        patient_name = request.form.get("patientName")
+        pharma_multiselect = request.form.getlist('pharmaceutical_multiselect')
+
+        print(appointment_id)
+        print(medic_id)
+        print(patient_name)
+        print(pharma_multiselect)
+        flash("Prescription created sucessfully.", 'success')
+        return redirect(url_for('doctor_dashboard_prescription_form'))
+
+    params_dict = {"pharmaceuticals": ["Bruffen", "Paracetamol", "Anti-depressive", "Bruffen", "Paracetamol",
+                                       "Anti-depressive"]}
+    return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
+
+# end of doctor-dashboard
+
+
+# admin dashboard
+
+@app.route('/admin')
+def admin():
+
+    return render_template('admin-dashboard.html', params={})
 
 if __name__ == '__main__':
     app.run(use_reloader=True)

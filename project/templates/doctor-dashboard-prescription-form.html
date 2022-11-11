@@ -35,7 +35,7 @@
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
-  <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
+  <nav class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main">
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href="{{ url_for('index') }}">
@@ -129,33 +129,48 @@
         </li>
       </ul>
     </div>
-  </aside>
+  </nav>
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-    <div class="container-fluid py-4">
+    <div class="align-content-center py-4">
         <a href="{{ url_for('doctor_dashboard_prescriptions') }}"><p style="padding-top: 10px; padding-left: 5px ;font-size: 14px; font-weight: bold"><i class="fa fa-arrow-left"></i> Go Back</p></a>
-      <div class="row my-4">
-        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
-          <div class="card">
-            <div class="card-header pb-4">
-              <div class="row">
-                <div class="col-lg-6 col-7">
-                <h5>Prescription Details</h5>
-                    <h6>ID: {{ params.id }}</h6>
-                    <h6>Date: {{ params.date }}</h6>
-                    <h6>Patient: {{ params.patient }}</h6>
-                    <h6>Motive: {{ params.motive }}</h6>
-                    <h6>Pharmaceuticals:</h6>
-                    <ul>
-                        {% for pharmaceutical in params.pharmaceuticals %}
-                            <li>{{ pharmaceutical }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                </div>
-              </div>
-            </div>
+     <div class="col-12" style="align-items: center; display: flex; justify-content: center">
+      <div class="col-5 my-4">
+      <h5>Create Prescription</h5>
+
+          {% for message in get_flashed_messages() %}
+          <div class="alert alert-success alert-dismissible">
+          <a href="{{ url_for('doctor_dashboard_prescription_form') }} " class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              {{ message }}
           </div>
-        </div>
+          {% endfor %}
+
+
+        <form action="{{ url_for('doctor_dashboard_prescription_form') }}" method="post">
+            <div class="form-group">
+                <label for="example-text-input" class="form-control-label">Appointment ID</label>
+                <input class="form-control" type="text" name="appointmentID" placeholder="Appointment ID">
+            </div>
+            <div class="form-group">
+                <label for="example-text-input" class="form-control-label">Medic ID</label>
+                <input class="form-control" type="text" name="medicID" placeholder="Medic ID">
+            </div>
+            <div class="form-group">
+                <label for="example-text-input" class="form-control-label">Patient Name</label>
+                <input class="form-control" type="text" placeholder="Patient Name" name="patientName">
+            </div>
+            <div class="form-group">
+                <label for="example-text-input" class="form-control-label">Pharmaceuticals</label>
+                    <select multiple class="form-control" name="pharmaceutical_multiselect">
+                        {% for pharmaceutical in params.pharmaceuticals %}
+                            <option value="{{ pharmaceutical }}">{{ pharmaceutical }}</option>
+                        {% endfor %}
+                    </select>
+            </div>
+            <button type="submit" class="btn my-1 me-1" style="background: #61CBFD; color: white ">Create Prescription</button>
+        </form>
+
+      </div>
+     </div>
 
         <footer class="footer pt-3  ">
         <div class="container-fluid">

@@ -141,7 +141,7 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Today's Appointments</p>
                     <h5 class="font-weight-bolder mb-0">
-                      5
+                      {{ params.todays_appointment }}
                     </h5>
                   </div>
                 </div>
@@ -162,7 +162,7 @@
                   <div class="numbers">
                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Today's Exams</p>
                     <h5 class="font-weight-bolder mb-0">
-                        3
+                        {{ params.todays_exams }}
                     </h5>
                   </div>
                 </div>
@@ -184,11 +184,11 @@
                 <div class="col-lg-6">
                   <div class="d-flex flex-column h-100">
                     <p class="mb-1 pt-2 text-bold">Next appointment: </p>
-                    <h5 class="font-weight-bolder">Alfredo</h5>
-                    <p class="mb-5">Motive: He hurt his knee while playing quidditch.</p>
-                      <p class="mb-5">Start of appointment: 11h15</p>
-                    <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href={{ url_for('doctor_dashboard_patient_info', **{"_id": 1})}}>
-                      Details about Jeff
+                    <h5 class="font-weight-bolder">{{ params.patient_next }}</h5>
+                    <p class="mb-5">{{ params.appointment_motive }}</p>
+                      <p class="mb-5">{{ params.start_appointment }}</p>
+                    <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href={{ url_for('doctor_dashboard_patient_info', **{"_id": params.patient_id})}}>
+                      Details about {{ params.patient_next }}
                       <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                     </a>
                   </div>
@@ -197,7 +197,7 @@
                   <div class="bg-white border-radius-lg h-100">
                     <img src="../static/img/shapes/waves-white.svg" class="position-absolute h-100 w-50 top-0 d-lg-block d-none" alt="waves">
                     <div class="position-relative d-flex align-items-center justify-content-center h-100">
-                      <img class="w-100 position-relative z-index-2 pt-4" src="../static/img/male_photo.jpeg" alt="rocket">
+                      <img class="w-100 position-relative z-index-2 pt-4" src="{{ url_for('static', filename=params.next_patient_photo)}}" alt="rocket">
                     </div>
                   </div>
                 </div>
@@ -211,16 +211,15 @@
               <span class="mask bg-gradient-dark"></span>
               <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
                 <h5 class="text-white font-weight-bolder mb-4 pt-2">Prescriptions Made Today</h5>
-                  <p class="text-white font-weight-bold">[Today's Date]</p>
+                  <p class="text-white font-weight-bold">{{ params.todays_date }}</p>
                   <ul class="text-white">
+                      {% for prescription in params.prescriptions %}
                       <li>
-                          Bruffen to [patient] at [timestamp]
-                      </li>
-                      <li>
-                          Paracetamol to [patient] at [timestamp]
+                          {{ prescription.id }} to {{ prescription.patient }} at {{ prescription.time }}
                       </li>
                   </ul>
-                <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                  {% endfor %}
+                <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="{{ url_for('doctor_dashboard_prescription_form') }}">
                   New Prescription
                   <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                 </a>
@@ -264,28 +263,31 @@
                     </tr>
                   </thead>
                   <tbody>
+                  {% for exam in params.exams %}
                     <tr>
                       <td style="padding-left: 30px">
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column">
-                            <span class="text-xs font-weight-bold">11h </span>
+                            <span class="text-xs font-weight-bold">{{ exam.hour }} </span>
                           </div>
                         </div>
                       </td>
                       <td>
-                          <span class="text-xs font-weight-bold"> 1.2.33 </span>
+                          <span class="text-xs font-weight-bold"> {{ exam.room }} </span>
                       </td>
                       <td style="padding-left: 30px">
                         <div class="avatar-group mt-2">
                           <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alfredo">
-                            <img src="../static/img/male_photo.jpeg" alt="team1">
+                            <img src="{{ url_for('static', filename=exam.photo) }}" alt="team1">
                           </a>
                         </div>
                       </td>
                       <td>
-                        <span class="text-xs font-weight-bold"> X-ray </span>
+                        <span class="text-xs font-weight-bold"> {{ exam.type }}</span>
                       </td>
                     </tr>
+                  {% endfor %}
+
                   </tbody>
                 </table>
               </div>
