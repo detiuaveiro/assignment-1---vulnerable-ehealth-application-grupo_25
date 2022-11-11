@@ -28,6 +28,7 @@ def createacc():
     return render_template('createacc.html')
 
 
+# doctor-dashboard
 @app.route('/doctor-dashboard')
 def doctor_dashboard():
     # to be completed, doctor-dashboard.html is prepared to receive params
@@ -159,6 +160,15 @@ def doctor_dashboard_prescription_form():
                                        "Anti-depressive"]}
     return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
 
+# end of doctor-dashboard
+
+
+# admin dashboard
+
+@app.route('/admin')
+def admin():
+
+    return render_template('admin-dashboard.html', params={})
 
 if __name__ == '__main__':
     app.run(use_reloader=True)
