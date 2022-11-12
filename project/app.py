@@ -10,8 +10,8 @@ db = mysql.connector.connect(
     #port=3307,
     #user="root",
     #password="1904",
-    #user="daniel",
-    #password="8495",
+    user="daniel",
+    password="8495",
     database="eHealthCorp"
 )
 
@@ -130,15 +130,37 @@ def doctor_dashboard_patients():
 
 @app.route('/doctor-dashboard/patients/<_id>')
 def doctor_dashboard_patient_info(_id):
+    #TODO: Melhorar página HTML
     _id = int(_id)
-    if _id == 1:
-        params_dict = {"patient": "Jeff", "niss": 12345, "description": "He's a very nice person.",
-                       "illnesses": ["Cold"]}
-    elif _id == 2:
-        params_dict = {"patient": "Tom", "niss": 12345, "description": "He's a very cool person.",
-                       "illnesses": ["Muscle Soreness", "Covid"]}
+
+    # Get personal info about the patient
+    cursor = db.cursor()
+    cursor.execute("SELECT Num_Utente, Nome, Email, Tel, Idade, Morada, NIF FROM Paciente JOIN Utilizador U "
+                   "on Paciente.ID = U.ID WHERE Paciente.ID = %s", (_id, ))
+
+    patient = cursor.fetchone()
+
+    params_dict = {"name": patient[1]  , "niss": patient[0], "email": patient[2], "tel": patient[3], "age":patient[4], "address": patient[5],
+                   "nif": patient[6], "illnesses": []}
+
+    # Get diseases info, if they exist
+
+    diseases = []
+
+    cursor.execute("SELECT Nome FROM Diagnostico JOIN Doenca D "
+                   "on D.Codigo = Diagnostico.Cod_Doenca WHERE Id_Pac = %s", (_id, ))
+
+    for Nome in cursor:
+        diseases.append(Nome)
+
+    if len(diseases) == 0:
+        params_dict["illnesses"].append("Este paciente não tem doenças diagnosticadas.")
     else:
-        params_dict = None
+        params_dict["illnesses"] = diseases
+
+
+    cursor.close()
+
     return render_template('doctor-dashboard-patient-info.html', params=params_dict)
 
 
@@ -267,4 +289,4 @@ def get_patient_info(patient_id):
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=True)
+    app.run(use_reloader=True, debug=True)
