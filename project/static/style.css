@@ -183,3 +183,23 @@ nav ul {
     color: #3ea1ec;
 }
 
+.center_op {
+    align-items: center;
+    display: flex;
+    justify-content: center
+}
+
+.sql_table{
+   overflow-y:scroll;
+   height:300px;
+   display:block;
+}
+
+.make-space-left{
+    padding-left: 20px;
+}
+.make-space-right{
+    padding-right: 16px;
+}
+
+

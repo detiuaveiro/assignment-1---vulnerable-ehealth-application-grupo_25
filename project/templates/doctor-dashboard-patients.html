@@ -143,7 +143,7 @@
                 </div>
                   <div class="col-lg-6 col-7">
                       <div>
-                          <form class="bg-white border-radius-lg d-flex me-2">
+                          <form action="#" method="POST" class="bg-white border-radius-lg d-flex me-2">
                              <input type="text" class="form-control ps-3" name="filter" style="width: 300px; margin-right: 10px" placeholder="Search for patient">
                              <input type="submit"  value="Search" class="btn my-1 me-1" style="background: #61CBFD; color: white ">
                           </form>
@@ -155,6 +155,13 @@
             </div>
             <div class="card-body px-0 pb-2">
               <div class="table-responsive">
+                  {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for msg in messages %}
+                            <p>{{ msg }}</p>
+                        {% endfor %}
+                    {%  endif %}
+                  {%  endwith %}
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
