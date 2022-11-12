@@ -56,6 +56,9 @@ def doctor_dashboard():
 def doctor_dashboard_patients():
     # here there will be a cursor.execute( "SELECT * FROM patients WHERE doctor_id = {id_of_authenticated_doctor}")
     # which will return an iterator
+    # TODO: Get the last appointment date of a patient (Save it in the DB? Query using table Consulta?)
+    # TODO: Search bar query: Check to see if the flash message is appearing when searching for query with no results, once Sessions have been implemented
+    # TODO: Replace with commented version once login of autenthicated users is setup
     """
     params_dict = {"patients": []}
     for result in iterator:
@@ -67,9 +70,6 @@ def doctor_dashboard_patients():
     params_dict = {"patients": [], "total_patients": 0}
 
     if request.method == "GET":
-        #TODO: Get the last appointment date of a patient (Save it in the DB? Query using table Consulta?)
-        #TODO: Search bar query: Check to see if the flash message is appearing when searching for query with no results, once Sessions have been implemented
-        #TODO: Replace with commented version once login of autenthicated users is setup
         '''
         doctor_id = session["user_ID"]
         
@@ -93,7 +93,6 @@ def doctor_dashboard_patients():
         patients.execute("SELECT Paciente.ID AS ID, Nome, Num_Utente FROM Paciente JOIN Utilizador U on Paciente.ID = U.ID")
 
         for (ID, Nome, Num_Utente) in patients:
-            # Buscar info do Nome à tabela de Utilizadores
             params_dict["patients"].append({"name": Nome, "niss": Num_Utente, "id": {"_id": ID}, "last_appointment": "17/4/2019"})
             params_dict["total_patients"] += 1
 
@@ -117,14 +116,6 @@ def doctor_dashboard_patients():
             return redirect(url_for("doctor_dashboard_patients"))
 
         patients.close()
-
-    '''
-    filtering = request.args.get('filter')
-    if filtering is None or filtering == "":
-        params_dict = {"patients": [{"name": "Jeff", "niss": 12345, "id": {"_id": 1}, "last_appointment": "17/4/2019"},
-                                    {"name": "Tom", "niss": 12345, "id": {"_id": 2}, "last_appointment": "20/07/2021"}],
-                       "total_patients": 2}
-    '''
 
     return render_template('doctor-dashboard-patients.html', params=params_dict)
 
@@ -164,10 +155,12 @@ def doctor_dashboard_patient_info(_id):
     return render_template('doctor-dashboard-patient-info.html', params=params_dict)
 
 
-@app.route('/doctor-dashboard/appointments')
+@app.route('/doctor-dashboard/appointments', methods=["GET", "POST"])
 def doctor_dashboard_appointments():
     # here there will be a cursor.execute( "SELECT * FROM appointments WHERE doctor_id = {id_of_authenticated_doctor}")
     # which will return an iterator
+    # TODO: Search bar query: Check to see if the flash message is appearing when searching for query with no results, once Sessions have been implemented
+    # TODO: Replace with commented version once login of autenthicated users is setup
     """
     params_dict = {"appointments": []}
     for result in iterator:
@@ -177,14 +170,96 @@ def doctor_dashboard_appointments():
 
     """
 
-    filtering = request.args.get('filter')
-    params_dict = {}
-    if filtering is None or filtering == "":
-        params_dict = {"appointments": [{"date": "10/11/2022", "hour": "11h", "id": {"_id": 1},
-                                         "specialty": "Pediatrics", "patient": "Jeff"},
-                                        {"date": "6/12/2022", "hour": "12h", "id": {"_id": 2},
-                                         "specialty": "Orthopedics", "patient": "Tom"}],
-                       "total_appointments": 2}
+    params_dict = {"appointments":[], "total_appointments": 0}
+
+    if request.method == "GET":
+        '''
+        doctor_id = session["user_ID"]
+
+        appointments = db.cursor()
+        appointments.execute("SELECT * FROM Consulta WHERE ID_Med = %s", (doctor_id, ))
+
+        for (Num_Cons, ID_Med, ID_Pac, Cod_Esp, Data) in appointments:
+            # Separar Data da Hora
+            dia, hora = str(Data).split(" ")
+
+            # Buscar info do Nome do Paciente à tabela de Utilizadores
+            cursor = db.cursor()
+
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+            name = cursor.fetchone()
+
+            # Buscar info do nome da especialidade
+
+            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo=%s", (Cod_Esp,))
+            especialidade = cursor.fetchone()
+
+            params_dict["appointments"].append(
+                {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": especialidade[0], "patient": name[0]})
+            params_dict["total_appointments"] += 1
+
+            cursor.close()
+            
+        appointments.close()
+        '''
+
+        # For testing purposes:
+        appointments = db.cursor()
+        appointments.execute("SELECT * FROM Consulta")
+
+        for (Num_Cons, ID_Med, ID_Pac, Cod_Esp, Data) in appointments:
+            # Separar Data da Hora
+            dia, hora = str(Data).split(" ")
+
+            # Buscar info do Nome do Paciente à tabela de Utilizadores
+            cursor = db.cursor()
+
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac, ))
+            name = cursor.fetchone()
+
+            # Buscar info do nome da especialidade
+
+            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo=%s", (Cod_Esp, ))
+            especialidade = cursor.fetchone()
+
+            params_dict["appointments"].append({"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": especialidade[0], "patient": name[0]})
+            params_dict["total_appointments"] += 1
+
+            cursor.close()
+
+
+        appointments.close()
+
+    elif request.method == "POST":
+        filter = "%" + request.form["filter"] + "%"
+
+        patients = db.cursor()
+        patients.execute("select Utilizador.ID, Nome from Utilizador JOIN Paciente AS P on Utilizador.ID = P.ID WHERE Nome LIKE %s",
+            (filter,))
+
+        if patients is not None:
+            for (ID, Nome) in patients:
+                appointments = db.cursor()
+
+                appointments.execute("SELECT Num_Cons, Nome, Data FROM Consulta JOIN Especialidade "
+                                     "ON Consulta.Cod_Esp = Especialidade.Codigo "
+                                     "WHERE ID_Pac=%s", (ID, ))
+
+                for (Num_Cons, Especialidade, Data) in appointments:
+                    # Separar Data da Hora
+                    dia, hora = str(Data).split(" ")
+
+                    params_dict["appointments"].append(
+                        {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": Especialidade, "patient": Nome})
+                    params_dict["total_appointments"] += 1
+
+                appointments.close()
+        else:
+            flash("Não foram encontrados resultados para a sua pesquisa!")
+            return redirect(url_for("doctor_dashboard_patients"))
+
+        patients.close()
+
 
     return render_template('doctor-dashboard-appointments.html', params=params_dict)
 
