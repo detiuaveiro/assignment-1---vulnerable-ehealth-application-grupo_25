@@ -48,8 +48,7 @@ nav ul {
     flex: 2;
     background-color: rgba(73, 165, 218, 0.3);
     padding: 20px;
-    border-bottom-left-radius: 10px;
-    border-top-left-radius: 10px;
+    border-radius: 20px;
     padding: 10px;
 }
 
@@ -60,8 +59,7 @@ nav ul {
     flex: 2;
     background-color: rgba(50, 165, 258, 0.3);
     padding: 20px;
-    border-bottom-left-radius: 10px;
-    border-top-left-radius: 10px;
+    border-radius: 20px;
     padding: 10px;
 }
 

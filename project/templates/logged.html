@@ -1,38 +1,398 @@
-<!--this speaks for itself -> user logged-->
+<!--
+=========================================================
+* Soft UI Dashboard - v1.0.6
+=========================================================
 
-{% extends "layout-logged.html" %}
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
 
-{% block content %}
-<section>
-    <div class="container-title">
-        <div class="text-gradient text-info">
-        <h3>Welcome, {user}</h3>
-        <!--<h4>Here are you next appointments...</h4> ainda nao sei se adiciono isto ou nao-->
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../static/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../static/img/favicon.png">
+  <title>
+    User Dashboard
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nucleo-icons.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nucleo-svg.css') }}"/>
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- CSS Files -->
+    <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='css/soft-ui-dashboard.css') }}" />
+</head>
+
+<body class="g-sidenav-show  bg-gray-100">
+  {% include 'navbar-logged.html' %}
+  <main class="main-content position-relative max-height-vh-100 border-radius-lg ">
+    <div class="container-fluid py-4">
+      <div class="container-fluid py-4">
+        <div class="row">
+          <div class="col-xl-8 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+              <div class="card-body p-4">
+                <div class="row">
+                  <div class="col-8">
+                    <h4 class="mb-0 text-capitalize font-weight-bold">Welcome, {user}</h4>
+                    <p class="font-weight-bolder mb-0">Here's everything you need to know:</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
+            <div class="card-body">
+              <div class="mask position-relative border-radius-lg bg-gradient-dark">
+                <div class="card-body position-relative d-flex flex-column p-4">
+                  <div class="row card-body position-relative z-index-1 d-flex flex-column h-100">
+                    <div class="col-8">
+                      <div class="numbers d-flex flex-column h-100">
+                        <h4 class="mb-0 text-white text-capitalize text-white font-weight-bold">Worried about your health?</h4>
+                        <a class="text-sm text-white font-weight-bold mb-0 icon-move-right mt-auto" href="{{ url_for('appointment')}}">
+                          Mark an appointment
+                          <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
+      <div class="row mt-4">
+        <div class="col-lg-4 mb-lg-0 mb-4">
+          <div class="card overflow-hidden position-relative border-radius-lg bg-dark h-100">
+            <span class="mask bg-gradient-dark"></span>
+            <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+              <div class="row">
+                <div class="d-flex flex-column h-100">
+                  <h5 class="pl-4 font-weight-bolder text-white pb-2">Your information: </h5>
+                  <p class="pl-4 text-white"><b>Name: </b>full name</p>
+                  <p class="pl-4 text-white"><b>Age: </b> pacient's age</p>
+                  <p class="pl-4 text-white"><b>E-mail: </b>email</p>
+                  <p class="pl-4 text-white"><b>NIF: </b>nif</p>
+                  <p class="pl-4 text-white"><b>Nr utente: </b>nutente</p>
+                  <p class="pl-4 text-white"><b>Phone number: </b>phonenmbr</p>
+                  <p class="pl-4 text-white"><b>Address: </b>address</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-lg-0 mb-4">
+          <div class="card h-100 p-3">
+            <div class="overflow-hidden position-relative border-radius-lg h-100">
+              <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                <h5 class="font-weight-bolder mb-4 pt-2">Available receipts:</h5>
+                <p class="font-weight-bold">Prescricao 1:</p>
+                <ul>
+                  <li>Medication1</li>
+                  <li>Medication2</li>
+                  <li>Medication3</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-lg-0 mb-4">
+          <div class="card h-100 p-3">
+            <div class="overflow-hidden position-relative border-radius-lg h-100">
+              <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
+                <h4 class="font-weight-bolder mb-4 pt-2">Previous exams:</h6>
+                  <!--repetir isto-->
+                <h5 class="font-weight-bold">Exam 1:</h5>
+                <ul>
+                  <li>Data: </li>
+                  <li>Procedimento: </li>
+                  <li>Resultado: </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <div class="background-main-c">
-        <div class="profile-div">
-            <div class = "list">
-                <nav>
-                    <ul>
-                    <li><a href="#">London</a></li>
-                    <li><a href="#">Paris</a></li>
-                    <li><a href="#">Tokyo</a></li>
+      <div class="row my-4">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col-lg-6 col-7">
+                  <h6>Upcoming Exams</h6>
+                </div>
+                <div class="col-lg-6 col-5 my-auto text-end">
+                  <div class="dropdown float-lg-end pe-4">
+                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa fa-ellipsis-v text-secondary"></i>
+                    </a>
+                    <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Exam type ascending</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Exam type descending</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Hour type ascending</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Hour type descending</a></li>
                     </ul>
-                </nav>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="columno2">
-                <h1>London</h1>
-                <p>London is the capital city of England. It is the most populous city in the  United Kingdom, with a metropolitan area of over 13 million inhabitants.</p>
-                <p>Standing on the River Thames, London has been a major settlement for two millennia, its history going back to its founding by the Romans, who named it Londinium.</p>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Scheduled to</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Room</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Doctor</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
+                    </tr>
+                  </thead>
+                  <!-- fazer for cicle aqui: -->
+                  <tbody>
+                    <tr>
+                      <td style="padding-left: 30px">
+                        <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column">
+                            <span class="text-xs font-weight-bold">11h </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                          <span class="text-xs font-weight-bold"> 1.2.33 </span>
+                      </td>
+                      <td style="padding-left: 30px">
+                        <div class="avatar-group mt-2">
+                          <span class="text-xs font-weight-bold">Andre Ventura (ew)</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="text-xs font-weight-bold"> X-ray </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <!-- acaba for cicle aqui: -->
+                </table>
+              </div>
             </div>
-            <div class="columno3">
-                <p>ola</p>
+          </div>
+        </div>
+      <footer class="footer pt-3  ">
+        <div class="container-fluid">
+          <div class="row align-items-center justify-content-lg-between">
+            <div class="col-lg-12 mb-lg-0 mb-4">
+              <div class="copyright text-lg-end text-sm text-muted text-lg">
+                Grupo 25 [SIO 2022]
+              </div>
             </div>
-        </div>  
+          </div>
+        </div>
+      </footer>
     </div>
-    </section>
-</section>
+    </div>
+    {% include 'footer.html' %}
+  </main>
 
-{% endblock %}
+  <!--   Core JS Files   -->
+  <script src="../static/js/core/popper.min.js"></script>
+  <script src="../static/js/core/bootstrap.min.js"></script>
+  <script src="../static/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../static/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="../static/js/plugins/chartjs.min.js"></script>
+  <script>
+    var ctx = document.getElementById("chart-bars").getContext("2d");
+
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+          label: "Sales",
+          tension: 0.4,
+          borderWidth: 0,
+          borderRadius: 4,
+          borderSkipped: false,
+          backgroundColor: "#fff",
+          data: [450, 200, 100, 220, 500, 100, 400, 230, 500],
+          maxBarThickness: 6
+        }, ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+            },
+            ticks: {
+              suggestedMin: 0,
+              suggestedMax: 500,
+              beginAtZero: true,
+              padding: 15,
+              font: {
+                size: 14,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+              color: "#fff"
+            },
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false
+            },
+            ticks: {
+              display: false
+            },
+          },
+        },
+      },
+    });
+
+
+    var ctx2 = document.getElementById("chart-line").getContext("2d");
+
+    var gradientStroke1 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke1.addColorStop(1, 'rgba(203,12,159,0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)'); //purple colors
+
+    var gradientStroke2 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke2.addColorStop(1, 'rgba(20,23,39,0.2)');
+    gradientStroke2.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
+
+    new Chart(ctx2, {
+      type: "line",
+      data: {
+        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        datasets: [{
+            label: "Mobile apps",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "#cb0c9f",
+            borderWidth: 3,
+            backgroundColor: gradientStroke1,
+            fill: true,
+            data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+            maxBarThickness: 6
+
+          },
+          {
+            label: "Websites",
+            tension: 0.4,
+            borderWidth: 0,
+            pointRadius: 0,
+            borderColor: "#3A416F",
+            borderWidth: 3,
+            backgroundColor: gradientStroke2,
+            fill: true,
+            data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
+            maxBarThickness: 6
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        scales: {
+          y: {
+            grid: {
+              drawBorder: false,
+              display: true,
+              drawOnChartArea: true,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              padding: 10,
+              color: '#b2b9bf',
+              font: {
+                size: 11,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+          x: {
+            grid: {
+              drawBorder: false,
+              display: false,
+              drawOnChartArea: false,
+              drawTicks: false,
+              borderDash: [5, 5]
+            },
+            ticks: {
+              display: true,
+              color: '#b2b9bf',
+              padding: 20,
+              font: {
+                size: 11,
+                family: "Open Sans",
+                style: 'normal',
+                lineHeight: 2
+              },
+            }
+          },
+        },
+      },
+    });
+  </script>
+  <script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../static/js/soft-ui-dashboard.min.js?v=1.0.6"></script>
+</body>
+
+</html>

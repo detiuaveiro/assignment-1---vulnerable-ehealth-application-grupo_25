@@ -27,6 +27,9 @@ def logged():
 def createacc():
     return render_template('createacc.html')
 
+@app.route('/appointment')
+def appointment():
+    return render_template('user-appointment.html')
 
 @app.route('/doctor-dashboard')
 def doctor_dashboard():
