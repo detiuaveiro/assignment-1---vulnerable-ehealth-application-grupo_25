@@ -4,6 +4,7 @@ import mysql.connector
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
 
+
 db = mysql.connector.connect(
     host="localhost",
     #port=3307,
@@ -230,7 +231,8 @@ def doctor_dashboard_prescription_form():
 
 # admin dashboard
 
-@app.route('/admin')
+
+@app.route('/admin', methods=('GET', 'POST'))
 def admin():
 
     cursor = db.cursor()
@@ -238,7 +240,10 @@ def admin():
     for medico in cursor.fetchall():
         print(medico)
 
+    if request.method == "POST":
+        print(request.form)
     return render_template('admin-dashboard.html', params={})
+
 
 if __name__ == '__main__':
     app.run(use_reloader=True)

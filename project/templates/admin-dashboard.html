@@ -51,7 +51,8 @@
                     <p class="mb-1 pt-2 text-bold">Medics Table</p>
                 </div>
                 <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Add Medic</button>
+                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white"
+                            data-bs-toggle="modal" data-bs-target="#exampleModal">Add Medic</button>
                 </div>
                   <div class="col-lg-3 col-sm-12 center_op">
                     <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Update Medic</button>
@@ -254,8 +255,63 @@
     </div>
     </div>
     </div>
+      <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add Medic</h5>
+            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post">
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Nome</label>
+                    <input class="form-control" type="text" name="nome" placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Email</label>
+                    <input class="form-control" type="text" name="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Tel</label>
+                    <input class="form-control" type="text" placeholder="Tel" name="tel">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Password</label>
+                    <input class="form-control" type="text" placeholder="Password" name="password">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Idade</label>
+                    <input class="form-control" type="text" placeholder="Idade" name="idade">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Morada</label>
+                    <input class="form-control" type="text" placeholder="Morada" name="morada">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">NIF</label>
+                    <input class="form-control" type="text" placeholder="NIF" name="nif">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Num_Medico</label>
+                    <input class="form-control" type="text" placeholder="Num Medic" name="num_medic">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Cod_Esp</label>
+                    <input class="form-control" type="text" placeholder="Codigo Esp",  name="cod_esp">
+                </div>
+                <div class="center_op">
+                <button type="submit" class="btn my-1 me-1" style="background: #61CBFD; color: white ">Add Medic</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
-
   <!--   Core JS Files   -->
   <script src="../static/js/core/popper.min.js"></script>
   <script src="../static/js/core/bootstrap.min.js"></script>
