@@ -11,15 +11,20 @@
                     <h3 class="mb-5" spellcheck="false">Login</h3>
                 </div>
                 <div class="col-12">
-                    <form class="modal-content animate" action="{{ url_for('logged') }}">
+                    <form class="modal-content animate" action="#" method="POST">
                         <div class="col-12">
-                          <label class="form-label" for="uname"><b>Username</b></label>
-                          <input class="form-input" type="text" placeholder="Enter Username" name="uname" required>
+                          <label class="form-label" for="email"><b>Email</b></label>
+                          <input class="form-input" type="email" placeholder="Enter Email" name="email" required>
                         </div>
                         <div class="col-12">
                           <label class="form-label" for="psw"><b>Password</b></label>
-                          <input class="form-input" type="password" placeholder="Enter Password" name="psw" required>
+                          <input class="form-input" type="password" placeholder="Enter Password" name="password" required>
                         </div>
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <p>{{ messages[0] }}</p>
+                            {%  endif %}
+                        {%  endwith %}
                         <div class="col-12">
                             <span class="psw"><a href="#">Forgot password?</a></span>
                         </div>
