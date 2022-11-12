@@ -16,6 +16,7 @@ db = mysql.connector.connect(
 )
 
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -244,8 +245,25 @@ def admin():
         print(medico)
 
     if request.method == "POST":
-        print(request.form)
+        form_id = request.args.get('form_id', 1, type=int)
+        if form_id == 1:
+            print(request.form)
+            print(request.args.get('form_id', 1, type=int))
+            return redirect(url_for('admin'))
+        elif form_id == 2:
+            print(request.form)
+            print(request.args.get('form_id', 1, type=int))
+            return redirect(url_for('admin'))
+        elif form_id == 3:
+            print(request.form)
+            print(request.args.get('form_id', 1, type=int))
+            return redirect(url_for('admin'))
+
     return render_template('admin-dashboard.html', params={})
+
+
+def get_patient_info(patient_id):
+    return "hello"
 
 
 if __name__ == '__main__':

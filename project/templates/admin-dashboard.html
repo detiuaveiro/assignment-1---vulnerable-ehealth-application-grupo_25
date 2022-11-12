@@ -52,119 +52,15 @@
                 </div>
                 <div class="col-lg-3 col-sm-12 center_op">
                     <button type="button" class="btn text-xs" style="background: #61CBFD; color: white"
-                            data-bs-toggle="modal" data-bs-target="#exampleModal">Add Medic</button>
+                            data-bs-toggle="modal" data-bs-target="#addMedic">Add Medic</button>
                 </div>
                   <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Update Medic</button>
+                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white"
+                            data-bs-toggle="modal" data-bs-target="#updateMedic">Update Medic</button>
                 </div>
                   <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Delete Medic</button>
-                </div>
-              </div>
-                <div class="col-lg-12 ms-auto text-center mt-5 mt-lg-0">
-                    <table class="sql_table">
-                        <thead>
-                            <tr>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-right">ID</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 make-space-left">Nome</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Email</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Tel</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Password</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Idade</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Morada</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">NIF</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Num_Medico</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Cod_Esp</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for f in range(15) %}
-                        <tr>
-                            {% for i in range(10) %}
-                          <td>
-                                <span class="text-xs font-weight-bold">hey</span>
-                          </td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-
-                </div>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="center_op col-lg-6 col-md-12 col-sm-12" style="padding-top: 2px">
-        <div class="card col-10" >
-            <div class="card-body p-3">
-              <div>
-              <div class="row">
-                <div class="col-lg-3 col-sm-12 center_op" style="color: black">
-                    <p class="mb-1 pt-2 text-bold">Patient Table</p>
-                </div>
-                <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Add Patient</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Update Patient</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Delete Patient</button>
-                </div>
-              </div>
-                <div class="col-lg-12 ms-auto text-center mt-5 mt-lg-0">
-                    <table class="sql_table">
-                        <thead>
-                            <tr>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-right">ID</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 make-space-left">Nome</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Email</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Tel</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Password</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Idade</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Morada</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">NIF</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Num_Utente</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for f in range(15) %}
-                        <tr>
-                            {% for i in range(10) %}
-                          <td>
-                                <span class="text-xs font-weight-bold">hey</span>
-                          </td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-
-                </div>
-              </div>
-            </div>
-          </div>
-    </div>
-    </div>
-    <div class="row" style="padding-top: 20px">
-    <div class="center_op col-lg-6 col-md-12 col-sm-12">
-        <div class="card col-10" >
-            <div class="card-body p-3">
-              <div>
-              <div class="row">
-                <div class="col-lg-3 col-sm-12 center_op" style="color: black">
-                    <p class="mb-1 pt-2 text-bold">Medics Table</p>
-                </div>
-                <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Add Medic</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Update Medic</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Delete Medic</button>
+                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white"
+                            data-bs-toggle="modal" data-bs-target="#deleteMedic">Delete Medic</button>
                 </div>
               </div>
                 <div class="col-lg-12 ms-auto text-center mt-5 mt-lg-0">
@@ -255,8 +151,8 @@
     </div>
     </div>
     </div>
-      <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <!-- Add Medic Modal -->
+    <div class="modal fade" id="addMedic" tabindex="-1" role="dialog" aria-labelledby="addMedicLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -266,7 +162,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <form method="post">
+            <form method="post" action="{{ url_for('admin', form_id=1)}}">
                 <div class="form-group">
                     <label for="example-text-input" class="form-control-label">Nome</label>
                     <input class="form-control" type="text" name="nome" placeholder="Nome">
@@ -311,6 +207,103 @@
         </div>
       </div>
     </div>
+
+        <!-- Update Medic Modal -->
+    <div class="modal fade" id="updateMedic" tabindex="-1" role="dialog" aria-labelledby="updateMedicLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Update Medic</h5>
+            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('admin', form_id=2)}}">
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">ID</label>
+                    <select class="form-control" type="text" name="nome" id="patient_select" style="appearance: menulist-button"
+                    onchange="loadForm()">
+                        <option value="1">None</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Nome</label>
+                    <input class="form-control" type="text" id="nome" name="nome" placeholder="Nome">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Email</label>
+                    <input class="form-control" type="text" id="email" name="email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Tel</label>
+                    <input class="form-control" type="text" id="tel" placeholder="Tel" name="tel">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Password</label>
+                    <input class="form-control" type="text" id="password" placeholder="Password" name="password">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Idade</label>
+                    <input class="form-control" type="text" id="idade" placeholder="Idade" name="idade">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Morada</label>
+                    <input class="form-control" type="text" id="morada" placeholder="Morada" name="morada">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">NIF</label>
+                    <input class="form-control" type="text" id="nif" placeholder="NIF" name="nif">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Num_Medico</label>
+                    <input class="form-control" type="text" id="num_medic" placeholder="Num Medic" name="num_medic">
+                </div>
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">Cod_Esp</label>
+                    <input class="form-control" type="text" id="cod_esp" placeholder="Codigo Esp",  name="cod_esp">
+                </div>
+                <div class="center_op">
+                <button type="submit" class="btn my-1 me-1" style="background: #61CBFD; color: white ">Add Medic</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+          <!-- Delete Medic Modal -->
+    <div class="modal fade" id="deleteMedic" tabindex="-1" role="dialog" aria-labelledby="deleteMedicLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Delete Medic</h5>
+            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="post" action="{{ url_for('admin', form_id=3)}}">
+                <div class="form-group">
+                    <label for="example-text-input" class="form-control-label">ID</label>
+                    <select class="form-control" type="text" name="nome" id="patient_select" style="appearance: menulist-button">
+                        <option value="1">None</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="center_op">
+                <button type="submit" class="btn my-1 me-1" style="background: #61CBFD; color: white ">Delete Medic</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
   <!--   Core JS Files   -->
   <script src="../static/js/core/popper.min.js"></script>
@@ -318,6 +311,20 @@
   <script src="../static/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="../static/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="../static/js/plugins/chartjs.min.js"></script>
+<script>
+    function loadForm(){
+        var patient_id = document.getElementById("patient_select").value
+        document.getElementById("nome").value = "My value" + patient_id;
+        document.getElementById("email").value = "My value" + patient_id;
+        document.getElementById("tel").value = "My value" + patient_id;
+        document.getElementById("password").value = "My value" + patient_id;
+        document.getElementById("idade").value = "My value" + patient_id;
+        document.getElementById("morada").value = "My value" + patient_id;
+        document.getElementById("nif").value = "My value" + patient_id;
+        document.getElementById("num_medic").value = "My value" + patient_id;
+        document.getElementById("cod_esp").value = "My value" + patient_id;
+    }
+</script>
 </body>
 
 </html>
