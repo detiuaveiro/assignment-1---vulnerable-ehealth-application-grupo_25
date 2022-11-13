@@ -257,16 +257,18 @@ def doctor_dashboard_appointments():
 
     """
 
-    params_dict = {"appointments":[], "total_appointments": 0}
+    params_dict = {"appointments": [], "total_appointments": 0}
+    doctor_id = session["user_id"]
 
     if request.method == "GET":
-        '''
-        doctor_id = session["user_ID"]
+        cursor = db.cursor()
+        cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
+                       "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                       "WHERE ID_Med = %s", (doctor_id, ))
 
-        appointments = db.cursor()
-        appointments.execute("SELECT * FROM Consulta WHERE ID_Med = %s", (doctor_id, ))
+        consultas = cursor.fetchall()
 
-        for (Num_Cons, ID_Med, ID_Pac, Cod_Esp, Data) in appointments:
+        for (Num_Cons, ID_Pac, Especialidade, Data) in consultas:
             # Separar Data da Hora
             dia, hora = str(Data).split(" ")
 
@@ -276,76 +278,44 @@ def doctor_dashboard_appointments():
             cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
             name = cursor.fetchone()
 
-            # Buscar info do nome da especialidade
-
-            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo=%s", (Cod_Esp,))
-            especialidade = cursor.fetchone()
-
+            # Adicionar info ao params_dict
             params_dict["appointments"].append(
-                {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": especialidade[0], "patient": name[0]})
+                {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": Especialidade, "patient": name[0]})
             params_dict["total_appointments"] += 1
 
             cursor.close()
-            
-        appointments.close()
-        '''
+    elif request.method == "POST":
+        filter = "%" + request.form["filter"] + "%"
 
-        # For testing purposes:
-        appointments = db.cursor()
-        appointments.execute("SELECT * FROM Consulta")
+        cursor = db.cursor()
+        cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
+                       "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                       "WHERE ID_Med = %s", (doctor_id,))
 
-        for (Num_Cons, ID_Med, ID_Pac, Cod_Esp, Data) in appointments:
+        consultas = cursor.fetchall()
+
+        for (Num_Cons, ID_Pac, Especialidade, Data) in consultas:
             # Separar Data da Hora
             dia, hora = str(Data).split(" ")
 
             # Buscar info do Nome do Paciente à tabela de Utilizadores
             cursor = db.cursor()
 
-            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac, ))
-            name = cursor.fetchone()
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s AND Nome LIKE %s ", (ID_Pac, filter, ))
+            patient = cursor.fetchall()
 
-            # Buscar info do nome da especialidade
-
-            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo=%s", (Cod_Esp, ))
-            especialidade = cursor.fetchone()
-
-            params_dict["appointments"].append({"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": especialidade[0], "patient": name[0]})
-            params_dict["total_appointments"] += 1
-
-            cursor.close()
-
-
-        appointments.close()
-
-    elif request.method == "POST":
-        filter = "%" + request.form["filter"] + "%"
-
-        patients = db.cursor()
-        patients.execute("select Utilizador.ID, Nome from Utilizador JOIN Paciente AS P on Utilizador.ID = P.ID WHERE Nome LIKE %s",
-            (filter,))
-
-        if patients is not None:
-            for (ID, Nome) in patients:
-                appointments = db.cursor()
-
-                appointments.execute("SELECT Num_Cons, Nome, Data FROM Consulta JOIN Especialidade "
-                                     "ON Consulta.Cod_Esp = Especialidade.Codigo "
-                                     "WHERE ID_Pac=%s", (ID, ))
-
-                for (Num_Cons, Especialidade, Data) in appointments:
-                    # Separar Data da Hora
-                    dia, hora = str(Data).split(" ")
-
+            if len(patient) > 0:
+                for (Nome) in patient:
+                    # Adicionar info ao params_dict
                     params_dict["appointments"].append(
-                        {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": Especialidade, "patient": Nome})
+                        {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": Especialidade,
+                         "patient": Nome[0]})
                     params_dict["total_appointments"] += 1
+            else:
+                flash("No results found")
+                return redirect(url_for("doctor_dashboard_appointments"))
 
-                appointments.close()
-        else:
-            flash("No results found for your search query")
-            return redirect(url_for("doctor_dashboard_patients"))
-
-        patients.close()
+                cursor.close()
 
 
     return render_template('doctor-dashboard-appointments.html', params=params_dict)
@@ -353,27 +323,63 @@ def doctor_dashboard_appointments():
 
 @app.route('/doctor-dashboard/appointments/<_id>')
 def doctor_dashboard_appointment_info(_id):
+    # TODO: Melhorar página HTML
     _id = int(_id)
-    if _id == 1:
-        params_dict = {"date": "10/11/2022", "hour": "11h", "specialty": "Pediatrics",
-                       "patient": "Jeff", "doctor": "Hernesto"}
-    elif _id == 2:
-        params_dict = {"date": "6/12/2022", "hour": "12h", "specialty": "Orthopedics",
-                       "patient": "Tom", "doctor": "Hernesto"}
-    else:
-        params_dict = None
+
+    cursor = db.cursor()
+    cursor.execute("SELECT Num_Cons, ID_Med, ID_Pac, Nome, Data "
+                   "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo WHERE Num_Cons = %s", (_id, ))
+
+    dados_consulta = cursor.fetchone()
+
+    ## Buscar nome do Médico e do Paciente
+
+    cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID=%s", (dados_consulta[2], ))
+    nome_paciente = cursor.fetchone()
+
+    cursor.execute("SELECT Nome FROM Med_User_View WHERE ID=%s", (dados_consulta[1],))
+    nome_medico = cursor.fetchone()
+
+    # Separar Data da Hora
+    dia, hora = str(dados_consulta[-1]).split(" ")
+
+
+    params_dict = {"date": dia, "hour": hora, "specialty": dados_consulta[3],
+                   "patient": nome_paciente[0], "doctor": nome_medico[0]}
+
     return render_template('doctor-dashboard-appointment-info.html', params=params_dict)
 
 
 @app.route('/doctor-dashboard/prescriptions')
 def doctor_dashboard_prescriptions():
+    params_dict = {"prescriptions": [], "total_prescriptions": 0}
+    doctor_id = session["user_id"]
 
-    filtering = request.args.get('filter')
-    params_dict = {}
-    if filtering is None or filtering == "":
-        params_dict = {"prescriptions": [{"date": "10/11/2022", "id": {"_id": 1}, "patient": "Jeff"},
-                                         {"date": "20/1/2021", "id": {"_id": 2}, "patient": "Tom"}],
-                       "total_prescriptions": 2}
+    if request.method == "GET":
+        cursor = db.cursor()
+        cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
+                       "ON Prescricao.Num_Consulta = C.Num_Cons "
+                       "WHERE C.ID_Med=%s", (doctor_id,))
+
+        prescriptions = cursor.fetchall()
+
+        for (Code, Data, ID_Pac) in prescriptions:
+            # Separar Data da Hora
+            dia, hora = str(Data).split(" ")
+
+            # Buscar info do Nome do Paciente à tabela de Utilizadores
+            cursor = db.cursor()
+
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+            name = cursor.fetchone()
+
+
+            # Adicionar info ao params_dict
+            params_dict["prescriptions"].append(
+                {"date": dia, "id": {"_id": Code}, "patient": name[0]})
+            params_dict["total_prescriptions"] += 1
+
+            cursor.close()
 
     return render_template('doctor-dashboard-prescription.html', params=params_dict)
 
@@ -381,7 +387,7 @@ def doctor_dashboard_prescriptions():
 @app.route('/doctor-dashboard/prescriptions/<_id>')
 def doctor_dashboard_prescription_info(_id):
     print(_id)
-    _id = int(_id)
+
     if _id == 1:
         params_dict = {"date": "10/11/2022", "name": "Bruffen", "id": 1,
                        "patient": "Jeff", "motive": "He has pain in his body.",
