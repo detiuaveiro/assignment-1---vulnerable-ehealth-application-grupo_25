@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 import mysql.connector
 
 app = Flask(__name__)
@@ -19,15 +19,56 @@ db = mysql.connector.connect(
 )
 
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    params_dict = {"email": "", "password": "", "id": ""}
+
+    if request.method == 'POST':
+        params_dict["email"] = request.form['email']
+        params_dict["password"] = request.form['password']
+
+        # Buscar email e pass à base de dados
+        cursor = db.cursor()
+
+        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s AND Password = %s", (params_dict["email"], params_dict["password"]))
+        user_data = cursor.fetchone()
+
+
+        if user_data is None:
+            flash("Email or password incorrect")
+            return redirect(url_for('login'))
+        else:
+            params_dict["id"] = user_data[0]
+
+            session['user_id'] = params_dict["id"]
+            session['email'] = user_data[1]
+
+            # Verificar se é médico ou paciente e redirecionar para a página correta
+            cursor.execute("SELECT ID FROM Medico WHERE ID = %s", (params_dict["id"],))
+            medico_data = cursor.fetchone()
+
+            if medico_data is None:
+                # É paciente
+                return redirect(url_for('logged'))
+            else:
+                # É médico
+                return redirect(url_for('doctor_dashboard'))
+            
     return render_template('login.html')
+
+def logout():
+    if session.get('user_id') is not None:
+        session.pop('user_id', None)
+        session.pop('email', None)
+
+    flash("Logged out successfully")
+    return redirect(url_for('index'))
 
 
 @app.route('/contactform')
@@ -115,7 +156,7 @@ def doctor_dashboard_patients():
                     {"name": Nome, "niss": Num_Utente, "id": {"_id": ID}, "last_appointment": "17/4/2019"})
                 params_dict["total_patients"] += 1
         else:
-            flash("Não foram encontrados resultados para a sua pesquisa!")
+            flash("No results found")
             return redirect(url_for("doctor_dashboard_patients"))
 
         patients.close()
@@ -148,7 +189,7 @@ def doctor_dashboard_patient_info(_id):
         diseases.append(Nome)
 
     if len(diseases) == 0:
-        params_dict["illnesses"].append("Este paciente não tem doenças diagnosticadas.")
+        params_dict["illnesses"].append("This patient has no diseases")
     else:
         params_dict["illnesses"] = diseases
 
@@ -258,7 +299,7 @@ def doctor_dashboard_appointments():
 
                 appointments.close()
         else:
-            flash("Não foram encontrados resultados para a sua pesquisa!")
+            flash("No results found for your search query")
             return redirect(url_for("doctor_dashboard_patients"))
 
         patients.close()
