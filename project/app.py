@@ -10,9 +10,12 @@ db = mysql.connector.connect(
     #port=3307,
     #user="root",
     #password="1904",
-    user="daniel",
-    password="8495",
-    database="eHealthCorp"
+    #user="daniel",
+    #password="8495",
+    #database="eHealthCorp"
+    user="bruna",
+    password="12345678",
+    database="sio_db"
 )
 
 
