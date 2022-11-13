@@ -32,6 +32,7 @@
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <!-- CSS Files -->
     <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='css/soft-ui-dashboard.css') }}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -67,7 +68,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for('doctor_dashboard_patients') }}">
+          <a class="nav-link" href="{{ url_for('doctor_dashboard_patients') }}">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>office</title>
@@ -146,6 +147,15 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    $(document).ready(function() {
+      // get current URL path and assign 'active' class
+      var pathname = window.location.pathname;
+      console.log(pathname);
+      $('.nav-item a[href="'+pathname+'"]').addClass('active');
+    })
+  </script>
   
     <!--   Core JS Files   -->
     <script src="../static/js/core/popper.min.js"></script>
