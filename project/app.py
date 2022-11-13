@@ -89,6 +89,9 @@ def contactform():
 def logged():
     return render_template('logged.html')
 
+@app.route('/contactdoctor')
+def contactdoctor():
+    return render_template('contact-doctor.html')
 
 @app.route('/create-acc', methods=['GET', 'POST'])
 def createacc():

@@ -4,9 +4,9 @@
 ## Homepage
 - Página de contactos disponivel a partir da homepage
 - Discuss if newsletter is good idea to keep or not 
-- Discuss what to keep from the existing footer links   
+- Discuss what to keep from the existing footer links
 
-## Contact Form Page
+## Contact Doctor Form Page
 - Make the html page
 
 ## Pacient Pages
