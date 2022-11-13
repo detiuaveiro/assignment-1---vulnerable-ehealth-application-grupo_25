@@ -7,12 +7,15 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3307,
-    user="root",
-    password="1904",
-    # user="daniel",
-    # password="8495",
-    database="eHealthCorp"
+    #port=3307,
+    #user="root",
+    #password="1904",
+    #user="daniel",
+    #password="8495",
+    #database="eHealthCorp"
+    user="bruna",
+    password="12345678",
+    database="sio_db"
 )
 
 
