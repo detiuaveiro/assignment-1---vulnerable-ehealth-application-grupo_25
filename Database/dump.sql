@@ -1,15 +1,13 @@
-CREATE DATABASE  IF NOT EXISTS `eHealthCorp` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `eHealthCorp`;
 -- MySQL dump 10.13  Distrib 8.0.31, for Linux (x86_64)
 --
 -- Host: 127.0.0.1    Database: eHealthCorp
 -- ------------------------------------------------------
--- Server version	8.0.31
+-- Server version	8.0.31-0ubuntu0.22.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -64,7 +62,7 @@ CREATE TABLE `Consulta` (
   CONSTRAINT `Consulta_Especialidade_null_fk` FOREIGN KEY (`Cod_Esp`) REFERENCES `Especialidade` (`Codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `Consulta_Médico_null_fk` FOREIGN KEY (`ID_Med`) REFERENCES `Medico` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `Consulta_Paciente_null_fk` FOREIGN KEY (`ID_Pac`) REFERENCES `Paciente` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,6 +71,7 @@ CREATE TABLE `Consulta` (
 
 LOCK TABLES `Consulta` WRITE;
 /*!40000 ALTER TABLE `Consulta` DISABLE KEYS */;
+INSERT INTO `Consulta` VALUES (1,2,1,1,'2022-11-15 00:00:00'),(2,2,1,1,'2022-11-10 10:00:00');
 /*!40000 ALTER TABLE `Consulta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,8 +86,9 @@ CREATE TABLE `Diagnostico` (
   `Cod_Doenca` int NOT NULL,
   `Id_Pac` int NOT NULL,
   PRIMARY KEY (`Cod_Doenca`,`Id_Pac`),
+  KEY `Diagnostico_Paciente_null_fk` (`Id_Pac`),
   CONSTRAINT `Diagnostico_Doenca_null_fk` FOREIGN KEY (`Cod_Doenca`) REFERENCES `Doenca` (`Codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Diagnostico_Paciente_null_fk` FOREIGN KEY (`Cod_Doenca`) REFERENCES `Paciente` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `Diagnostico_Paciente_null_fk` FOREIGN KEY (`Id_Pac`) REFERENCES `Paciente` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -98,6 +98,7 @@ CREATE TABLE `Diagnostico` (
 
 LOCK TABLES `Diagnostico` WRITE;
 /*!40000 ALTER TABLE `Diagnostico` DISABLE KEYS */;
+INSERT INTO `Diagnostico` VALUES (5,1);
 /*!40000 ALTER TABLE `Diagnostico` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -175,8 +176,30 @@ CREATE TABLE `Med_Pac` (
 
 LOCK TABLES `Med_Pac` WRITE;
 /*!40000 ALTER TABLE `Med_Pac` DISABLE KEYS */;
+INSERT INTO `Med_Pac` VALUES (1,2),(4,2);
 /*!40000 ALTER TABLE `Med_Pac` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `Med_User_View`
+--
+
+DROP TABLE IF EXISTS `Med_User_View`;
+/*!50001 DROP VIEW IF EXISTS `Med_User_View`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `Med_User_View` AS SELECT 
+ 1 AS `ID`,
+ 1 AS `Nome`,
+ 1 AS `Email`,
+ 1 AS `Tel`,
+ 1 AS `Password`,
+ 1 AS `Idade`,
+ 1 AS `Morada`,
+ 1 AS `NIF`,
+ 1 AS `Num_Medico`,
+ 1 AS `Cod_Esp`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `Medicamento`
@@ -231,6 +254,26 @@ INSERT INTO `Medico` VALUES (2,'0001',1);
 UNLOCK TABLES;
 
 --
+-- Temporary view structure for view `Pac_User_View`
+--
+
+DROP TABLE IF EXISTS `Pac_User_View`;
+/*!50001 DROP VIEW IF EXISTS `Pac_User_View`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `Pac_User_View` AS SELECT 
+ 1 AS `ID`,
+ 1 AS `Nome`,
+ 1 AS `Email`,
+ 1 AS `Tel`,
+ 1 AS `Password`,
+ 1 AS `Idade`,
+ 1 AS `Morada`,
+ 1 AS `NIF`,
+ 1 AS `Num_Utente`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `Paciente`
 --
 
@@ -242,7 +285,7 @@ CREATE TABLE `Paciente` (
   `Num_Utente` char(9) NOT NULL,
   PRIMARY KEY (`ID`),
   CONSTRAINT `Paciente_Utilizador_null_fk` FOREIGN KEY (`ID`) REFERENCES `Utilizador` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -251,7 +294,7 @@ CREATE TABLE `Paciente` (
 
 LOCK TABLES `Paciente` WRITE;
 /*!40000 ALTER TABLE `Paciente` DISABLE KEYS */;
-INSERT INTO `Paciente` VALUES (1,'273134778');
+INSERT INTO `Paciente` VALUES (1,'273134778'),(3,'240496930'),(4,'444883959');
 /*!40000 ALTER TABLE `Paciente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,6 +309,7 @@ CREATE TABLE `Prescricao` (
   `Cod_Medic` int NOT NULL,
   `Num_Consulta` int NOT NULL,
   `Id_Med` int NOT NULL,
+  `Code` char(5) NOT NULL,
   PRIMARY KEY (`Id_Med`,`Num_Consulta`,`Cod_Medic`),
   KEY `Prescricao_Consulta_null_fk` (`Num_Consulta`),
   KEY `Prescricao_Medicamento_null_fk` (`Cod_Medic`),
@@ -331,7 +375,7 @@ CREATE TABLE `Utilizador` (
   `Morada` varchar(100) DEFAULT NULL,
   `NIF` char(9) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -340,9 +384,45 @@ CREATE TABLE `Utilizador` (
 
 LOCK TABLES `Utilizador` WRITE;
 /*!40000 ALTER TABLE `Utilizador` DISABLE KEYS */;
-INSERT INTO `Utilizador` VALUES (1,'Artur Correia','art.afo@ua.pt','930577403','1904',20,'Quinta do Bosque, Lote 110, 2ºEsq','262190185'),(2,'Ana Filipa Gomes','afgomes@mail.pt',NULL,'1234',NULL,NULL,'112773456');
+INSERT INTO `Utilizador` VALUES (1,'Artur Correia','art.afo@ua.pt','930577403','1904',20,'Quinta do Bosque, Lote 110, 2ºEsq','262190185'),(2,'Ana Filipa Gomes','afgomes@mail.pt',NULL,'1234',NULL,NULL,'112773456'),(3,'Daniel Carvalho','dl.carvalho@ua.pt','962368016','0000',25,'Sever do Vouga','222222222'),(4,'Andreia Soares','andreia@mail.pt','234555039','0000',27,'Porto','294953959');
 /*!40000 ALTER TABLE `Utilizador` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Final view structure for view `Med_User_View`
+--
+
+/*!50001 DROP VIEW IF EXISTS `Med_User_View`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`daniel`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `Med_User_View` AS select `U`.`ID` AS `ID`,`U`.`Nome` AS `Nome`,`U`.`Email` AS `Email`,`U`.`Tel` AS `Tel`,`U`.`Password` AS `Password`,`U`.`Idade` AS `Idade`,`U`.`Morada` AS `Morada`,`U`.`NIF` AS `NIF`,`M`.`Num_Medico` AS `Num_Medico`,`M`.`Cod_Esp` AS `Cod_Esp` from (`Medico` `M` join `Utilizador` `U` on((`M`.`ID` = `U`.`ID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `Pac_User_View`
+--
+
+/*!50001 DROP VIEW IF EXISTS `Pac_User_View`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`daniel`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `Pac_User_View` AS select `U`.`ID` AS `ID`,`U`.`Nome` AS `Nome`,`U`.`Email` AS `Email`,`U`.`Tel` AS `Tel`,`U`.`Password` AS `Password`,`U`.`Idade` AS `Idade`,`U`.`Morada` AS `Morada`,`U`.`NIF` AS `NIF`,`P`.`Num_Utente` AS `Num_Utente` from (`Paciente` `P` join `Utilizador` `U` on((`P`.`ID` = `U`.`ID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -353,4 +433,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-11 19:45:36
+-- Dump completed on 2022-11-13 18:50:46
