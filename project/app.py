@@ -7,15 +7,16 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3307,
-    #user="root",
-    #password="1904",
+    port=3307,
+    user="root",
+    password="1904",
+    get_warnings=True,
     #user="daniel",
     #password="8495",
-    #database="eHealthCorp"
-    user="bruna",
-    password="12345678",
-    database="sio_db"
+    database="eHealthCorp",
+    #user="bruna",
+    #password="12345678",
+    #database="sio_db"
 )
 
 
@@ -39,6 +40,9 @@ def login():
         cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s AND Password = %s", (params_dict["email"], params_dict["password"]))
         user_data = cursor.fetchone()
 
+        # There are no warnings
+        warnings = cursor.fetchwarnings()
+        print(warnings)
 
         if user_data is None:
             flash("Email or password incorrect")
@@ -81,8 +85,46 @@ def logged():
     return render_template('logged.html')
 
 
-@app.route('/create-acc')
+@app.route('/create-acc', methods=['GET', 'POST'])
 def createacc():
+    if request.method == 'POST':
+        form_input = {
+            "firstname": request.form['firstname'],
+            "lastname": request.form['lastname'],
+            "email": request.form['email'],
+            "nutente": request.form['nutente'],
+            "nif": request.form['nif'],
+            "tel": request.form['tel'],
+            "morada": request.form['morada'],
+            "password": request.form['psw'],
+            "confirm_password": request.form['pswc']
+        }
+
+        for key, value in form_input.items():
+            if value == "":
+                form_input[key] = None
+
+        if form_input["password"] != form_input["confirm_password"]:
+            flash("Passwords don't match")
+            return redirect(url_for('createacc'))
+        
+        cursor = db.cursor()
+
+        cursor.execute('''
+            INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+            , (form_input["firstname"] + " "+ form_input["lastname"], form_input["email"], form_input["tel"], form_input["password"], None, form_input["morada"], form_input["nif"]))
+        
+        cursor.execute('''
+            INSERT INTO Paciente (ID, Num_Utente)
+            VALUES (%s, %s)'''
+            , (cursor.lastrowid, form_input["nutente"]))
+
+        db.commit()
+        
+        
+        return redirect(url_for('login'))
+
     return render_template('createacc.html')
 
 @app.route('/appointment')

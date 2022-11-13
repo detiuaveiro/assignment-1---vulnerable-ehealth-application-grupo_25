@@ -10,32 +10,32 @@
                 <h3 class="mb-5 text-gradient text-info greeting-title text-title-c" spellcheck="false">Start by creating an account</h3>
             </div>
             <div class="col-12">
-                <form class="modal-content animate background form-back" action="{{ url_for('logged') }}">      <!--change this action to a confirmation page -> needs to be connected to db??-->
+                <form class="modal-content animate background form-back" action="#" method="POST">      <!--change this action to a confirmation page -> needs to be connected to db??-->
                     <div class="form-container">
                         <div class="input">
                             <label class="form-labelca" for="fname" id="labelca"><b>Name</b></label>
-                            <input class="form-inputcah" type="text" placeholder="First Name" name="uname" required>
-                            <input class="form-inputcah" type="text" placeholder="Last Name" name="uname" required>
+                            <input class="form-inputcah" type="text" placeholder="First Name" name="firstname" required>
+                            <input class="form-inputcah" type="text" placeholder="Last Name" name="lastname" required>
                         </div>
                         <div class="col-12">
                             <label class="form-labelca" for="uname" id="labelca"><b>E-mail</b></label>
-                            <input class="form-inputca" type="text" placeholder="E-mail" name="uname" required>
+                            <input class="form-inputca" type="text" placeholder="E-mail" name="email" required>
                         </div>
                         <div class="col-12">
                             <label class="form-labelca" for="uname" id="labelca"><b>Nr utente:</b></label>
-                            <input class="form-inputca" type="text" placeholder="Nr utente" name="uname" required>
+                            <input class="form-inputca" type="text" placeholder="Nr utente" name="nutente" required>
                         </div>
                         <div class="col-12">
                             <label class="form-labelca" for="uname" id="labelca"><b>NIF</b></label>
-                            <input class="form-inputca" type="text" placeholder="Nr contribuinte" name="uname" required>
+                            <input class="form-inputca" type="text" placeholder="Nr contribuinte" name="nif" required>
                         </div>
                         <div class="col-12">
                             <label class="form-labelca" for="uname" id="labelca"><b>Telemovel: </b></label>
-                            <input class="form-inputca" type="text" placeholder="Telemovel" name="uname" required>
+                            <input class="form-inputca" type="text" placeholder="Telemovel" name="tel">
                         </div>
                         <div class="col-12">
                             <label class="form-labelca" for="uname" id="labelca"><b>Morada: </b></label>
-                            <input class="form-inputca" type="text" placeholder="Morada" name="uname" required>
+                            <input class="form-inputca" type="text" placeholder="Morada" name="morada">
                         </div>
                         <div class="col-xs-6">
                             <label class="form-labelca" for="psw" id="labelca"><b>Insert password</b></label>
