@@ -7,18 +7,23 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3307,
-    user="root",
-    password="1904",
+    #port=3307,
+    #user="root",
+    #password="1904",
     get_warnings=True,
-    #user="daniel",
-    #password="8495",
+    user="daniel",
+    password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
 )
 
+'''
+Contas:
+-> Médico: afgomes@mail.pt pass: 1234
+-> Paciente: art.afo@ua.pt pass: 1904
+'''
 
 @app.route('/')
 def index():
@@ -122,7 +127,6 @@ def createacc():
 
         db.commit()
         
-        
         return redirect(url_for('login'))
 
     return render_template('createacc.html')
@@ -142,9 +146,6 @@ def doctor_dashboard():
 def doctor_dashboard_patients():
     # here there will be a cursor.execute( "SELECT * FROM patients WHERE doctor_id = {id_of_authenticated_doctor}")
     # which will return an iterator
-    # TODO: Get the last appointment date of a patient (Save it in the DB? Query using table Consulta?)
-    # TODO: Search bar query: Check to see if the flash message is appearing when searching for query with no results, once Sessions have been implemented
-    # TODO: Replace with commented version once login of autenthicated users is setup
     """
     params_dict = {"patients": []}
     for result in iterator:
@@ -154,54 +155,54 @@ def doctor_dashboard_patients():
 
     """
     params_dict = {"patients": [], "total_patients": 0}
+    doctor_id = session["user_id"]
 
     if request.method == "GET":
-        '''
-        doctor_id = session["user_ID"]
-        
-        patients_ID = db.cursor()
-        patients_ID.execute("SELECT * FROM Med_Pac WHERE ID_Med=%s", (doctor_id,))
+        cursor = db.cursor()
+        cursor.execute("SELECT ID_Pac FROM Med_Pac WHERE ID_Med=%s", (doctor_id,))
 
-        for ID in patients_ID:
-            patient_NISS = db.cursor()
-            patient_NISS.execute("SELECT Paciente.ID, Nome, Num_Utente FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE ID=%s", (ID, ))
-            patient = patient_NISS.fetchone()[0]
+        patients_id = cursor.fetchall()
+
+        for (ID_Pac) in patients_id:
+            cursor.execute("SELECT U.ID, Nome, Num_Utente "
+                                 "FROM (Paciente JOIN Utilizador U on U.ID = Paciente.ID) "
+                                 "WHERE U.ID=%s LIMIT 1", tuple(ID_Pac))
+
+            patient = cursor.fetchone()
+
+            cursor.execute("SELECT Data FROM Consulta WHERE ID_Pac=%s ORDER BY Data LIMIT 1", tuple(ID_Pac))
+
+            data = cursor.fetchone()
+
+            if data is not None:
+                last_appointment = data[0]
+            else:
+                last_appointment = "Nenhum"
 
             # Adicionar info ao params_dict
-            params_dict["patients"].append({"name":patient[1], "niss": patient[-1], "id": {"_id": ID}, "last_appointment": "17/4/2019"})
+            params_dict["patients"].append({"name": patient[1], "niss": patient[-1], "id": {"_id": ID_Pac[0]}, "last_appointment": last_appointment})
             params_dict["total_patients"] += 1
 
-            patient_NISS.close()
-        '''
-
-        # For testing purposes:
-        patients = db.cursor()
-        patients.execute("SELECT Paciente.ID AS ID, Nome, Num_Utente FROM Paciente JOIN Utilizador U on Paciente.ID = U.ID")
-
-        for (ID, Nome, Num_Utente) in patients:
-            params_dict["patients"].append({"name": Nome, "niss": Num_Utente, "id": {"_id": ID}, "last_appointment": "17/4/2019"})
-            params_dict["total_patients"] += 1
-
-
-        patients.close()
+        cursor.close()
 
     elif request.method == "POST":
         filter = "%" + request.form["filter"] + "%"
 
-        patients = db.cursor()
-        patients.execute("select Utilizador.ID, Nome, Num_Utente from Utilizador JOIN Paciente AS P on Utilizador.ID = P.ID WHERE Nome LIKE %s", (filter, ))
+        cursor = db.cursor()
+        cursor.execute("SELECT ID_Pac, Nome, Num_Utente FROM Med_Pac JOIN Pac_User_View ON ID_Pac=ID WHERE ID_Med=%s AND Nome LIKE %s", (doctor_id, filter, ))
 
+        patients = cursor.fetchall()
 
-        if patients is not None:
-            for (ID, Nome, Num_Utente) in patients:
+        if len(patients) > 0:
+            for (ID_Pac, Nome, Num_Utente) in patients:
                 params_dict["patients"].append(
-                    {"name": Nome, "niss": Num_Utente, "id": {"_id": ID}, "last_appointment": "17/4/2019"})
+                    {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac[0]}, "last_appointment": "17/4/2019"})
                 params_dict["total_patients"] += 1
         else:
             flash("No results found")
             return redirect(url_for("doctor_dashboard_patients"))
 
-        patients.close()
+        cursor.close()
 
     return render_template('doctor-dashboard-patients.html', params=params_dict)
 
@@ -228,7 +229,7 @@ def doctor_dashboard_patient_info(_id):
                    "on D.Codigo = Diagnostico.Cod_Doenca WHERE Id_Pac = %s", (_id, ))
 
     for Nome in cursor:
-        diseases.append(Nome)
+        diseases.append(Nome[0])
 
     if len(diseases) == 0:
         params_dict["illnesses"].append("This patient has no diseases")
