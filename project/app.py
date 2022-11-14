@@ -447,7 +447,6 @@ def doctor_dashboard_prescriptions():
             cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
             name = cursor.fetchone()
 
-
             # Adicionar info ao params_dict
             params_dict["prescriptions"].append(
                 {"date": dia, "id": {"_id": Code}, "patient": name[0]})
@@ -495,9 +494,10 @@ def doctor_dashboard_prescription_info(_id):
 def doctor_dashboard_prescription_form():
     if request.method == "POST":
         appointment_id = request.form.get('appointmentID')
-        medic_id = request.form.get("medicID")
-        pharma_multiselect = request.form['pharmaceutical_multiselect']
+        medic_id = session["user_id"]
+        pharma_multiselect = request.form.getlist('pharmaceutical_multiselect')
         prescription_code = get_random_code(5)
+        print(pharma_multiselect)
         
         if not appointment_id or not medic_id or not pharma_multiselect:
             flash("Please fill all the fields")
@@ -516,16 +516,28 @@ def doctor_dashboard_prescription_form():
             return redirect(url_for("doctor_dashboard_prescriptions"))
 
     elif request.method == "GET":
-        pharmaceuticals = []
+        params_dict = dict()
+        params_dict['pharmaceuticals'] = []
+        params_dict['appointment_ids'] = []
+        doctor_id = session["user_id"]
         cursor = db.cursor()
-        cursor.execute("SELECT Nome FROM Medicamento")
 
-        pharma = cursor.fetchall()
+        cursor.execute("SELECT Codigo, Nome FROM Medicamento")
 
-        for name in pharma:
-            pharmaceuticals.append(name[0])
+        pharmas = cursor.fetchall()
 
-        params_dict = {"pharmaceuticals": pharmaceuticals}
+        for pharma in pharmas:
+            params_dict['pharmaceuticals'].append((pharma[0], pharma[1]))
+
+        cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
+                       "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                       "WHERE ID_Med = %s", (doctor_id,))
+
+        consultas = cursor.fetchall()
+
+        for consulta in consultas:
+            params_dict['appointment_ids'].append(consulta[0])
+
         return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
 
 # end of doctor-dashboard
