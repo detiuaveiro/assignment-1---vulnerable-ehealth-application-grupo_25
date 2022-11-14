@@ -572,8 +572,44 @@ def admin():
     return render_template('admin-dashboard.html', params={})
 
 
-def get_patient_info(patient_id):
-    return "hello"
+@app.route('/reviews')
+def reviews():
+    params_dict = dict()
+    if request.method == "POST":
+        name = request.form.get('name')
+        review = request.form.get('review')
+        print(name, review)
+
+        if not name or not review:
+            flash("Please fill all the fields")
+            return redirect(url_for("reviews"))
+        else:
+            """
+            cursor = db.cursor()
+            cursor.execute('''
+                INSERT INTO Reviews (Name, Review) 
+                VALUES (%s, %s)''',
+                           (name, review))
+            db.commit()
+            cursor.close()
+            """
+            flash("Prescription created successfully")
+            return redirect(url_for("doctor_dashboard_prescriptions"))
+
+    elif request.method == "GET":
+        params_dict['reviews'] = []
+        """
+        cursor = db.cursor()
+        cursor.execute("SELECT Nome, Review FROM Reviews")
+        reviewss = cursor.fetchall()
+        
+
+        for review in reviewss:
+            params_dict['reviews'].append((review[0], review[1]))
+        """
+
+    return render_template('reviews.html', params=params_dict)
+
 
 def get_random_code(length):
     """Generate a random string"""

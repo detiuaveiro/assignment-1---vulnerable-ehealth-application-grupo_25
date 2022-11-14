@@ -42,7 +42,7 @@ HTML:
 HTML:
 - Logout button DONE
 - Logo redirect to dashboard DONE
-- Details about next appointment redirect to appointment (should be details about patient, because appointment is not yet made)
+- Details about next appointment redirect to appointment (should be details about patient, because appointment is not yet made) DONE
 - Today's Exams -> Today's Appointments DONE
 - Apresentar mensagem "Bem-vindo {nome}"  DONE
 
@@ -53,12 +53,12 @@ HTML:
 ## Appointments e Appointments/id
 - Adaptar backend do Patients DONE
 - Rework HTML do appointments/id DONE
-- Mudar nome do search
+- Mudar o placeholder do search
 
 ## Prescriptions
-- Adaptar backend do Patients
-- Rework HTML do appointments/id
-- Fazer backend do forms
+- Adaptar backend do Patients DONE
+- Rework HTML do appointments/id DONE
+- Fazer backend do forms, atualizar para processar as listas
 
 ## Running the app with a virtual environment
 ```bash
