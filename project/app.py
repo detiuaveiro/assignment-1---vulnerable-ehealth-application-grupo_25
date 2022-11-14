@@ -19,6 +19,9 @@ db = mysql.connector.connect(
     #user="bruna",
     #password="12345678",
     #database="sio_db"
+    #user='andre',
+    #password='Password123#@!',
+    #database='db1',
 )
 
 '''
@@ -73,6 +76,8 @@ def login():
             
     return render_template('login.html')
 
+
+@app.route('/logout')
 def logout():
     if session.get('user_id') is not None:
         session.pop('user_id', None)
@@ -146,11 +151,64 @@ def createacc():
 def appointment():
     return render_template('user-appointment.html')
 
+
 # doctor-dashboard
 @app.route('/doctor-dashboard')
 def doctor_dashboard():
-    # to be completed, doctor-dashboard.html is prepared to receive params
-    return render_template('doctor-dashboard.html', params={})
+    params_dict = {}
+    doctor_id = session["user_id"]
+    cursor = db.cursor()
+
+    cursor.execute("SELECT Nome FROM Utilizador WHERE ID=%s", (doctor_id,))
+    params_dict['doctor_name'] = cursor.fetchone()[0]
+    todays_date = "2022-11-15"
+
+    cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
+                   "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                   "WHERE ID_Med = %s AND Data = %s", (doctor_id, todays_date,))
+
+    consultas = cursor.fetchall()
+    params_dict['total_todays_appointments'] = 0
+    params_dict['todays_appointments'] = []
+
+    for (Num_Cons, ID_Pac, Especialidade, Data) in consultas:
+        # Separar Data da Hora
+        dia, hora = str(Data).split(" ")
+
+        # Buscar info do Nome do Paciente à tabela de Utilizadores
+
+        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+        name = cursor.fetchone()
+
+        # Adicionar info ao params_dict
+        params_dict["todays_appointments"].append(
+            {"date": dia, "hour": hora, "patient": name[0], 'patient_id': ID_Pac, 'num_appointment': Num_Cons})
+        params_dict['total_todays_appointments'] += 1
+        params_dict['todays_appointments'].sort(key=lambda x: x['hour'])
+        params_dict['next_appointment'] = params_dict['todays_appointments'][0]
+
+    cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
+                   "ON Prescricao.Num_Consulta = C.Num_Cons "
+                   "WHERE C.ID_Med=%s AND Data = %s", (doctor_id, todays_date,))
+
+    prescriptions = cursor.fetchall()
+    params_dict["prescriptions"] = []
+    for (Code, Data, ID_Pac) in prescriptions:
+        # Separar Data da Hora
+        dia, hora = str(Data).split(" ")
+
+        # Buscar info do Nome do Paciente à tabela de Utilizadores
+
+        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+        name = cursor.fetchone()
+
+        # Adicionar info ao params_dict
+        params_dict["prescriptions"].append(
+            {"date": dia, "id": Code, "patient": name[0]})
+
+    cursor.close()
+
+    return render_template('doctor-dashboard.html', params=params_dict)
 
 
 @app.route('/doctor-dashboard/patients/', methods=["GET", "POST"])
