@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container-fluid py-4">
     <div class="col-12" style="padding-bottom: 20px">
-        <h4>Welcome back, {{ params.doctor_name }},</h4>
+        <h4>Welcome back, Dr. {{ params.doctor_name }}</h4>
     </div>
 
   <div class="row">
@@ -13,7 +13,7 @@
       <div class="card">
         <div class="card-body p-3">
           <div class="row">
-            <div class="col-8">
+            <div class="col-10">
               <div class="numbers">
                 <p class="text-sm mb-0 text-capitalize font-weight-bold">Number of Today's Appointments</p>
                 <h5 class="font-weight-bolder mb-0">
@@ -21,10 +21,12 @@
                 </h5>
               </div>
             </div>
-            <div class="col-4 text-end">
-              <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
-                <i class="fa fa-book text-lg opacity-10" aria-hidden="true"></i>
-              </div>
+            <div class="col-2 pr-3">
+                <a href={{ url_for('doctor_dashboard_appointments')}}>
+                  <div class="icon icon-shape bg-gradient-primary shadow text-center pr-3 ">
+                      <i class="fa fa-book text-lg opacity-10" aria-hidden="true"></i>
+                  </div>
+                </a>
             </div>
           </div>
         </div>
@@ -34,14 +36,14 @@
 <!-- Next Appointment & Prescriptions Made Today Card -->
   <div class="row mt-4">
     <div class="col-lg-7 mb-lg-0 mb-4">
-      <div class="card">
+      <div class="card h-100">
         <div class="card-body p-3">
           <div class="row">
             <div class="col-12">
               <div class="d-flex flex-column h-100">
                 <p class="mb-1 pt-2 text-bold">Next appointment: </p>
                 <h5 class="font-weight-bolder">Patient: {{ params.next_appointment.patient }}</h5>
-                <p class="mb-5"Hour:>{{ params.next_appointment.hour }}</p>
+                <p class="mb-5">Scheduled For: {{ params.next_appointment.hour }}</p>
                 <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href={{ url_for('doctor_dashboard_patient_info', **{"_id": params.next_appointment.patient_id})}}>
                   Details about {{ params.next_appointment.patient }}
                   <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
@@ -52,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-5 ">
       <div class="card h-100 p-3">
         <div class="overflow-hidden position-relative border-radius-lg bg-dark h-100">
           <span class="mask bg-gradient-dark"></span>

@@ -9,12 +9,12 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3307,
-    user="root",
-    password="1904",
+    #port=3307,
+    #user="root",
+    #password="1904",
     get_warnings=True,
-    #user="daniel",
-    #password="8495",
+    user="daniel",
+    password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
@@ -29,6 +29,8 @@ Contas:
 -> Médico: afgomes@mail.pt pass: 1234
 -> Paciente: art.afo@ua.pt pass: 1904
 '''
+
+todays_date = ("2022-11-15 00:00:00", "2022-11-15 23:59:59")
 
 @app.route('/')
 def index():
@@ -161,11 +163,10 @@ def doctor_dashboard():
 
     cursor.execute("SELECT Nome FROM Utilizador WHERE ID=%s", (doctor_id,))
     params_dict['doctor_name'] = cursor.fetchone()[0]
-    todays_date = "2022-11-15"
 
     cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
                    "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
-                   "WHERE ID_Med = %s AND Data = %s", (doctor_id, todays_date,))
+                   "WHERE ID_Med = %s AND Data BETWEEN %s AND %s", (doctor_id, todays_date[0], todays_date[1]))
 
     consultas = cursor.fetchall()
     params_dict['total_todays_appointments'] = 0
@@ -176,7 +177,6 @@ def doctor_dashboard():
         dia, hora = str(Data).split(" ")
 
         # Buscar info do Nome do Paciente à tabela de Utilizadores
-
         cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
         name = cursor.fetchone()
 
@@ -189,20 +189,24 @@ def doctor_dashboard():
 
     cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
                    "ON Prescricao.Num_Consulta = C.Num_Cons "
-                   "WHERE C.ID_Med=%s AND Data = %s", (doctor_id, todays_date,))
+                   "WHERE C.ID_Med=%s AND Data BETWEEN %s AND %s", (doctor_id, todays_date[0], todays_date[1], ))
 
     prescriptions = cursor.fetchall()
     params_dict["prescriptions"] = []
+    prescriptions_code = []
     for (Code, Data, ID_Pac) in prescriptions:
+        if Code in prescriptions_code:
+            continue
+
         # Separar Data da Hora
         dia, hora = str(Data).split(" ")
 
         # Buscar info do Nome do Paciente à tabela de Utilizadores
-
         cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
         name = cursor.fetchone()
 
         # Adicionar info ao params_dict
+        prescriptions_code.append(Code)
         params_dict["prescriptions"].append(
             {"date": dia, "id": Code, "patient": name[0]})
 
@@ -315,8 +319,6 @@ def doctor_dashboard_patient_info(_id):
 def doctor_dashboard_appointments():
     # here there will be a cursor.execute( "SELECT * FROM appointments WHERE doctor_id = {id_of_authenticated_doctor}")
     # which will return an iterator
-    # TODO: Search bar query: Check to see if the flash message is appearing when searching for query with no results, once Sessions have been implemented
-    # TODO: Replace with commented version once login of autenthicated users is setup
     """
     params_dict = {"appointments": []}
     for result in iterator:
@@ -357,35 +359,40 @@ def doctor_dashboard_appointments():
         filter = "%" + request.form["filter"] + "%"
 
         cursor = db.cursor()
-        cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
-                       "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
-                       "WHERE ID_Med = %s", (doctor_id,))
+        cursor.execute(
+            "SELECT ID_Pac, Nome FROM Med_Pac JOIN Pac_User_View ON ID_Pac=ID WHERE ID_Med=%s AND Nome LIKE %s",
+            (doctor_id, filter,))
 
-        consultas = cursor.fetchall()
+        pacientes = cursor.fetchall()
 
-        for (Num_Cons, ID_Pac, Especialidade, Data) in consultas:
-            # Separar Data da Hora
-            dia, hora = str(Data).split(" ")
+        if len(pacientes) == 0:
+            cursor.close()
+            flash("No results found")
+            return redirect(url_for("doctor_dashboard_appointments"))
 
-            # Buscar info do Nome do Paciente à tabela de Utilizadores
-            cursor = db.cursor()
+        for (ID_Pac, Nome) in pacientes:
+            cursor.execute("SELECT Num_Cons, Nome, Data "
+                           "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                           "WHERE ID_Med = %s AND ID_Pac=%s", (doctor_id, ID_Pac, ))
 
-            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s AND Nome LIKE %s ", (ID_Pac, filter, ))
-            patient = cursor.fetchall()
+            consultas = cursor.fetchall()
 
-            if len(patient) > 0:
-                for (Nome) in patient:
+            if len(consultas) > 0:
+                for (Num_Cons, Especialidade, Data) in consultas:
+                    # Separar Data da Hora
+                    dia, hora = str(Data).split(" ")
+
                     # Adicionar info ao params_dict
                     params_dict["appointments"].append(
                         {"date": dia, "hour": hora, "id": {"_id": Num_Cons}, "specialty": Especialidade,
-                         "patient": Nome[0]})
+                         "patient": Nome})
                     params_dict["total_appointments"] += 1
             else:
+                cursor.close()
                 flash("No results found")
                 return redirect(url_for("doctor_dashboard_appointments"))
 
-                cursor.close()
-
+            cursor.close()
 
     return render_template('doctor-dashboard-appointments.html', params=params_dict)
 
@@ -613,7 +620,6 @@ def get_random_code():
     """Generate a random string"""
     str = string.ascii_uppercase
     return ''.join(random.choice(str) for i in range(3)).join(random.choice(string.digits) for i in range(2))
-
 
 
 if __name__ == '__main__':
