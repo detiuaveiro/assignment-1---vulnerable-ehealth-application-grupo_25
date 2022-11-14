@@ -1,13 +1,16 @@
 # TODO LIST
 
 ## Homepage and Login
-## Homepage
+
+Data do Site: 20/11
+### Homepage
 - Página de contactos disponivel a partir da homepage
 - Discuss if newsletter is good idea to keep or not 
 - Discuss what to keep from the existing footer links   
 
-## Contact Form Page
-- Make the html page
+### Review Page
+- Lista de Reviews antigas
+- Form para escrever nova review
 
 ## Pacient Pages
 ### Main Page

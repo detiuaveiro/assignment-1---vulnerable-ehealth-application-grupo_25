@@ -354,6 +354,7 @@ def doctor_dashboard_appointment_info(_id):
 def doctor_dashboard_prescriptions():
     params_dict = {"prescriptions": [], "total_prescriptions": 0}
     doctor_id = session["user_id"]
+    prescriptions_code = set()
 
     if request.method == "GET":
         cursor = db.cursor()
@@ -364,6 +365,11 @@ def doctor_dashboard_prescriptions():
         prescriptions = cursor.fetchall()
 
         for (Code, Data, ID_Pac) in prescriptions:
+            if Code in prescriptions_code:
+                continue
+
+            prescriptions_code.add(Code)
+
             # Separar Data da Hora
             dia, hora = str(Data).split(" ")
 
@@ -387,17 +393,33 @@ def doctor_dashboard_prescriptions():
 @app.route('/doctor-dashboard/prescriptions/<_id>')
 def doctor_dashboard_prescription_info(_id):
     print(_id)
+    pharmaceuticals = []
 
-    if _id == 1:
-        params_dict = {"date": "10/11/2022", "name": "Bruffen", "id": 1,
-                       "patient": "Jeff", "motive": "He has pain in his body.",
-                       "pharmaceuticals": ["Bruffen", "Paracetamol"]}
-    elif _id == 2:
-        params_dict = {"date": "6/12/2022", "name": "Anti-depressive", "id": 2,
-                       "patient": "Tom", "Motive": "Because yes",
-                       "pharmaceuticals": ["Anti-depressives", "Heroine"]}
-    else:
-        params_dict = None
+    cursor = db.cursor()
+    cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (_id, ))
+
+    prescription = cursor.fetchall()
+
+    for (Code, ID_Pac, Data, Cod_Medic) in prescription:
+        # Buscar o nome do Paciente
+        print(Cod_Medic)
+
+        cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = %s", (ID_Pac, ))
+        name = cursor.fetchone()
+
+        # Buscar os Faramacêuticos
+        cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = %s", (Cod_Medic, ))
+        pharma = cursor.fetchone()
+
+        print(pharma)
+        pharmaceuticals.append(pharma[0])
+
+
+    params_dict = {"date": Data,
+                   "patient": name[0], "id": _id,
+                   "pharmaceuticals": pharmaceuticals}
+
+    cursor.close()
     return render_template('doctor-dashboard-prescription-info.html', params=params_dict)
 
 
