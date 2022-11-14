@@ -5,6 +5,15 @@
 <!--isto esta muito horrivel so -> ver a parte das background images-->
 <section class="py-5 background-img">
     <div class="container">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <script>
+                    alert("{{ msg }}");
+                    </script>
+                {% endfor %}
+            {%  endif %}
+        {%  endwith %}
         <div class="row text-center">
             <div class="col-12">
                 <h3 class="mb-5 text-gradient text-info greeting-title text-title-c" spellcheck="false">Start by creating an account</h3>
