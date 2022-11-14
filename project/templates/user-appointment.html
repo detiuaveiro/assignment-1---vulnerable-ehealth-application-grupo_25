@@ -43,7 +43,7 @@
                         <legend>Schedule an appointment</legend>
                         <div class="row">
                             <div class="mb-3">
-                            <div class="col-md-9 col-lg-6">
+                            <div class="col-md-10 col-lg-6">
                                 <label for="specialtySelect" class="form-label">Escolha uma especialidade</label>
                                 <select id="specialtySelect" class="form-select ">
                                     <option value="especialidade1">Especialidade1</option>
@@ -51,14 +51,20 @@
                                     <option value="especialidade3">Especialidade3</option>
                                 </select>
                             </div>
-                            <div class="col-md-9 col-lg-6">
-                                <label for="doctorSelect" class="form-label">Escolha um médico</label>
-                                <select id="doctorSelect" class="form-select " disabled>
-                                    <option>Medico 1</option>
-                                    <option>Medico 2</option>
-                                </select>
+                            <div class="row pt-4">
+                              <div class="col-md-5 col-lg-3">
+                                  <label for="doctorSelect" class="form-label">Escolha um médico</label>
+                                  <select id="doctorSelect" class="form-select" disabled>
+                                      <option>Medico 1</option>
+                                      <option>Medico 2</option>
+                                  </select>
+                              </div>
+                              <div class="col-md-5 col-lg-3">
+                                <label for="dataSelect" class="form-label">Escolha uma data:</label>
+                                <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
+                              </div>
                             </div>
-                            <div class="col-md-9 col-lg-6">
+                            <div class="col-md-10 col-lg-6">
                                 <label for="comment">Comentário:</label>
                                 <textarea class="form-control" rows="5" id="comment" name="text"></textarea>
                             </div>
@@ -105,6 +111,14 @@
     </main>
   
     <!--   Core JS Files   -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
+<link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />
+
+<!-- Bootstrap Date-Picker Plugin -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
     <script src="../static/js/core/popper.min.js"></script>
     <script src="../static/js/core/bootstrap.min.js"></script>
     <script src="../static/js/plugins/perfect-scrollbar.min.js"></script>
@@ -123,7 +137,19 @@
     $(update_doctors);
     $("#specialtySelect").change(update_doctors);
     </script>
-    
+    <script>
+      $(document).ready(function(){
+        var date_input=$('input[name="date"]'); //our date input has the name "date"
+        var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
+        var options={
+          format: 'mm/dd/yyyy',
+          container: container,
+          todayHighlight: true,
+          autoclose: true,
+        };
+        date_input.datepicker(options);
+      })
+    </script>
     <script>
       var ctx = document.getElementById("chart-bars").getContext("2d");
   

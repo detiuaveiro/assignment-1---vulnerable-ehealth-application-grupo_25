@@ -11,25 +11,25 @@
 
 ## Pacient Pages
 ### Main Page
-- Fazer hardcode da data para mostrar upcoming exams, como nas páginas do médico
+- Fazer hardcode da data para mostrar upcoming exams, como nas páginas do médico 
 - Backend 
 
 HTML:
-- Mudar logo da uni para logo usado nas páginas do Médico
-- Prescrição: Input para receber código da Prescrição. Se tiver válido, apresentar informação
-- Mudar 'Exams' para 'Appointments'
-- Upcoming APpointments - Apagar os 3 pontos das opções
+- Mudar logo da uni para logo usado nas páginas do Médico - DONE
+- Prescrição: Input para receber código da Prescrição. Se tiver válido, apresentar informação 
+- Mudar 'Exams' para 'Appointments' - DONE
+- Upcoming APpointments - Apagar os 3 pontos das opções - DONE
 
 ### Make an Appointment
-- Acrescentar input de data
+- Acrescentar input de data - DONE 
 
 - Backend
 
 ### Contacts
-- Ideias?
+- Ideias? - ?
 
 ## Admin Dashboard Page
-- Make the html page
+- Make the html page - DONE
 
 
 ## Doctor Pages

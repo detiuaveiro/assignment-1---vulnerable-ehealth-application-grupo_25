@@ -7,6 +7,10 @@
     }
 }
 
+.glyphicon-calendar{
+    display: inline-block;
+}
+
 .greeting-title{
     color:#075684;
 }
@@ -14,6 +18,10 @@
 .profile-div{
     display: -webkit-flex;
     display: flex;
+}
+
+.input-group-addon{
+    display: inline-block;
 }
 
 .container-title{
