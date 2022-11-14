@@ -50,8 +50,8 @@ HTML:
 - Rework HTML do patients/id DONE
 
 ## Appointments e Appointments/id
-- Adaptar backend do Patients
-- Rework HTML do appointments/id
+- Adaptar backend do Patients DONE
+- Rework HTML do appointments/id DONE
 
 ## Prescriptions
 - Adaptar backend do Patients

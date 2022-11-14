@@ -412,7 +412,6 @@ def doctor_dashboard_appointment_info(_id):
     # Separar Data da Hora
     dia, hora = str(dados_consulta[-1]).split(" ")
 
-
     params_dict = {"date": dia, "hour": hora, "specialty": dados_consulta[3],
                    "patient": nome_paciente[0], "doctor": nome_medico[0]}
 
