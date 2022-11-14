@@ -441,9 +441,18 @@ def doctor_dashboard_prescription_form():
         flash("Prescription created sucessfully.", 'success')
         return redirect(url_for('doctor_dashboard_prescription_form'))
 
-    params_dict = {"pharmaceuticals": ["Bruffen", "Paracetamol", "Anti-depressive", "Bruffen", "Paracetamol",
-                                       "Anti-depressive"]}
-    return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
+    elif request.method == "GET":
+        pharmaceuticals = []
+        cursor = db.cursor()
+        cursor.execute("SELECT Nome FROM Medicamento")
+
+        pharma = cursor.fetchall()
+
+        for name in pharma:
+            pharmaceuticals.append(name[0])
+
+        params_dict = {"pharmaceuticals": pharmaceuticals}
+        return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
 
 # end of doctor-dashboard
 
