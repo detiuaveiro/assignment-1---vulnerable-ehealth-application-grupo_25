@@ -47,7 +47,7 @@ HTML:
 - Apresentar mensagem "Bem-vindo {nome}"  DONE
 
 ## Patients e Patients/Id
-- Rework HTML do patients/id
+- Rework HTML do patients/id DONE
 
 ## Appointments e Appointments/id
 - Adaptar backend do Patients
