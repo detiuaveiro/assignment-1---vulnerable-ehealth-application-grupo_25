@@ -16,8 +16,8 @@ db = mysql.connector.connect(
     user="daniel",
     password="8495",
     database="eHealthCorp",
-    #user="bruna",
-    #password="12345678",
+    user="bruna",
+    password="12345678",
     #database="sio_db"
     #user='andre',
     #password='Password123#@!',
@@ -85,7 +85,6 @@ def logout():
         session.pop('user_id', None)
         session.pop('email', None)
 
-    flash("Logged out successfully")
     return redirect(url_for('index'))
 
 
@@ -123,6 +122,15 @@ def createacc():
             "confirm_password": request.form['pswc']
         }
 
+        # Verificar se o email já existe
+        cursor = db.cursor()
+        cursor.execute("SELECT Email FROM Utilizador WHERE Email = %s", (form_input["email"],))
+        email_data = cursor.fetchone()
+        if email_data is not None:
+            flash("Email already exists")
+            return redirect(url_for('createacc'))
+        
+
         for key, value in form_input.items():
             if value == "":
                 form_input[key] = None
@@ -131,7 +139,6 @@ def createacc():
             flash("Passwords don't match")
             return redirect(url_for('createacc'))
         
-        cursor = db.cursor()
 
         cursor.execute('''
             INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
@@ -144,6 +151,7 @@ def createacc():
             , (cursor.lastrowid, form_input["nutente"]))
 
         db.commit()
+        cursor.close()
         
         return redirect(url_for('login'))
 
