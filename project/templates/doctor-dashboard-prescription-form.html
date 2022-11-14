@@ -15,7 +15,7 @@
           {% endfor %}
 
 
-        <form action="{{ url_for('doctor_dashboard_prescription_form') }}" method="post">
+        <form action="{{ url_for('doctor_dashboard_prescription_form') }}" method="POST">
             <div class="form-group">
                 <label for="example-text-input" class="form-control-label">Appointment ID</label>
                 <input class="form-control" type="text" name="appointmentID" placeholder="Appointment ID">
@@ -23,10 +23,6 @@
             <div class="form-group">
                 <label for="example-text-input" class="form-control-label">Medic ID</label>
                 <input class="form-control" type="text" name="medicID" placeholder="Medic ID">
-            </div>
-            <div class="form-group">
-                <label for="example-text-input" class="form-control-label">Patient Name</label>
-                <input class="form-control" type="text" placeholder="Patient Name" name="patientName">
             </div>
             <div class="form-group">
                 <label for="example-text-input" class="form-control-label">Pharmaceuticals</label>

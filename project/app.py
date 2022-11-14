@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
+import random
+import string
 import mysql.connector
 
 app = Flask(__name__)
@@ -7,12 +9,12 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3307,
-    #user="root",
-    #password="1904",
+    port=3307,
+    user="root",
+    password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
+    #user="daniel",
+    #password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
@@ -80,8 +82,14 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/contactform')
+@app.route('/contactform', methods=['GET', 'POST'])
 def contactform():
+    if request.method == 'POST':
+        pass
+    
+    if request.method == 'GET':
+        pass
+
     return render_template('contactform.html')
 
 
@@ -431,15 +439,24 @@ def doctor_dashboard_prescription_form():
     if request.method == "POST":
         appointment_id = request.form.get('appointmentID')
         medic_id = request.form.get("medicID")
-        patient_name = request.form.get("patientName")
-        pharma_multiselect = request.form.getlist('pharmaceutical_multiselect')
-
-        print(appointment_id)
-        print(medic_id)
-        print(patient_name)
-        print(pharma_multiselect)
-        flash("Prescription created sucessfully.", 'success')
-        return redirect(url_for('doctor_dashboard_prescription_form'))
+        pharma_multiselect = request.form['pharmaceutical_multiselect']
+        prescription_code = get_random_code(5)
+        
+        if not appointment_id or not medic_id or not pharma_multiselect:
+            flash("Please fill all the fields")
+            return redirect(url_for("doctor_dashboard_prescription_form"))
+        else:
+            cursor = db.cursor()
+            cursor.execute("SELECT Codigo FROM Medicamento WHERE Nome = %s", (pharma_multiselect,))
+            cod_medic = cursor.fetchone()[0]
+            cursor.execute('''
+                INSERT INTO Prescricao (Cod_Medic, Num_Consulta, Id_Med, Code) 
+                VALUES (%s, %s, %s, %s)''', 
+                (cod_medic, appointment_id, medic_id, prescription_code))
+            db.commit()
+            cursor.close()
+            flash("Prescription created successfully")
+            return redirect(url_for("doctor_dashboard_prescriptions"))
 
     elif request.method == "GET":
         pharmaceuticals = []
@@ -488,6 +505,12 @@ def admin():
 
 def get_patient_info(patient_id):
     return "hello"
+
+def get_random_code(length):
+    """Generate a random string"""
+    str = string.ascii_uppercase
+    return ''.join(random.choice(str) for i in range(length))
+
 
 
 if __name__ == '__main__':
