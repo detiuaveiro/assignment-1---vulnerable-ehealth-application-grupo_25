@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
+import random
+import string
 import mysql.connector
 
 app = Flask(__name__)
@@ -7,16 +9,19 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3307,
-    #user="root",
-    #password="1904",
+    port=3307,
+    user="root",
+    password="1904",
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    #database="eHealthCorp",
-    user="bruna",
-    password="12345678",
-    database="sio_db"
+    database="eHealthCorp",
+    #user="bruna",
+    #password="12345678",
+    #database="sio_db"
+    #user='andre',
+    #password='Password123#@!',
+    #database='db1',
 )
 
 '''
@@ -71,6 +76,8 @@ def login():
             
     return render_template('login.html')
 
+
+@app.route('/logout')
 def logout():
     if session.get('user_id') is not None:
         session.pop('user_id', None)
@@ -80,8 +87,14 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/contactform')
+@app.route('/contactform', methods=['GET', 'POST'])
 def contactform():
+    if request.method == 'POST':
+        pass
+    
+    if request.method == 'GET':
+        pass
+
     return render_template('contactform.html')
 
 
@@ -138,11 +151,64 @@ def createacc():
 def appointment():
     return render_template('user-appointment.html')
 
+
 # doctor-dashboard
 @app.route('/doctor-dashboard')
 def doctor_dashboard():
-    # to be completed, doctor-dashboard.html is prepared to receive params
-    return render_template('doctor-dashboard.html', params={})
+    params_dict = {}
+    doctor_id = session["user_id"]
+    cursor = db.cursor()
+
+    cursor.execute("SELECT Nome FROM Utilizador WHERE ID=%s", (doctor_id,))
+    params_dict['doctor_name'] = cursor.fetchone()[0]
+    todays_date = "2022-11-15"
+
+    cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
+                   "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                   "WHERE ID_Med = %s AND Data = %s", (doctor_id, todays_date,))
+
+    consultas = cursor.fetchall()
+    params_dict['total_todays_appointments'] = 0
+    params_dict['todays_appointments'] = []
+
+    for (Num_Cons, ID_Pac, Especialidade, Data) in consultas:
+        # Separar Data da Hora
+        dia, hora = str(Data).split(" ")
+
+        # Buscar info do Nome do Paciente à tabela de Utilizadores
+
+        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+        name = cursor.fetchone()
+
+        # Adicionar info ao params_dict
+        params_dict["todays_appointments"].append(
+            {"date": dia, "hour": hora, "patient": name[0], 'patient_id': ID_Pac, 'num_appointment': Num_Cons})
+        params_dict['total_todays_appointments'] += 1
+        params_dict['todays_appointments'].sort(key=lambda x: x['hour'])
+        params_dict['next_appointment'] = params_dict['todays_appointments'][0]
+
+    cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
+                   "ON Prescricao.Num_Consulta = C.Num_Cons "
+                   "WHERE C.ID_Med=%s AND Data = %s", (doctor_id, todays_date,))
+
+    prescriptions = cursor.fetchall()
+    params_dict["prescriptions"] = []
+    for (Code, Data, ID_Pac) in prescriptions:
+        # Separar Data da Hora
+        dia, hora = str(Data).split(" ")
+
+        # Buscar info do Nome do Paciente à tabela de Utilizadores
+
+        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+        name = cursor.fetchone()
+
+        # Adicionar info ao params_dict
+        params_dict["prescriptions"].append(
+            {"date": dia, "id": Code, "patient": name[0]})
+
+    cursor.close()
+
+    return render_template('doctor-dashboard.html', params=params_dict)
 
 
 @app.route('/doctor-dashboard/patients/', methods=["GET", "POST"])
@@ -199,7 +265,7 @@ def doctor_dashboard_patients():
         if len(patients) > 0:
             for (ID_Pac, Nome, Num_Utente) in patients:
                 params_dict["patients"].append(
-                    {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac[0]}, "last_appointment": "17/4/2019"})
+                    {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac}, "last_appointment": "17/4/2019"})
                 params_dict["total_patients"] += 1
         else:
             flash("No results found")
@@ -346,7 +412,6 @@ def doctor_dashboard_appointment_info(_id):
     # Separar Data da Hora
     dia, hora = str(dados_consulta[-1]).split(" ")
 
-
     params_dict = {"date": dia, "hour": hora, "specialty": dados_consulta[3],
                    "patient": nome_paciente[0], "doctor": nome_medico[0]}
 
@@ -357,6 +422,7 @@ def doctor_dashboard_appointment_info(_id):
 def doctor_dashboard_prescriptions():
     params_dict = {"prescriptions": [], "total_prescriptions": 0}
     doctor_id = session["user_id"]
+    prescriptions_code = set()
 
     if request.method == "GET":
         cursor = db.cursor()
@@ -367,6 +433,11 @@ def doctor_dashboard_prescriptions():
         prescriptions = cursor.fetchall()
 
         for (Code, Data, ID_Pac) in prescriptions:
+            if Code in prescriptions_code:
+                continue
+
+            prescriptions_code.add(Code)
+
             # Separar Data da Hora
             dia, hora = str(Data).split(" ")
 
@@ -375,7 +446,6 @@ def doctor_dashboard_prescriptions():
 
             cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
             name = cursor.fetchone()
-
 
             # Adicionar info ao params_dict
             params_dict["prescriptions"].append(
@@ -390,17 +460,33 @@ def doctor_dashboard_prescriptions():
 @app.route('/doctor-dashboard/prescriptions/<_id>')
 def doctor_dashboard_prescription_info(_id):
     print(_id)
+    pharmaceuticals = []
 
-    if _id == 1:
-        params_dict = {"date": "10/11/2022", "name": "Bruffen", "id": 1,
-                       "patient": "Jeff", "motive": "He has pain in his body.",
-                       "pharmaceuticals": ["Bruffen", "Paracetamol"]}
-    elif _id == 2:
-        params_dict = {"date": "6/12/2022", "name": "Anti-depressive", "id": 2,
-                       "patient": "Tom", "Motive": "Because yes",
-                       "pharmaceuticals": ["Anti-depressives", "Heroine"]}
-    else:
-        params_dict = None
+    cursor = db.cursor()
+    cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (_id, ))
+
+    prescription = cursor.fetchall()
+
+    for (Code, ID_Pac, Data, Cod_Medic) in prescription:
+        # Buscar o nome do Paciente
+        print(Cod_Medic)
+
+        cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = %s", (ID_Pac, ))
+        name = cursor.fetchone()
+
+        # Buscar os Faramacêuticos
+        cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = %s", (Cod_Medic, ))
+        pharma = cursor.fetchone()
+
+        print(pharma)
+        pharmaceuticals.append(pharma[0])
+
+
+    params_dict = {"date": Data,
+                   "patient": name[0], "id": _id,
+                   "pharmaceuticals": pharmaceuticals}
+
+    cursor.close()
     return render_template('doctor-dashboard-prescription-info.html', params=params_dict)
 
 
@@ -408,20 +494,49 @@ def doctor_dashboard_prescription_info(_id):
 def doctor_dashboard_prescription_form():
     if request.method == "POST":
         appointment_id = request.form.get('appointmentID')
-        medic_id = request.form.get("medicID")
-        patient_name = request.form.get("patientName")
-        pharma_multiselect = request.form.getlist('pharmaceutical_multiselect')
+        id_medico = session["user_id"]
+        id_medicamentos = request.form.getlist('pharmaceutical_multiselect')
+        prescription_code = get_random_code()
 
-        print(appointment_id)
-        print(medic_id)
-        print(patient_name)
-        print(pharma_multiselect)
-        flash("Prescription created sucessfully.", 'success')
-        return redirect(url_for('doctor_dashboard_prescription_form'))
+        if not appointment_id or not id_medicamentos:
+            flash("Please fill all the fields")
+            return redirect(url_for("doctor_dashboard_prescription_form"))
+        else:
+            cursor = db.cursor()
+            for id_medicamento in id_medicamentos:
+                cursor.execute('''
+                    INSERT INTO Prescricao (Cod_Medic, Num_Consulta, Id_Med, Code) 
+                    VALUES (%s, %s, %s, %s)''', 
+                    (id_medicamento, appointment_id, id_medico, prescription_code))
+            db.commit()
+            cursor.close()
+            flash("Prescription created successfully")
+            return redirect(url_for("doctor_dashboard_prescriptions"))
 
-    params_dict = {"pharmaceuticals": ["Bruffen", "Paracetamol", "Anti-depressive", "Bruffen", "Paracetamol",
-                                       "Anti-depressive"]}
-    return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
+    elif request.method == "GET":
+        params_dict = dict()
+        params_dict['pharmaceuticals'] = []
+        params_dict['appointment_ids'] = []
+        doctor_id = session["user_id"]
+        cursor = db.cursor()
+
+        cursor.execute("SELECT Codigo, Nome FROM Medicamento")
+
+        pharmas = cursor.fetchall()
+
+        for pharma in pharmas:
+            params_dict['pharmaceuticals'].append((pharma[0], pharma[1]))
+
+        cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
+                       "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
+                       "WHERE ID_Med = %s", (doctor_id,))
+
+        consultas = cursor.fetchall()
+
+        for consulta in consultas:
+            params_dict['appointment_ids'].append(consulta[0])
+
+        return render_template('doctor-dashboard-prescription-form.html', params=params_dict)
 
 # end of doctor-dashboard
 
@@ -455,8 +570,50 @@ def admin():
     return render_template('admin-dashboard.html', params={})
 
 
-def get_patient_info(patient_id):
-    return "hello"
+@app.route('/reviews')
+def reviews():
+    params_dict = dict()
+    if request.method == "POST":
+        name = request.form.get('name')
+        review = request.form.get('review')
+        print(name, review)
+
+        if not name or not review:
+            flash("Please fill all the fields")
+            return redirect(url_for("reviews"))
+        else:
+            """
+            cursor = db.cursor()
+            cursor.execute('''
+                INSERT INTO Reviews (Name, Review) 
+                VALUES (%s, %s)''',
+                           (name, review))
+            db.commit()
+            cursor.close()
+            """
+            flash("Prescription created successfully")
+            return redirect(url_for("doctor_dashboard_prescriptions"))
+
+    elif request.method == "GET":
+        params_dict['reviews'] = []
+        """
+        cursor = db.cursor()
+        cursor.execute("SELECT Nome, Review FROM Reviews")
+        reviewss = cursor.fetchall()
+        
+
+        for review in reviewss:
+            params_dict['reviews'].append((review[0], review[1]))
+        """
+
+    return render_template('reviews.html', params=params_dict)
+
+
+def get_random_code():
+    """Generate a random string"""
+    str = string.ascii_uppercase
+    return ''.join(random.choice(str) for i in range(3)).join(random.choice(string.digits) for i in range(2))
+
 
 
 if __name__ == '__main__':

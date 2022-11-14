@@ -1,5 +1,5 @@
-{% extends 'layout-doctor-dashboard.html' %}
-
+{% extends 'layout-doctor.html' %}
+{% set active_page = "doctor_dashboard_prescriptions" %}
 {% block content %}
 <div class="container-fluid py-4">
   <div class="row my-4">
@@ -53,7 +53,7 @@
                     </div>
                   </td>
                     <td class="align-middle text-center text-sm">
-                            <a href={{ url_for('doctor_dashboard_prescription_info', **prescription.id) }}><i class="fa fa-search"></i></a>
+                            <a href={{ url_for('doctor_dashboard_prescription_info', **prescription.id) }}><i class="fa fa-search"></i>s</a>
                     </td>
                 </tr>
               {% endfor %}
