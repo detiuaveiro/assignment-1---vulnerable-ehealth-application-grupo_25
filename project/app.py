@@ -11,12 +11,12 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
-    database="eHealthCorp",
-    #user="bruna",
-    #password="12345678",
-    #database="sio_db"
+    #user="daniel",
+    #password="8495",
+    #database="eHealthCorp",
+    user="bruna",
+    password="12345678",
+    database="sio_db"
 )
 
 '''
