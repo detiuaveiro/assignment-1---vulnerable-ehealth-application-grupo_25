@@ -48,10 +48,12 @@ HTML:
 
 ## Patients e Patients/Id
 - Rework HTML do patients/id DONE
+- When flash error, update actual data not hardcoded
 
 ## Appointments e Appointments/id
 - Adaptar backend do Patients DONE
 - Rework HTML do appointments/id DONE
+- Mudar nome do search
 
 ## Prescriptions
 - Adaptar backend do Patients

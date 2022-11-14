@@ -265,7 +265,7 @@ def doctor_dashboard_patients():
         if len(patients) > 0:
             for (ID_Pac, Nome, Num_Utente) in patients:
                 params_dict["patients"].append(
-                    {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac[0]}, "last_appointment": "17/4/2019"})
+                    {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac}, "last_appointment": "17/4/2019"})
                 params_dict["total_patients"] += 1
         else:
             flash("No results found")
