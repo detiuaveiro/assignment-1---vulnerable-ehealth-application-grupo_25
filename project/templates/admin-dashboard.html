@@ -36,13 +36,14 @@
 </head>
 
 <body class="bg-gray-100">
+{% include 'admin-navbar.html' %}
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
     <div class="container-fluid py-4" >
       <div class="center_op col-12" style="padding-bottom: 20px">
         <h4>Admin Dashboard</h4>
       </div>
     <div class="row" >
-    <div class="center_op col-lg-6 col-md-12 col-sm-12">
+    <div class="center_op col-12">
         <div class="card col-10" >
             <div class="card-body p-3">
               <div>
@@ -56,10 +57,6 @@
                 </div>
                   <div class="col-lg-3 col-sm-12 center_op">
                     <button type="button" class="btn text-xs" style="background: #61CBFD; color: white"
-                            data-bs-toggle="modal" data-bs-target="#updateMedic">Update Medic</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white"
                             data-bs-toggle="modal" data-bs-target="#deleteMedic">Delete Medic</button>
                 </div>
               </div>
@@ -68,77 +65,51 @@
                         <thead>
                             <tr>
                               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-right">ID</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 make-space-left">Nome</th>
+                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 make-space-left">Num_Medic</th>
+                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Cod_esp</th>
+                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Nome</th>
                               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Email</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Tel</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Password</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Tel</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Password</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Idade</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Morada</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">NIF</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Num_Medico</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Cod_Esp</th>
 
                             </tr>
                         </thead>
                         <tbody>
-                        {% for f in range(15) %}
+                        {% for medic in params.medics %}
                         <tr>
-                            {% for i in range(10) %}
                           <td>
-                                <span class="text-xs font-weight-bold">hey</span>
+                                <span class="text-xs font-weight-bold">{{ medic[0] }}</span>
                           </td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-
-                </div>
-              </div>
-            </div>
-          </div>
-    </div>
-    <div class="center_op col-lg-6 col-md-12 col-sm-12" style="padding-top: 2px">
-        <div class="card col-10" >
-            <div class="card-body p-3">
-              <div>
-              <div class="row">
-                <div class="col-lg-3 col-sm-12 center_op" style="color: black">
-                    <p class="mb-1 pt-2 text-bold">Patient Table</p>
-                </div>
-                <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Add Patient</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Update Patient</button>
-                </div>
-                  <div class="col-lg-3 col-sm-12 center_op">
-                    <button type="button" class="btn text-xs" style="background: #61CBFD; color: white">Delete Patient</button>
-                </div>
-              </div>
-                <div class="col-lg-12 ms-auto text-center mt-5 mt-lg-0">
-                    <table class="sql_table">
-                        <thead>
-                            <tr>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-right">ID</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2 make-space-left">Nome</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Email</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Tel</th>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Password</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Idade</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Morada</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">NIF</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 make-space-left">Num_Utente</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for f in range(15) %}
-                        <tr>
-                            {% for i in range(10) %}
-                          <td>
-                                <span class="text-xs font-weight-bold">hey</span>
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[1] }}</span>
                           </td>
-                            {% endfor %}
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[2] }}</span>
+                          </td>
+                            <td>
+                                <span class="text-xs font-weight-bold">{{ medic[4] }}</span>
+                          </td>
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[5] }}</span>
+                          </td><td>
+                                <span class="text-xs font-weight-bold">{{ medic[6] }}</span>
+                          </td>
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[7] }}</span>
+                          </td>
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[8] }}</span>
+                          </td>
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[9] }}</span>
+                          </td>
+                        <td>
+                                <span class="text-xs font-weight-bold">{{ medic[10] }}</span>
+                          </td>
+                        <td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -197,74 +168,11 @@
                 </div>
                 <div class="form-group">
                     <label for="example-text-input" class="form-control-label">Cod_Esp</label>
-                    <input class="form-control" type="text" placeholder="Codigo Esp",  name="cod_esp">
-                </div>
-                <div class="center_op">
-                <button type="submit" class="btn my-1 me-1" style="background: #61CBFD; color: white ">Add Medic</button>
-                </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-        <!-- Update Medic Modal -->
-    <div class="modal fade" id="updateMedic" tabindex="-1" role="dialog" aria-labelledby="updateMedicLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Update Medic</h5>
-            <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form method="post" action="{{ url_for('admin', form_id=2)}}">
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">ID</label>
-                    <select class="form-control" type="text" name="nome" id="patient_select" style="appearance: menulist-button"
-                    onchange="loadForm()">
-                        <option value="1">None</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
+                    <select class="form-control" type="text" name="cod_esp" style="appearance: menulist-button;">
+                        {% for cod_esp in params.espec %}
+                            <option value={{ cod_esp[0] }}>{{ cod_esp[0] }}</option>
+                        {% endfor %}
                     </select>
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Nome</label>
-                    <input class="form-control" type="text" id="nome" name="nome" placeholder="Nome">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Email</label>
-                    <input class="form-control" type="text" id="email" name="email" placeholder="Email">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Tel</label>
-                    <input class="form-control" type="text" id="tel" placeholder="Tel" name="tel">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Password</label>
-                    <input class="form-control" type="text" id="password" placeholder="Password" name="password">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Idade</label>
-                    <input class="form-control" type="text" id="idade" placeholder="Idade" name="idade">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Morada</label>
-                    <input class="form-control" type="text" id="morada" placeholder="Morada" name="morada">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">NIF</label>
-                    <input class="form-control" type="text" id="nif" placeholder="NIF" name="nif">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Num_Medico</label>
-                    <input class="form-control" type="text" id="num_medic" placeholder="Num Medic" name="num_medic">
-                </div>
-                <div class="form-group">
-                    <label for="example-text-input" class="form-control-label">Cod_Esp</label>
-                    <input class="form-control" type="text" id="cod_esp" placeholder="Codigo Esp",  name="cod_esp">
                 </div>
                 <div class="center_op">
                 <button type="submit" class="btn my-1 me-1" style="background: #61CBFD; color: white ">Add Medic</button>
@@ -286,14 +194,14 @@
             </button>
           </div>
           <div class="modal-body">
-            <form method="post" action="{{ url_for('admin', form_id=3)}}">
+            <form method="post" action="{{ url_for('admin', form_id=2)}}">
                 <div class="form-group">
                     <label for="example-text-input" class="form-control-label">ID</label>
-                    <select class="form-control" type="text" name="nome" id="patient_select" style="appearance: menulist-button">
-                        <option value="1">None</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
+                    <select class="form-control" type="text" name="medic_id" id="medic_id" style="appearance: menulist-button">
+                        {% for medic in params.medics %}
+                            <option value={{ medic[0] }}>{{ medic[0] }}</option>
+                        {% endfor %}
+                    </select>
                     </select>
                 </div>
                 <div class="center_op">
@@ -311,20 +219,6 @@
   <script src="../static/js/plugins/perfect-scrollbar.min.js"></script>
   <script src="../static/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="../static/js/plugins/chartjs.min.js"></script>
-<script>
-    function loadForm(){
-        var patient_id = document.getElementById("patient_select").value
-        document.getElementById("nome").value = "My value" + patient_id;
-        document.getElementById("email").value = "My value" + patient_id;
-        document.getElementById("tel").value = "My value" + patient_id;
-        document.getElementById("password").value = "My value" + patient_id;
-        document.getElementById("idade").value = "My value" + patient_id;
-        document.getElementById("morada").value = "My value" + patient_id;
-        document.getElementById("nif").value = "My value" + patient_id;
-        document.getElementById("num_medic").value = "My value" + patient_id;
-        document.getElementById("cod_esp").value = "My value" + patient_id;
-    }
-</script>
 </body>
 
 </html>

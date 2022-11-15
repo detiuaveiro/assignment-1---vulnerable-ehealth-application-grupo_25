@@ -13,15 +13,15 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
-    database="eHealthCorp",
+    #user="daniel",
+    #password="8495",
+    #database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    #user='andre',
-    #password='Password123#@!',
-    #database='db1',
+    user='andre',
+    password='Password123#@!',
+    database='db1',
 )
 
 '''
@@ -740,28 +740,61 @@ def doctor_dashboard_prescription_form():
 # admin dashboard
 @app.route('/admin', methods=('GET', 'POST'))
 def admin():
-
+    dict_params = dict()
+    dict_params['medics'] = []
+    dict_params['espec'] = []
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM Medico LEFT JOIN Utilizador ON Medico.ID = Utilizador.ID")
-    for medico in cursor.fetchall():
-        print(medico)
 
     if request.method == "POST":
         form_id = request.args.get('form_id', 1, type=int)
         if form_id == 1:
-            print(request.form)
-            print(request.args.get('form_id', 1, type=int))
-            return redirect(url_for('admin'))
+            num_medic = request.form.get('num_medic')
+            cod_esp = request.form.get('cod_esp')
+            nome = request.form.get('nome')
+            email = request.form.get('email')
+            tel = request.form.get('tel')
+            password = request.form.get('password')
+            idade = request.form.get('idade')
+            morada = request.form.get('morada')
+            nif = request.form.get('nif')
+
+            if not num_medic or not cod_esp or not nome or not email or not tel or not password or not idade or not morada or not nif:
+                flash("Please fill all the fields")
+                return redirect(url_for("admin"))
+            else:
+                cursor.execute('''
+                    INSERT INTO Utilizador (ID, Nome, Email, Tel, Password, Idade, Morada, NIF) 
+                        VALUES (NULL, %s, %s, %s, %s, %s, %s, %s)''', (nome, email, tel, password, idade, morada, nif,))
+                db.commit()
+                cursor.execute('''
+                    INSERT INTO Medico (ID, Num_Medico, Cod_Esp) 
+                        VALUES (NULL, %s, %s)''', (num_medic, cod_esp,))
+                db.commit()
+                print(request.form)
+                print(request.args.get('form_id', 1, type=int))
+                return redirect(url_for('admin'))
         elif form_id == 2:
-            print(request.form)
-            print(request.args.get('form_id', 1, type=int))
+            medic_id = request.form.get('medic_id')
+            cursor.execute('''DELETE FROM Medico WHERE ID=%s''', (medic_id,))
+            db.commit()
             return redirect(url_for('admin'))
         elif form_id == 3:
             print(request.form)
             print(request.args.get('form_id', 1, type=int))
             return redirect(url_for('admin'))
+    else:
+        cursor.execute("SELECT * FROM Medico LEFT JOIN Utilizador ON Utilizador.ID = Medico.ID")
+        medics = cursor.fetchall()
+        for medic in medics:
+            print(medic)
+            dict_params['medics'].append(medic)
 
-    return render_template('admin-dashboard.html', params={})
+        cursor.execute("SELECT Codigo FROM Especialidade")
+        especialidades = cursor.fetchall()
+        for especialidade in especialidades:
+            dict_params['espec'].append(especialidade)
+        print(dict_params['espec'])
+    return render_template('admin-dashboard.html', params=dict_params)
 
 
 @app.route('/reviews', methods=["GET", "POST"])
