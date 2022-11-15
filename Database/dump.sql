@@ -429,7 +429,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `Med_User_View` AS select `U`.`ID` AS `ID`,`U`.`Nome` AS `Nome`,`U`.`Email` AS `Email`,`U`.`Tel` AS `Tel`,`U`.`Password` AS `Password`,`U`.`Idade` AS `Idade`,`U`.`Morada` AS `Morada`,`U`.`NIF` AS `NIF`,`M`.`Num_Medico` AS `Num_Medico`,`M`.`Cod_Esp` AS `Cod_Esp` from (`Medico` `M` join `Utilizador` `U` on((`M`.`ID` = `U`.`ID`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -447,7 +446,6 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `Pac_User_View` AS select `U`.`ID` AS `ID`,`U`.`Nome` AS `Nome`,`U`.`Email` AS `Email`,`U`.`Tel` AS `Tel`,`U`.`Password` AS `Password`,`U`.`Idade` AS `Idade`,`U`.`Morada` AS `Morada`,`U`.`NIF` AS `NIF`,`P`.`Num_Utente` AS `Num_Utente` from (`Paciente` `P` join `Utilizador` `U` on((`P`.`ID` = `U`.`ID`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
