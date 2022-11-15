@@ -237,9 +237,52 @@ def createacc():
 
     return render_template('createacc.html')
 
-@app.route('/appointment')
+@app.route('/appointment', methods=["GET", "POST"])
 def appointment():
-    return render_template('user-appointment.html')
+    if request.method == "GET":
+        params_dict = dict()
+        params_dict['doctors'] = []
+
+        cursor = db.cursor()
+
+        cursor.execute("SELECT ID, Med_User_View.Nome, Especialidade.Nome FROM Med_User_View JOIN Especialidade ON Cod_Esp = Codigo")
+
+        doctors = cursor.fetchall()
+
+        for (ID, Doc_Name, Especialidade) in doctors:
+            params_dict['doctors'].append({
+                "ID": ID, "Name": Doc_Name, "Specialty": Especialidade
+            })
+
+        cursor.close()
+    elif request.method == "POST":
+        id_medico = request.form.get('doctorSelect')
+        date = request.form.get("date")
+        hour = request.form.get("hour")
+
+        if not id_medico or not date or not hour:
+            flash("Please fill all the fields")
+            return redirect(url_for("appointment"))
+        else:
+            cursor = db.cursor()
+
+            pacient_id = session["user_id"]
+            query_date = str(date) + " " +  str(hour)
+
+            cursor.execute("SELECT Cod_Esp FROM Medico JOIN Especialidade E on E.Codigo = Medico.Cod_Esp WHERE ID=%s", (id_medico, ))
+            cod_esp = cursor.fetchone()
+
+            cursor.execute('''
+                        INSERT INTO Consulta (ID_Med, ID_Pac, Cod_Esp, Data) 
+                        VALUES (%s, %s, %s, %s)''',
+                           (id_medico, pacient_id, cod_esp[0], query_date))
+            db.commit()
+            cursor.close()
+            flash("Appointment scheduled successfully!")
+            return redirect(url_for("appointment"))
+
+
+    return render_template('user-appointment.html', params=params_dict)
 
 
 # doctor-dashboard
@@ -273,7 +316,6 @@ def doctor_dashboard():
             {"date": dia, "hour": hora, "patient": name[0], 'patient_id': ID_Pac, 'num_appointment': Num_Cons})
         params_dict['total_todays_appointments'] += 1
         params_dict['todays_appointments'].sort(key=lambda x: x['hour'])
-        params_dict['next_appointment'] = params_dict['todays_appointments'][0]
 
     cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
                    "ON Prescricao.Num_Consulta = C.Num_Cons "
@@ -666,9 +708,9 @@ def admin():
     return render_template('admin-dashboard.html', params={})
 
 
-@app.route('/reviews')
+@app.route('/reviews', methods=["GET", "POST"])
 def reviews():
-    params_dict = dict()
+    params_dict = {"reviews": [], "total_reviews": 0}
     if request.method == "POST":
         name = request.form.get('name')
         review = request.form.get('review')
@@ -678,29 +720,30 @@ def reviews():
             flash("Please fill all the fields")
             return redirect(url_for("reviews"))
         else:
-            """
             cursor = db.cursor()
             cursor.execute('''
-                INSERT INTO Reviews (Name, Review) 
+                INSERT INTO Comentario (Autor, Texto) 
                 VALUES (%s, %s)''',
                            (name, review))
             db.commit()
             cursor.close()
-            """
             flash("Prescription created successfully")
-            return redirect(url_for("doctor_dashboard_prescriptions"))
+            return redirect(url_for("reviews"))
 
     elif request.method == "GET":
         params_dict['reviews'] = []
-        """
+
         cursor = db.cursor()
-        cursor.execute("SELECT Nome, Review FROM Reviews")
-        reviewss = cursor.fetchall()
+        cursor.execute("SELECT * FROM Comentario")
+        reviews = cursor.fetchall()
         
 
-        for review in reviewss:
-            params_dict['reviews'].append((review[0], review[1]))
-        """
+        for (ID, Autor, Texto, Data) in reviews:
+            params_dict["reviews"].append({"date": Data,
+                           "author": Autor, "id": ID,
+                           "text": Texto})
+            params_dict["total_reviews"] += 1
+
 
     return render_template('reviews.html', params=params_dict)
 
