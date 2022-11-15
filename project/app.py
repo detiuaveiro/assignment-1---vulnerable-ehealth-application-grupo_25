@@ -9,15 +9,15 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3307,
-    #user="root",
-    #password="1904",
+    port=3307,
+    user="root",
+    password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
+    #user="daniel",
+    #password="8495",
     database="eHealthCorp",
-    user="bruna",
-    password="12345678",
+    #user="bruna",
+    #password="12345678",
     #database="sio_db"
     #user='andre',
     #password='Password123#@!',
@@ -99,9 +99,89 @@ def contactform():
     return render_template('contactform.html')
 
 
-@app.route('/logged')  # mudar isto futuramente
+@app.route('/logged', methods=['GET', 'POST'])
 def logged():
+    if session.get('user_id') is None:
+        return redirect(url_for('login'))
+    
+    if request.method == 'GET':
+        ctx = {
+            'user_id': session.get('user_id'),
+            'pacient_info': [],
+            'appointments': [],
+        } 
+
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM  Pac_User_View WHERE ID = %s", (session.get('user_id'),))
+        ctx['pacient_info'] = cursor.fetchone()
+
+        cursor.execute("SELECT * FROM Consulta WHERE ID_Pac = %s AND Data >= %s", (session.get('user_id'), todays_date[0]))
+        appointment_db_data = cursor.fetchall() 
+        print(appointment_db_data)
+        for appointment in appointment_db_data:
+            medic_id = appointment[1]
+            cursor.execute("SELECT Nome, Cod_Esp FROM Med_User_View WHERE ID = %s", (medic_id,))
+            medic_data = cursor.fetchone()
+            nome_medico = medic_data[0]
+            cod_esp = medic_data[1]
+            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo = %s", (cod_esp,))
+            especialidade = cursor.fetchone()[0]
+            datetime = str(appointment[4])
+            data = datetime.split(" ")[0]
+            horas = datetime.split(" ")[1]
+            ctx['appointments'].append((nome_medico, especialidade, data, horas))
+
+        cursor.close()
+
+        return render_template('logged.html', ctx=ctx)
+
     return render_template('logged.html')
+
+@app.route('/patient-prescription-details', methods=['GET', 'POST'])
+def patient_prescription_details():
+    if request.method == 'POST':
+        prescription_code = request.form["prescription_code"]
+        pharmaceuticals = []
+
+        cursor = db.cursor()
+        cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (prescription_code, ))
+
+        prescription = cursor.fetchall()
+
+        for (Code, ID_Pac, Data, Cod_Medic) in prescription:
+            # Buscar o nome do Paciente
+            print(Cod_Medic)
+
+            cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = %s", (ID_Pac, ))
+            name = cursor.fetchone()
+
+            # Buscar os Faramacêuticos
+            cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = %s", (Cod_Medic, ))
+            pharma = cursor.fetchone()
+
+            print(pharma)
+            pharmaceuticals.append(pharma[0])
+
+
+        params_dict = {"date": Data,
+                    "patient": name[0], "id": prescription_code,
+                    "pharmaceuticals": pharmaceuticals} 
+        
+        return render_template('patient-prescription-details.html', params=params_dict)
+
+@app.route('/patient_exam_details', methods=['GET', 'POST'])
+def patient_exam_details():
+    if request.method == 'POST':
+        exam_code = request.form["exam_code"]
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Analise WHERE Codigo = %s", (exam_code, ))
+        exam = cursor.fetchone()
+        print(exam)
+        params_dict = {"date": exam[1],
+                    "patient": exam[2], "id": exam_code,
+                    "exam_type": exam[3], "result": exam[4]} 
+        
+        return render_template('patient-exam-details.html', params=params_dict)
 
 @app.route('/contactdoctor')
 def contactdoctor():
@@ -547,6 +627,7 @@ def doctor_dashboard_prescription_form():
                        "WHERE ID_Med = %s", (doctor_id,))
 
         consultas = cursor.fetchall()
+        cursor.close()
 
         for consulta in consultas:
             params_dict['appointment_ids'].append(consulta[0])

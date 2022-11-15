@@ -48,7 +48,7 @@
               <div class="card-body p-4">
                 <div class="row">
                   <div class="col-8">
-                    <h4 class="mb-0 text-capitalize font-weight-bold">Welcome, {user}</h4>
+                    <h4 class="mb-0 text-capitalize font-weight-bold">Welcome, {{ctx.pacient_info[1].split(" ")[0]}}</h4>
                     <p class="font-weight-bolder mb-0">Here's everything you need to know:</p>
                   </div>
                 </div>
@@ -83,70 +83,60 @@
               <div class="row">
                 <div class="d-flex flex-column h-100">
                   <h5 class="pl-4 font-weight-bolder text-white pb-2">Your information: </h5>
-                  <p class="pl-4 text-white"><b>Name: </b>full name</p>
-                  <p class="pl-4 text-white"><b>Age: </b> pacient's age</p>
-                  <p class="pl-4 text-white"><b>E-mail: </b>email</p>
-                  <p class="pl-4 text-white"><b>NIF: </b>nif</p>
-                  <p class="pl-4 text-white"><b>Nr utente: </b>nutente</p>
-                  <p class="pl-4 text-white"><b>Phone number: </b>phonenmbr</p>
-                  <p class="pl-4 text-white"><b>Address: </b>address</p>
+                  <p class="pl-4 text-white"><b>Name: </b>{{ctx.pacient_info[1]}}</p>
+                  <p class="pl-4 text-white"><b>Age: </b>{{ctx.pacient_info[5]}}</p>
+                  <p class="pl-4 text-white"><b>E-mail: </b>{{ctx.pacient_info[2]}}</p>
+                  <p class="pl-4 text-white"><b>NIF: </b>{{ctx.pacient_info[-2]}}</p>
+                  <p class="pl-4 text-white"><b>Nr utente: </b>{{ctx.pacient_info[-1]}}</p>
+                  <p class="pl-4 text-white"><b>Phone number: </b>{{ctx.pacient_info[3]}}</p>
+                  <p class="pl-4 text-white"><b>Address: </b>{{ctx.pacient_info[6]}}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <!-- Recipe Card -->
         <div class="col-lg-4 mb-lg-0 mb-4">
           <div class="card h-100 p-3">
             <div class="overflow-hidden position-relative border-radius-lg h-100">
               <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
-                <h5 class="font-weight-bolder mb-4 pt-2">Check Recipe:</h5>
-                <p class="font-weight-bold">Please insert the recipe code:</p>
-                <div class="col-12 pt-4">
-                  <label for="name">Recipe code:</label>
-                  <input class="form-control" type="text" id="name" name="name">
-                </div>
-                <div class="col-auto pt-4">
-                  <button type="button" class="btn mb-0 cursor-pointer bg-gradient-info" id="finishedBut" data-toggle="modal" data-target="#exampleModalCenter">Submit</button>
-                </div>
-              </div>
-             <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLongTitle">Recipe found:</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <h6>Medicação: </h6>
-                      <h6>Nao sei mais...: </h6>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
+                <h5 class="font-weight-bolder mb-4 pt-2">Check Prescription:</h5>
+                <p class="font-weight-bold">Please insert the prescription code:</p>
+                <form action="{{url_for('patient_prescription_details')}}" method="POST">
+                  <div class="col-12 pt-4">
+                    <label for="prescription_code">Prescription code:</label>
+                      <input class="form-control" type="text" id="prescription_code" name="prescription_code">
                   </div>
-                </div>
+                  <div class="col-auto pt-4">
+                    <button type="submit" class="btn mb-0 cursor-pointer bg-gradient-info" id="btn_prescription">Submit</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
+        <!-- End Recipe Card -->
+        <!-- Anal Card -->
         <div class="col-lg-4 mb-lg-0 mb-4">
           <div class="card h-100 p-3">
             <div class="overflow-hidden position-relative border-radius-lg h-100">
               <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
-                <h4 class="font-weight-bolder mb-4 pt-2">Previous exams:</h6>
-                  <!--repetir isto-->
-                <h5 class="font-weight-bold">Exam 1:</h5>
-                <ul>
-                  <li>Data: </li>
-                  <li>Procedimento: </li>
-                  <li>Resultado: </li>
-                </ul>
+                <h5 class="font-weight-bolder mb-4 pt-2">Check Exam:</h5>
+                <p class="font-weight-bold">Please insert the exam code:</p>
+                <form action="#" method="POST">
+                  <div class="col-12 pt-4">
+                    <label for="prescription_code">Exam code:</label>
+                      <input class="form-control" type="text" id="prescription_code" name="exam_code">
+                  </div>
+                  <div class="col-auto pt-4">
+                    <button type="submit" class="btn mb-0 cursor-pointer bg-gradient-info" id="btn_exam">Submit</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
         </div>
+        <!-- End Anal Card -->
       </div>
 
       <div class="row my-4">
@@ -164,35 +154,45 @@
                 <table class="table align-items-center mb-0">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Scheduled to</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Room</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Hour</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Doctor</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Especialidade</th>
                     </tr>
                   </thead>
                   <!-- fazer for cicle aqui: -->
-                  <tbody>
-                    <tr>
-                      <td style="padding-left: 30px">
-                        <div class="d-flex px-2 py-1">
-                          <div class="d-flex flex-column">
-                            <span class="text-xs font-weight-bold">11h </span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                          <span class="text-xs font-weight-bold"> 1.2.33 </span>
-                      </td>
-                      <td style="padding-left: 30px">
-                        <div class="avatar-group mt-2">
-                          <span class="text-xs font-weight-bold">Andre Ventura (ew)</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold"> X-ray </span>
-                      </td>
-                    </tr>
-                  </tbody>
+                    <tbody>
+                      {% if ctx.appointments %}
+                        {% for appointment in ctx.appointments %}
+                          <tr>
+                            <td style="padding-left: 30px">
+                              <div class="d-flex px-2 py-1">
+                                <div class="d-flex flex-column">
+                                  <span class="text-xs font-weight-bold">{{appointment[2]}}</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                                <span class="text-xs font-weight-bold">{{appointment[3]}}</span>
+                            </td>
+                            <td style="padding-left: 30px">
+                              <div class="avatar-group mt-2">
+                                <span class="text-xs font-weight-bold">{{appointment[0]}}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <span class="text-xs font-weight-bold">{{appointment[1]}}</span>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      {% else %}
+                        <tr>
+                          <td colspan="4" style="text-align: center">
+                            <span class="text-xs font-weight-bold">No appointments</span>
+                          </td>
+                        </tr>
+                      {% endif %}
+                    </tbody>
                   <!-- acaba for cicle aqui: -->
                 </table>
               </div>
