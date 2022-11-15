@@ -40,6 +40,12 @@
 <body class="g-sidenav-show  bg-gray-100">
   {% include 'navbar-logged.html' %}
   <main class="main-content position-relative max-height-vh-100 border-radius-lg ">
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-success alert-dismissible">
+      <a href="{{ url_for('doctor_dashboard_prescription_form') }} " class="close" data-dismiss="alert" aria-label="close">&times;</a>
+          {{ message }}
+      </div>
+    {% endfor %}
     <div class="container-fluid py-4">
       <div class="container-fluid py-4">
         <div class="row">

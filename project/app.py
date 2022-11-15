@@ -279,7 +279,7 @@ def appointment():
             db.commit()
             cursor.close()
             flash("Appointment scheduled successfully!")
-            return redirect(url_for("appointment"))
+            return redirect(url_for("logged"))
 
 
     return render_template('user-appointment.html', params=params_dict)
