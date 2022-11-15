@@ -1,5 +1,5 @@
 {% extends 'layout-doctor.html' %}
-{% set active_page = "doctor_dashboard_appointments" %}
+{% set active_page = "doctor_dashboard_exams" %}
 {% block content %}
 <div class="container-fluid py-4">
   <div class="row my-4">
@@ -8,13 +8,13 @@
         <div class="card-header pb-4">
           <div class="row">
             <div class="col-lg-6 col-7">
-              <h5>List of Appointments</h5>
-                <p>Total appointments: {{ params.total_appointments }}</p>
+              <h5>List of Exams</h5>
+                <p>Total Exams: {{ params.total_exams }}</p>
             </div>
               <div class="col-lg-6 col-7">
                   <div>
                       <form action="#" method="POST" class="bg-white border-radius-lg d-flex me-2">
-                          <input type="text" class="form-control ps-3" name="filter" style="width: 300px; margin-right: 10px" placeholder="Search for patient's appointments">
+                          <input type="text" class="form-control ps-3" name="filter" style="width: 300px; margin-right: 10px" placeholder="Search for patient's exams">
                           <input type="submit"  value="Search" class="btn my-1 me-1" style="background: #61CBFD; color: white ">
                       </form>
 
@@ -37,50 +37,44 @@
             <table class="table align-items-center mb-0">
               <thead>
                 <tr>
-                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">#</th>
-                  <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Date</th>
-                  <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Hour</th>
+                    <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Code</th>
+                  <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Emission Date</th>
+                  <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Expiration Date</th>
                   <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Patient</th>
-                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Specialty</th>
                   <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder opacity-7">More Details</th>
                 </tr>
               </thead>
               <tbody>
-              {% for appointment in params.appointments %}
+              {% for exam in params.exams %}
                 <tr>
                 <td>
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">{{ appointment.id._id }}</h6>
+                        <h6 class="mb-0 text-sm">{{ exam.code }}</h6>
                       </div>
                     </div>
                   </td>
                   <td>
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">{{ appointment.date }}</h6>
+                        <h6 class="mb-0 text-sm">{{ exam.emission_date }}</h6>
                       </div>
                     </div>
                   </td>
                     <td>
                     <div class="d-flex px-2 py-1">
                       <div class="d-flex flex-column justify-content-center">
-                        <h6 class="mb-0 text-sm">{{ appointment.hour }}</h6>
+                        <h6 class="mb-0 text-sm">{{ exam.expiration_date }}</h6>
                       </div>
                     </div>
                   </td>
                   <td class="align-middle text-center text-sm">
                       <div class="avatar-group mt-2">
-                        <h6 class="mb-0 text-sm">{{ appointment.patient }}</h6>
+                        <h6 class="mb-0 text-sm">{{ exam.patient }}</h6>
                     </div>
                   </td>
                     <td class="align-middle text-center text-sm">
-                      <div class="avatar-group mt-2">
-                        <h6 class="mb-0 text-sm">{{ appointment.specialty }}</h6>
-                    </div>
-                  </td>
-                    <td class="align-middle text-center text-sm">
-                            <a href={{ url_for('doctor_dashboard_appointment_info', **appointment.id) }}><i class="fa fa-search"></i></a>
+                            <a href={{ url_for('doctor_dashboard_exam_info', **{"_id": exam.code}) }}><i class="fa fa-search"></i></a>
                     </td>
                 </tr>
               {% endfor %}
