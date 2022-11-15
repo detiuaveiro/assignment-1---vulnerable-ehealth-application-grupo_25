@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <h5 class="card-title">{{ review.author}}</h5>
-                                <p class="card-text"> {{ review.text}}</p>
+                                <p class="card-text"> {{ review.text|safe}}</p>
                                 <p class="card-footer p-0 m-0"> {{ review.date }}</p>
                             </div>
                         </div>
