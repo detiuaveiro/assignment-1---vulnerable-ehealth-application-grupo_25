@@ -129,7 +129,7 @@
               <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
                 <h5 class="font-weight-bolder mb-4 pt-2">Check Exam:</h5>
                 <p class="font-weight-bold">Please insert the exam code:</p>
-                <form action="#" method="POST">
+                <form action="{{url_for('patient_exam_details')}}" method="POST">
                   <div class="col-12 pt-4">
                     <label for="prescription_code">Exam code:</label>
                       <input class="form-control" type="text" id="prescription_code" name="exam_code">

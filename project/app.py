@@ -162,7 +162,6 @@ def patient_prescription_details():
             print(pharma)
             pharmaceuticals.append(pharma[0])
 
-
         params_dict = {"date": Data,
                     "patient": name[0], "id": prescription_code,
                     "pharmaceuticals": pharmaceuticals} 
@@ -174,12 +173,25 @@ def patient_exam_details():
     if request.method == 'POST':
         exam_code = request.form["exam_code"]
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM Analise WHERE Codigo = %s", (exam_code, ))
-        exam = cursor.fetchone()
-        print(exam)
-        params_dict = {"date": exam[1],
-                    "patient": exam[2], "id": exam_code,
-                    "exam_type": exam[3], "result": exam[4]} 
+        cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s", (exam_code, ))
+        exam = cursor.fetchall()
+        cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s", (exam_code, ))
+        User = cursor.fetchone()
+
+        params_dict = {
+            "Codigo": exam[0][0],
+            "User": User[0],
+            "Data_Emissao": exam[0][2],
+            "Data_Validade": exam[0][3],
+            "Tests": [],
+        }
+
+        for test in exam:
+            params_dict["Tests"].append((test[-5], test[-4], test[-3], test[-2], test[-1]))
+
+        print(params_dict)
+
+        cursor.close()
         
         return render_template('patient-exam-details.html', params=params_dict)
 
