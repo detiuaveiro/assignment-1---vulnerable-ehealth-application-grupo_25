@@ -13,25 +13,27 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    #user="daniel",
-    #password="8495",
-    #database="eHealthCorp",
+    user="daniel",
+    password="8495",
+    database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    user='andre',
-    password='Password123#@!',
-    database='db1',
+    #user='andre',
+    #password='Password123#@!',
+    #database='db1',
 )
 
 '''
-Contas:
+Accounts:
 -> Médico: afgomes@mail.pt pass: 1234
 -> Paciente: art.afo@ua.pt pass: 1904
 '''
 
 todays_date = ("2022-11-15 00:00:00", "2022-11-15 23:59:59")
 
+
+# Index Pages
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -91,9 +93,100 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route('/create-acc', methods=['GET', 'POST'])
+def createacc():
+    if request.method == 'POST':
+        form_input = {
+            "firstname": request.form['firstname'],
+            "lastname": request.form['lastname'],
+            "email": request.form['email'],
+            "nutente": request.form['nutente'],
+            "nif": request.form['nif'],
+            "tel": request.form['tel'],
+            "morada": request.form['morada'],
+            "password": request.form['psw'],
+            "confirm_password": request.form['pswc']
+        }
+
+        # Verificar se o email já existe
+        cursor = db.cursor()
+        cursor.execute("SELECT Email FROM Utilizador WHERE Email = %s", (form_input["email"],))
+        email_data = cursor.fetchone()
+        if email_data is not None:
+            flash("Email already exists")
+            return redirect(url_for('createacc'))
+
+        for key, value in form_input.items():
+            if value == "":
+                form_input[key] = None
+
+        if form_input["password"] != form_input["confirm_password"]:
+            flash("Passwords don't match")
+            return redirect(url_for('createacc'))
+
+        cursor.execute('''
+            INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+                       , (
+                       form_input["firstname"] + " " + form_input["lastname"], form_input["email"], form_input["tel"],
+                       form_input["password"], None, form_input["morada"], form_input["nif"]))
+
+        cursor.execute('''
+            INSERT INTO Paciente (ID, Num_Utente)
+            VALUES (%s, %s)'''
+                       , (cursor.lastrowid, form_input["nutente"]))
+
+        db.commit()
+        cursor.close()
+
+        return redirect(url_for('login'))
+
+    return render_template('createacc.html')
+
+
+@app.route('/reviews', methods=["GET", "POST"])
+def reviews():
+    params_dict = {"reviews": [], "total_reviews": 0}
+    if request.method == "POST":
+        name = request.form.get('name')
+        review = request.form.get('review')
+        print(name, review)
+
+        if not name or not review:
+            flash("Please fill all the fields")
+            return redirect(url_for("reviews"))
+        else:
+            cursor = db.cursor()
+            cursor.execute('''
+                INSERT INTO Comentario (Autor, Texto) 
+                VALUES (%s, %s)''',
+                           (name, review))
+            db.commit()
+            cursor.close()
+            flash("Review posted successfully")
+            return redirect(url_for("reviews"))
+
+    elif request.method == "GET":
+        params_dict['reviews'] = []
+
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Comentario")
+        reviews = cursor.fetchall()
+
+        for (ID, Autor, Texto, Data) in reviews:
+            params_dict["reviews"].append({"date": Data,
+                                           "author": Autor, "id": ID,
+                                           "text": Texto})
+            params_dict["total_reviews"] += 1
+
+    return render_template('reviews.html', params=params_dict)
+
+
+# Patient Dashboard
 @app.route('/logged', methods=['GET', 'POST'])
 def logged():
     if session.get('user_id') is None:
+        flash("You must login to access this page!")
         return redirect(url_for('login'))
     
     if request.method == 'GET':
@@ -132,6 +225,10 @@ def logged():
 
 @app.route('/patient-prescription-details', methods=['GET', 'POST'])
 def patient_prescription_details():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         prescription_code = request.form["prescription_code"]
         pharmaceuticals = []
@@ -140,6 +237,12 @@ def patient_prescription_details():
         cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (prescription_code, ))
 
         prescription = cursor.fetchall()
+
+        '''
+        if len(prescription) == 0:
+            flash("That prescription code is not associated with your account!")
+            return redirect(url_for("logged"))
+        '''
 
         for (Code, ID_Pac, Data, Cod_Medic) in prescription:
             # Buscar o nome do Paciente
@@ -161,6 +264,10 @@ def patient_prescription_details():
 
 @app.route('/patient_exam_details', methods=['GET', 'POST'])
 def patient_exam_details():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         exam_code = request.form["exam_code"]
         cursor = db.cursor()
@@ -187,56 +294,12 @@ def patient_exam_details():
         return render_template('patient-exam-details.html', params=params_dict)
 
 
-@app.route('/create-acc', methods=['GET', 'POST'])
-def createacc():
-    if request.method == 'POST':
-        form_input = {
-            "firstname": request.form['firstname'],
-            "lastname": request.form['lastname'],
-            "email": request.form['email'],
-            "nutente": request.form['nutente'],
-            "nif": request.form['nif'],
-            "tel": request.form['tel'],
-            "morada": request.form['morada'],
-            "password": request.form['psw'],
-            "confirm_password": request.form['pswc']
-        }
-
-        # Verificar se o email já existe
-        cursor = db.cursor()
-        cursor.execute("SELECT Email FROM Utilizador WHERE Email = %s", (form_input["email"],))
-        email_data = cursor.fetchone()
-        if email_data is not None:
-            flash("Email already exists")
-            return redirect(url_for('createacc'))
-
-        for key, value in form_input.items():
-            if value == "":
-                form_input[key] = None
-
-        if form_input["password"] != form_input["confirm_password"]:
-            flash("Passwords don't match")
-            return redirect(url_for('createacc'))
-
-        cursor.execute('''
-            INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)'''
-            , (form_input["firstname"] + " "+ form_input["lastname"], form_input["email"], form_input["tel"], form_input["password"], None, form_input["morada"], form_input["nif"]))
-        
-        cursor.execute('''
-            INSERT INTO Paciente (ID, Num_Utente)
-            VALUES (%s, %s)'''
-            , (cursor.lastrowid, form_input["nutente"]))
-
-        db.commit()
-        cursor.close()
-        
-        return redirect(url_for('login'))
-
-    return render_template('createacc.html')
-
 @app.route('/appointment', methods=["GET", "POST"])
 def appointment():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     if request.method == "GET":
         params_dict = dict()
         params_dict['doctors'] = []
@@ -285,6 +348,10 @@ def appointment():
 # doctor-dashboard
 @app.route('/doctor-dashboard')
 def doctor_dashboard():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     params_dict = {}
     doctor_id = session["user_id"]
     cursor = db.cursor()
@@ -346,6 +413,10 @@ def doctor_dashboard():
 
 @app.route('/doctor-dashboard/patients/', methods=["GET", "POST"])
 def doctor_dashboard_patients():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     params_dict = {"patients": [], "total_patients": 0}
     doctor_id = session["user_id"]
 
@@ -400,6 +471,10 @@ def doctor_dashboard_patients():
 
 @app.route('/doctor-dashboard/patients/<_id>')
 def doctor_dashboard_patient_info(_id):
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     _id = int(_id)
 
     # Get personal info about the patient
@@ -434,6 +509,10 @@ def doctor_dashboard_patient_info(_id):
 
 @app.route('/doctor-dashboard/appointments', methods=["GET", "POST"])
 def doctor_dashboard_appointments():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     params_dict = {"appointments": [], "total_appointments": 0}
     doctor_id = session["user_id"]
 
@@ -505,6 +584,10 @@ def doctor_dashboard_appointments():
 
 @app.route('/doctor-dashboard/appointments/<_id>')
 def doctor_dashboard_appointment_info(_id):
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     _id = int(_id)
 
     cursor = db.cursor()
@@ -532,6 +615,10 @@ def doctor_dashboard_appointment_info(_id):
 
 @app.route('/doctor-dashboard/exams', methods=["GET", "POST"])
 def doctor_dashboard_exams():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     params_dict = {"exams": [], "total_exams": 0}
     doctor_id = session["user_id"]
 
@@ -590,35 +677,42 @@ def doctor_dashboard_exams():
     return render_template('doctor-dashboard-exams.html', params=params_dict)
 
 
-@app.route('/doctor-dashboard/appointments/<_id>')
+@app.route('/doctor-dashboard/exams/<_id>')
 def doctor_dashboard_exam_info(_id):
-    _id = int(_id)
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
 
+    exam_code = _id
     cursor = db.cursor()
-    cursor.execute("SELECT Num_Cons, ID_Med, ID_Pac, Nome, Data "
-                   "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo WHERE Num_Cons = %s", (_id, ))
+    cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s",
+                   (exam_code,))
+    exam = cursor.fetchall()
+    cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s",
+                   (exam_code,))
+    User = cursor.fetchone()
 
-    dados_consulta = cursor.fetchone()
+    params_dict = {
+        "Codigo": exam[0][0],
+        "User": User[0],
+        "Data_Emissao": exam[0][2],
+        "Data_Validade": exam[0][3],
+        "Tests": [],
+    }
 
-    ## Buscar nome do Médico e do Paciente
+    for test in exam:
+        params_dict["Tests"].append((test[-5], test[-4], test[-3], test[-2], test[-1]))
 
-    cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID=%s", (dados_consulta[2], ))
-    nome_paciente = cursor.fetchone()
-
-    cursor.execute("SELECT Nome FROM Med_User_View WHERE ID=%s", (dados_consulta[1],))
-    nome_medico = cursor.fetchone()
-
-    # Separar Data da Hora
-    dia, hora = str(dados_consulta[-1]).split(" ")
-
-    params_dict = {"date": dia, "hour": hora, "specialty": dados_consulta[3],
-                   "patient": nome_paciente[0], "doctor": nome_medico[0]}
-
-    return render_template('doctor-dashboard-appointment-info.html', params=params_dict)
+    cursor.close()
+    return render_template('doctor-dashboard-exam-info.html', params=params_dict)
 
 
 @app.route('/doctor-dashboard/prescriptions')
 def doctor_dashboard_prescriptions():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     params_dict = {"prescriptions": [], "total_prescriptions": 0}
     doctor_id = session["user_id"]
     prescriptions_code = set()
@@ -658,6 +752,10 @@ def doctor_dashboard_prescriptions():
 
 @app.route('/doctor-dashboard/prescriptions/<_id>')
 def doctor_dashboard_prescription_info(_id):
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     print(_id)
     pharmaceuticals = []
 
@@ -687,6 +785,10 @@ def doctor_dashboard_prescription_info(_id):
 
 @app.route('/doctor-dashboard/prescriptions/form', methods=('GET', 'POST'))
 def doctor_dashboard_prescription_form():
+    if session.get('user_id') is None:
+        flash("You must login to access this page!")
+        return redirect(url_for('login'))
+
     if request.method == "POST":
         appointment_id = request.form.get('appointmentID')
         id_medico = session["user_id"]
@@ -796,49 +898,9 @@ def admin():
         print(dict_params['espec'])
     return render_template('admin-dashboard.html', params=dict_params)
 
-
-@app.route('/reviews', methods=["GET", "POST"])
-def reviews():
-    params_dict = {"reviews": [], "total_reviews": 0}
-    if request.method == "POST":
-        name = request.form.get('name')
-        review = request.form.get('review')
-        print(name, review)
-
-        if not name or not review:
-            flash("Please fill all the fields")
-            return redirect(url_for("reviews"))
-        else:
-            cursor = db.cursor()
-            cursor.execute('''
-                INSERT INTO Comentario (Autor, Texto) 
-                VALUES (%s, %s)''',
-                           (name, review))
-            db.commit()
-            cursor.close()
-            flash("Prescription created successfully")
-            return redirect(url_for("reviews"))
-
-    elif request.method == "GET":
-        params_dict['reviews'] = []
-
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM Comentario")
-        reviews = cursor.fetchall()
-        
-
-        for (ID, Autor, Texto, Data) in reviews:
-            params_dict["reviews"].append({"date": Data,
-                           "author": Autor, "id": ID,
-                           "text": Texto})
-            params_dict["total_reviews"] += 1
-
-
-    return render_template('reviews.html', params=params_dict)
-
-
+# Auxilliary Functions
 def get_random_code():
-    """Generate a random string"""
+    """Generate a random string. Used to generate Prescription and Exam Codes"""
     str = string.ascii_uppercase
     return ''.join(random.choice(str) for i in range(3)).join(random.choice(string.digits) for i in range(2))
 
