@@ -41,8 +41,7 @@
   {% include 'navbar-logged.html' %}
   <main class="main-content position-relative max-height-vh-100 border-radius-lg ">
     {% for message in get_flashed_messages() %}
-      <div class="alert alert-success alert-dismissible">
-      <a href="{{ url_for('doctor_dashboard_prescription_form') }} " class="close" data-dismiss="alert" aria-label="close">&times;</a>
+      <div class="alert alert-danger alert-dismissible">
           {{ message }}
       </div>
     {% endfor %}

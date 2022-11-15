@@ -6,6 +6,12 @@
 
     <section class="py-5">
         <div class="container">
+            {% for message in get_flashed_messages() %}
+              <div class="alert alert-danger alert-dismissible">
+              <a href="{{ url_for('doctor_dashboard_prescription_form') }} " class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message }}
+              </div>
+            {% endfor %}
             <div class="row text-center">
                 <div class="col-12">
                     <h3 class="mb-5" spellcheck="false">Login</h3>
