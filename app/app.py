@@ -9,19 +9,19 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3306,
-    user="root",
-    password="1904",
+    #port=3306,
+    #user="root",
+    #password="1904",
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    database="eHealthCorp",
+    #database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    #user='andre',
-    #password='Password123#@!',
-    #database='db2',
+    user='andre',
+    password='Password123#@!',
+    database='db2',
 )
 
 '''
@@ -44,9 +44,9 @@ def login():
 
     params_dict = {"email": "", "password": "", "id": ""}
 
-    if request.method == 'POST':
-        params_dict["email"] = request.form['email']
-        params_dict["password"] = request.form['password']
+    if request.method == 'GET' and len(request.args) > 0:
+        params_dict["email"] = request.args['email']
+        params_dict["password"] = request.args['password']
 
         # Buscar email e pass à base de dados
         cursor = db.cursor(buffered=True)
