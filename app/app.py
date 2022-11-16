@@ -9,19 +9,19 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3306,
-    user="root",
-    password="1904",
+    #port=3306,
+    #user="root",
+    #password="1904",
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    database="eHealthCorp",
+    #database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    #user='andre',
-    #password='Password123#@!',
-    #database='db1',
+    user='andre',
+    password='Password123#@!',
+    database='db2',
 )
 
 '''
@@ -49,11 +49,12 @@ def login():
         params_dict["password"] = request.form['password']
 
         # Buscar email e pass à base de dados
-        cursor = db.cursor()
-
-        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s AND Password = %s", (params_dict["email"], params_dict["password"]))
+        cursor = db.cursor(buffered=True)
+        print(params_dict["email"])
+        print(params_dict["password"])
+        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" + str(params_dict["email"]) + "' AND Password='" + str(params_dict["password"]) + "'")
         user_data = cursor.fetchone()
-
+        print(user_data)
         if user_data is None:
             flash("Email or password incorrect")
             cursor.close()
@@ -63,9 +64,10 @@ def login():
 
             session['user_id'] = params_dict["id"]
             session['email'] = user_data[1]
-
+            print("We are are in.")
+            print(params_dict["id"])
             # Verificar se é médico ou paciente e redirecionar para a página correta
-            cursor.execute("SELECT ID FROM Medico WHERE ID = %s", (params_dict["id"],))
+            cursor.execute("SELECT ID FROM Medico WHERE ID = " + str(params_dict["id"]))
             medico_data = cursor.fetchone()
 
             if medico_data is None:
@@ -106,7 +108,7 @@ def createacc():
 
         # Verificar se o email já existe
         cursor = db.cursor()
-        cursor.execute("SELECT Email FROM Utilizador WHERE Email = %s", (form_input["email"],))
+        cursor.execute("SELECT Email FROM Utilizador WHERE Email = '" + str(form_input["email"]) + "'")
         email_data = cursor.fetchone()
         if email_data is not None:
             flash("Email already exists")
@@ -120,17 +122,9 @@ def createacc():
             flash("Passwords don't match")
             return redirect(url_for('createacc'))
 
-        cursor.execute('''
-            INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)'''
-                       , (
-                       form_input["firstname"] + " " + form_input["lastname"], form_input["email"], form_input["tel"],
-                       form_input["password"], None, form_input["morada"], form_input["nif"]))
+        cursor.execute(" INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF) VALUES ('" + str(form_input["firstname"]) + " " + str(form_input["lastname"]) + "', '" + str(form_input["email"]) + "', '" + str(form_input["tel"]) + "', '" + str(form_input["password"]) + "', " + str("Null") + ", '" + str(form_input["morada"]) + "', '" + str(form_input["nif"]) + "')")
 
-        cursor.execute('''
-            INSERT INTO Paciente (ID, Num_Utente)
-            VALUES (%s, %s)'''
-                       , (cursor.lastrowid, form_input["nutente"]))
+        cursor.execute("INSERT INTO Paciente (ID, Num_Utente) VALUES ('" + str(cursor.lastrowid) + "','" + str(form_input["nutente"]) + "')")
 
         db.commit()
         cursor.close()
