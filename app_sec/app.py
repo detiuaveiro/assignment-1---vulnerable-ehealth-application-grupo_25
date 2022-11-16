@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 import random
 import string
 import mysql.connector
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
@@ -9,19 +10,19 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3306,
-    user="root",
-    password="1904",
+    #port=3306,
+    #user="root",
+    #password="1904",
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    database="eHealthCorp",
+    #database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    #user='andre',
-    #password='Password123#@!',
-    #database='db1',
+    user='andre',
+    password='Password123#@!',
+    database='db2',
 )
 
 '''
@@ -51,11 +52,15 @@ def login():
         # Buscar email e pass à base de dados
         cursor = db.cursor()
 
-        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s AND Password = %s", (params_dict["email"], params_dict["password"]))
+        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s", (params_dict["email"],))
         user_data = cursor.fetchone()
 
         if user_data is None:
-            flash("Email or password incorrect")
+            flash("Email incorrect")
+            cursor.close()
+            return redirect(url_for('login'))
+        elif not check_password_hash(user_data[2], params_dict["password"]):
+            flash("Password incorrect")
             cursor.close()
             return redirect(url_for('login'))
         else:
@@ -120,12 +125,15 @@ def createacc():
             flash("Passwords don't match")
             return redirect(url_for('createacc'))
 
+        hashed_pass = generate_password_hash(form_input["password"])
+        print(hashed_pass)
+        print(len(hashed_pass))
         cursor.execute('''
             INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
             VALUES (%s, %s, %s, %s, %s, %s, %s)'''
                        , (
                        form_input["firstname"] + " " + form_input["lastname"], form_input["email"], form_input["tel"],
-                       form_input["password"], None, form_input["morada"], form_input["nif"]))
+                       hashed_pass, None, form_input["morada"], form_input["nif"]))
 
         cursor.execute('''
             INSERT INTO Paciente (ID, Num_Utente)
