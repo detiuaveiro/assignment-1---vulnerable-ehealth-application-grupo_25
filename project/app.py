@@ -54,10 +54,6 @@ def login():
         cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s AND Password = %s", (params_dict["email"], params_dict["password"]))
         user_data = cursor.fetchone()
 
-        # There are no warnings
-        warnings = cursor.fetchwarnings()
-        print(warnings)
-
         if user_data is None:
             flash("Email or password incorrect")
             cursor.close()
@@ -234,15 +230,13 @@ def patient_prescription_details():
         pharmaceuticals = []
 
         cursor = db.cursor()
-        cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (prescription_code, ))
+        cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s AND ID_Pac = %s", (prescription_code, session['user_id']))
 
         prescription = cursor.fetchall()
 
-        '''
         if len(prescription) == 0:
-            flash("That prescription code is not associated with your account!")
+            flash("There is no prescription with that code")
             return redirect(url_for("logged"))
-        '''
 
         for (Code, ID_Pac, Data, Cod_Medic) in prescription:
             # Buscar o nome do Paciente
@@ -275,6 +269,10 @@ def patient_exam_details():
         exam = cursor.fetchall()
         cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s", (exam_code, ))
         User = cursor.fetchone()
+
+        if len(exam) == 0:
+            flash("That exam code is not associated with your account!")
+            return redirect(url_for("logged"))
 
         params_dict = {
             "Codigo": exam[0][0],
@@ -577,7 +575,7 @@ def doctor_dashboard_appointments():
                 flash("No results found")
                 return redirect(url_for("doctor_dashboard_appointments"))
 
-            cursor.close()
+        cursor.close()
 
     return render_template('doctor-dashboard-appointments.html', params=params_dict)
 

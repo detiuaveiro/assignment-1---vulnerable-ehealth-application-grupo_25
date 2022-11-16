@@ -4,6 +4,11 @@
 <div class="container-fluid py-4">
   <div class="row my-4">
     <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+      {% for message in get_flashed_messages() %}
+      <div class="alert alert-danger alert-dismissible">
+          {{ message }}
+      </div>
+    {% endfor %}
       <div class="card">
         <div class="card-header pb-0">
           <div class="row">
