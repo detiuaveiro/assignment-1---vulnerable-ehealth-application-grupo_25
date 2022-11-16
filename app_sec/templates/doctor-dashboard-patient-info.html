@@ -1,0 +1,82 @@
+{% extends "layout-doctor.html" %}
+{% set active_page = "doctor_dashboard_patients" %}
+
+{% block content %}
+    <div class="container-fluid py-4">
+        <a href="{{ url_for('doctor_dashboard_patients') }}"><p style="padding-top: 10px; padding-left: 5px ;font-size: 14px; font-weight: bold"><i class="fa fa-arrow-left"></i> Go Back</p></a>
+
+        <!-- Patient Name Card -->
+        <div class="row my-4">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-4">
+              <div class="row">
+                <div class="col-12">
+                  <h2>{{ params.name }}</h2>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 col-sm-12">
+                            <h5>NISS <p>{{ params.niss }}</p></h5>
+                        </div>
+                        <div class="col-lg-4 col-md-12 col-sm-12">
+                            <h5 >NIF <p>{{ params.nif }}</p></h5>
+                        </div>
+                        <div class="col-lg-4 col-md-12 col-sm-12">
+                            <h5>Age <p>{{ params.age }}</p></h5>
+                        </div>
+                    </div>
+
+
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contacts Info Card -->
+        <div class="row my-4">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-4">
+              <div class="row">
+                <div class="col-lg-12 col-12">
+                  <h3> Contactos </h3>
+                    <div class="row">
+                        <div class="col-lg-4 col-md-12 col-sm-12">
+                            <h5> E-Mail <p>{{ params.email }}</p></h5>
+                        </div>
+                        <div class="col-lg-4 col-md-12 col-sm-12">
+                            <h5 >Telefone <p>{{ params.tel }}</p></h5>
+                        </div>
+                        <div class="col-lg-4 col-md-12 col-sm-12">
+                            <h5 >Endereço <p>{{ params.address }}</p></h5>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diseases Card -->
+        <div class="row my-4">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-4">
+              <div class="row">
+                <div class="col-lg-6 col-7">
+                  <h3> Diagnósticos </h3>
+                    <ul>
+                        {% for illness in params.illnesses %}
+                            <li>{{ illness }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+{% endblock %}

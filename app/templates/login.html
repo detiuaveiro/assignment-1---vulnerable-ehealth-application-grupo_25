@@ -1,0 +1,58 @@
+<!-- Loopple Templates: https://www.loopple.com/templates | Copyright Loopple (https://www.loopple.com) | This copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+<!--done-->
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <section class="py-5">
+        <div class="container">
+            {% for message in get_flashed_messages() %}
+              <div class="alert alert-danger alert-dismissible">
+              <a href="{{ url_for('doctor_dashboard_prescription_form') }} " class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  {{ message }}
+              </div>
+            {% endfor %}
+            <div class="row text-center">
+                <div class="col-12">
+                    <h3 class="mb-5" spellcheck="false">Login</h3>
+                </div>
+                <div class="col-12">
+                    <form class="modal-content animate" action="#" method="POST">
+                        <div class="col-12">
+                          <label class="form-label" for="email"><b>Email</b></label>
+                          <input class="form-input" type="text" placeholder="Enter Email" name="email" required>
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label" for="psw"><b>Password</b></label>
+                          <input class="form-input" type="password" placeholder="Enter Password" name="password" required>
+                        </div>
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <p>{{ messages[0] }}</p>
+                            {%  endif %}
+                        {%  endwith %}
+                        <div class="col-12">
+                            <span class="psw"><a href="#">Forgot password?</a></span>
+                        </div>
+                        <div class="col-12">
+                            <div class="button-container">
+                                <button class="login-button" type="submit">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-12">
+                        or
+                    </div>
+                    <div class="col-12">
+                        <div class="button-container">
+                            <a href="{{ url_for('createacc') }}">
+                                <button class="login-button" type="submit">Create New Account</button> 
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
