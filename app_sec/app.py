@@ -1,10 +1,13 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, send_from_directory
 import random
 import string
+from datetime import datetime, timedelta
+import os
 import mysql.connector
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['UPLOAD_FOLDER'] = '/static/'
 
 
 db = mysql.connector.connect(
@@ -56,9 +59,23 @@ def login():
 
         if user_data is None:
             flash("Email or password incorrect")
+            if session.get("attempt") is None:
+                session["attempt"] = 1
+            elif session["attempt"] < 3:
+                session["attempt"] += 1
+            else:
+                session["last_attempt"] = datetime.now()
+                flash("Too many attempts. Try again later")
+
             cursor.close()
             return redirect(url_for('login'))
         else:
+            if session.get("last_attempt") is not None and datetime.now() - session["last_attempt"].replace(tzinfo=None)  < timedelta(minutes=1):
+                flash("Too many attempts. Try again later")
+                return redirect(url_for('login'))
+
+            session["attempt"] = 0
+
             params_dict["id"] = user_data[0]
 
             session['user_id'] = params_dict["id"]
@@ -85,6 +102,8 @@ def logout():
     if session.get('user_id') is not None:
         session.pop('user_id', None)
         session.pop('email', None)
+        session.pop('attempt', None)
+        session.pop('last_attempt', None)
 
     return redirect(url_for('index'))
 
@@ -902,6 +921,13 @@ def admin():
             dict_params['espec'].append(especialidade)
         print(dict_params['espec'])
     return render_template('admin-dashboard.html', params=dict_params)
+
+@app.route('/download/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    uploads = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    return send_from_directory(directory='static', path=filename, as_attachment=True)
+
 
 # Auxilliary Functions
 def get_random_code():

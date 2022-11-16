@@ -42,6 +42,7 @@
   <main class="main-content position-relative max-height-vh-100 border-radius-lg ">
     {% for message in get_flashed_messages() %}
       <div class="alert alert-danger alert-dismissible">
+        <a href="{{ url_for('logged') }}"><p style="padding-top: 10px; padding-left: 5px ;font-size: 14px; font-weight: bold"><i class="fa fa-arrow-left"></i> Go Back</p></a>
           {{ message }}
       </div>
     {% endfor %}
