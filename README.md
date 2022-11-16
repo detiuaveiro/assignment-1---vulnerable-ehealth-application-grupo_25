@@ -1,7 +1,7 @@
 ## SQL INJECTION (CWE-89) (Butuc)
 - Versão Insegura:
-    - Desparametrizar as queries
-    - Login a partir de método GET em vez de POST?
+    - Desparametrizar as queries **DONE**
+    - Login a partir de método GET em vez de POST? **DONE**
 
 ## XSS (CWE-79) (Artur)
 ### Stored XSS
@@ -35,8 +35,8 @@
 
 ## CWE-522 + CWE-434 (Artur + Daniel)
 - Ambas (Butuc)
-    - Criar um ficheiro HTML para editar informações do perfil
-    - Página deve ter opção para mudar pass e foto de perfil
+    - Criar um ficheiro HTML para editar informações do perfil **Done**
+    - Página deve ter opção para mudar pass e foto de perfil **Done**
 
 - Versão Insegura:
     - No caminho URL, apresentar o ID do utilizador

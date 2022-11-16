@@ -34,11 +34,11 @@
                     </div>
                 </form>
             </div>
-        <div class="row center_op" >
+        <div class="row center_op ">
         {% if params.total_reviews > 0 %}
             <h4 style="text-align: center">What Our Clients Have To Say</h4>
         {% endif %}
-        <div class="col-4">
+        <div class="col-lg-5 col-md-5 col-sm-12" style="overflow-y: scroll; height: 300px">
         {% for review in params.reviews %}
 
                 <div class="card card-body mb-3">
