@@ -70,7 +70,9 @@
                     </div>
                   </td>
                     <td class="align-middle text-center text-sm">
-                            <a href={{ url_for('doctor_dashboard_exam_info', **{"_id": exam.code}) }}><i class="fa fa-search"></i></a>
+                      <form action="{{url_for('doctor_dashboard_exam_info')}}" method="POST">
+                        <button type="submit" class="fa fa-search" name="exam_code" value="{{ exam.code }}" id="{{ exam.code }}"></button>
+                      <form>
                     </td>
                 </tr>
               {% endfor %}
