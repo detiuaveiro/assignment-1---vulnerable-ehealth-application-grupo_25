@@ -1,6 +1,6 @@
 ## SQL INJECTION (CWE-89) (Butuc)
 - Versão Insegura:
-    - Desparametrizar as queries
+    - Desparametrizar as queries **DONE**
     - Login a partir de método GET em vez de POST?
 
 ## XSS (CWE-79) (Artur)
