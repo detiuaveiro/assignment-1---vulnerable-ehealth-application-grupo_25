@@ -460,7 +460,7 @@ def doctor_dashboard_patients():
                     {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac}, "last_appointment": "17/4/2019"})
                 params_dict["total_patients"] += 1
         else:
-            flash("No results found")
+            flash("No results found for %s" % request.form["filter"])
             return redirect(url_for("doctor_dashboard_patients"))
 
         cursor.close()
@@ -573,7 +573,7 @@ def doctor_dashboard_appointments():
                     params_dict["total_appointments"] += 1
             else:
                 cursor.close()
-                flash("No results found")
+                flash("No results found for %s" % request.form["filter"])
                 return redirect(url_for("doctor_dashboard_appointments"))
 
         cursor.close()
@@ -656,7 +656,7 @@ def doctor_dashboard_exams():
 
         if len(exams) == 0:
             cursor.close()
-            flash("No results found")
+            flash("No results found for %s" % request.form["filter"])
             return redirect(url_for("doctor_dashboard_exams"))
 
         for (Code, ID_Med, ID_Pac, Emi, Val, Nome) in exams:
