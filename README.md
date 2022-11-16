@@ -14,7 +14,7 @@
 - Versão Segura: **DONE** 
     - Verificar que código de Exam é do Utilizador Logged In
 
-## Missing Encryption of Sensitive Data (CWE-311) (Butuc)
+## Missing Encryption of Sensitive Data (CWE-311) (Butuc) DONE
 - Versão Segura
     - Encriptar password na BD
 
@@ -35,8 +35,8 @@
 
 ## CWE-522 + CWE-434 (Artur + Daniel)
 - Ambas (Butuc)
-    - Criar um ficheiro HTML para editar informações do perfil
-    - Página deve ter opção para mudar pass e foto de perfil
+    - Criar um ficheiro HTML para editar informações do perfil **Done**
+    - Página deve ter opção para mudar pass e foto de perfil **Done**
 
 - Versão Insegura:
     - No caminho URL, apresentar o ID do utilizador

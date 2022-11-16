@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 import random
 import string
+import os
 import mysql.connector
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['UPLOAD_FOLDER'] = '/static/'
 
 
 db = mysql.connector.connect(
@@ -14,8 +17,8 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
+    #user="daniel",
+    #password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
@@ -64,7 +67,7 @@ def login():
             flash("Email incorrect!")
             cursor.close()
             return redirect(url_for('login'))
-        elif password != params_dict["password"]:
+        elif not check_password_hash(password, params_dict["password"]):
             ## Password errada
             current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -174,12 +177,13 @@ def createacc():
             flash("Passwords don't match")
             return redirect(url_for('createacc'))
 
+        hashed_pass = generate_password_hash(form_input["password"])
         cursor.execute('''
             INSERT INTO Utilizador (Nome, Email, Tel, Password, Idade, Morada, NIF)
             VALUES (%s, %s, %s, %s, %s, %s, %s)'''
                        , (
                        form_input["firstname"] + " " + form_input["lastname"], form_input["email"], form_input["tel"],
-                       form_input["password"], None, form_input["morada"], form_input["nif"]))
+                       hashed_pass, None, form_input["morada"], form_input["nif"]))
 
         cursor.execute('''
             INSERT INTO Paciente (ID, Num_Utente)
@@ -964,6 +968,13 @@ def admin():
             dict_params['espec'].append(especialidade)
         print(dict_params['espec'])
     return render_template('admin-dashboard.html', params=dict_params)
+
+@app.route('/download/<path:filename>', methods=['GET', 'POST'])
+def download(filename):
+    print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    uploads = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    return send_from_directory(directory='static', path=filename, as_attachment=True)
+
 
 # Auxilliary Functions
 def get_random_code():

@@ -13,9 +13,9 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
-    database="eHealthCorp",
+    #user="daniel",
+    #password="8495",
+    #database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
@@ -52,7 +52,10 @@ def login():
         cursor = db.cursor(buffered=True)
         print(params_dict["email"])
         print(params_dict["password"])
-        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" + str(params_dict["email"]) + "' AND Password='" + str(params_dict["password"]) + "'")
+        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" \
+            + str(params_dict["email"]) + \
+            "' AND Password='" \
+            + str(params_dict["password"]) + "'")
         user_data = cursor.fetchone()
         print(user_data)
         if user_data is None:
@@ -64,7 +67,7 @@ def login():
 
             session['user_id'] = params_dict["id"]
             session['email'] = user_data[1]
-            print("We are are in.")
+            print("We are in.")
             print(params_dict["id"])
             # Verificar se é médico ou paciente e redirecionar para a página correta
             cursor.execute("SELECT ID FROM Medico WHERE ID = " + str(params_dict["id"]))
@@ -209,6 +212,15 @@ def logged():
 
     return render_template('logged.html')
 
+@app.route('/logged/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    ctx = dict()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM  Pac_User_View WHERE ID =" + str(session.get('user_id')))
+    ctx['pacient_info'] = cursor.fetchone()
+    print(ctx['pacient_info'])
+    cursor.close()
+    return render_template('edit-patient-profile.html', ctx=ctx)
 
 @app.route('/patient-prescription-details', methods=['GET', 'POST'])
 def patient_prescription_details():
