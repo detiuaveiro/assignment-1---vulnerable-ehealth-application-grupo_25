@@ -14,7 +14,7 @@
 - Versão Segura:
     - Verificar que código de Exam é do Utilizador Logged In
 
-## Missing Encryption of Sensitive Data (CWE-311) (Butuc)
+## Missing Encryption of Sensitive Data (CWE-311) (Butuc) DONE
 - Versão Segura
     - Encriptar password na BD
 
