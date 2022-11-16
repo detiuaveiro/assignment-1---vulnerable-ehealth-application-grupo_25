@@ -5,13 +5,13 @@
 
 ## XSS (CWE-79) (Artur)
 ### Stored XSS
--DONE
+-**DONE**
 
 ### Reflected XSS
--DONE
+-**DONE**
 
 ## Improper Input Validation (CWE-20) (Daniel)
-- Versão Segura:
+- Versão Segura: **DONE** 
     - Verificar que código de Exam é do Utilizador Logged In
 
 ## Missing Encryption of Sensitive Data (CWE-311) (Butuc)
@@ -19,11 +19,11 @@
     - Encriptar password na BD
 
 ## CWE-598: Use of GET Request Method With Sensitive Query Strings + CWE-200: Exposure of Sensitive Information to an Unauthorized Actor (Artur)
--DONE
+-**DONE**
 
 ## CWE-307: Improper Restriction of Excessive Authentication Attempts (Daniel)
 - Versão Segura
-    - Bloquear login após 3 tentativas de password erradas (Procurar qual a CWE)
+    - Bloquear login após 5 tentativas de password erradas 
 
 ## CWE-552: Files or Directories Accessible to External Parties (Artur)
 - Ambas

@@ -13,15 +13,15 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    #user="daniel",
-    #password="8495",
-    #database="eHealthCorp",
+    user="daniel",
+    password="8495",
+    database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    user='andre',
-    password='Password123#@!',
-    database='db2',
+    #user='andre',
+    #password='Password123#@!',
+    #database='db2',
 )
 
 '''
@@ -227,6 +227,7 @@ def patient_prescription_details():
 
         if len(prescription) == 0:
             flash("There is no prescription with that code")
+            cursor.close()
             return redirect(url_for("logged"))
 
         for (Code, ID_Pac, Data, Cod_Medic) in prescription:
@@ -263,6 +264,7 @@ def patient_exam_details():
 
         if len(exam) == 0:
             flash("That exam code is not associated with your account!")
+            cursor.close()
             return redirect(url_for("logged"))
 
         params_dict = {

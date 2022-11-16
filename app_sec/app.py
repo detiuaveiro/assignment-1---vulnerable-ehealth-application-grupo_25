@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 import random
 import string
 import mysql.connector
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
@@ -9,12 +10,12 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    port=3306,
-    user="root",
-    password="1904",
+    #port=3306,
+    #user="root",
+    #password="1904",
     get_warnings=True,
-    #user="daniel",
-    #password="8495",
+    user="daniel",
+    password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
@@ -51,18 +52,71 @@ def login():
         # Buscar email e pass à base de dados
         cursor = db.cursor()
 
-        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email = %s AND Password = %s", (params_dict["email"], params_dict["password"]))
+        cursor.execute("SELECT Utilizador.ID, Email, Password, Num_Tentativas, Ult_tentativa FROM Utilizador JOIN Login_Attempts LA on Utilizador.ID = LA.ID WHERE Email = %s", (params_dict["email"],))
         user_data = cursor.fetchone()
+        ID = user_data[0]
+        email = user_data[1]
+        password = user_data[2]
+        attempts = user_data[3]
+        last_attempt = user_data[4]
 
         if user_data is None:
-            flash("Email or password incorrect")
+            flash("Email incorrect!")
             cursor.close()
             return redirect(url_for('login'))
+        elif password != params_dict["password"]:
+            ## Password errada
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            if attempts < 3:
+                rem = 5 - (attempts + 1)
+                flash(f'Password is incorrect! You have {rem} attempts remaining.')
+
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE ID=%s'''
+                               , (attempts+1, current_time, ID))
+                db.commit()
+
+                cursor.close()
+                return redirect(url_for('login'))
+            elif attempts == 3:
+                flash('Password is incorrect! This is your last login attempt before you are blocked for 5 minutes!')
+
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE ID=%s'''
+                               , (attempts + 1, current_time, ID))
+                db.commit()
+
+                cursor.close()
+                return redirect(url_for('login'))
+            else:
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE ID=%s'''
+                               , (attempts + 1, current_time, ID))
+                db.commit()
+
+                flash('You will not be able to attempt a login into this profile for the next minute.')
+                cursor.close()
+
+                return redirect(url_for('login'))
+
         else:
-            params_dict["id"] = user_data[0]
+            params_dict["id"] = ID
 
             session['user_id'] = params_dict["id"]
-            session['email'] = user_data[1]
+            session['email'] = email
+
+            # Verificar se número de tentativas foi ultrapassado
+            duration = datetime.now() - last_attempt
+            duration_in_min = divmod(duration.total_seconds(), 60)[0]
+
+
+            if attempts >= 4 and duration_in_min < 1:
+                flash(f'You will not be able to attempt a login into this profile for the next minute.')
+                cursor.close()
+                return redirect(url_for('login'))
+
+            cursor = db.cursor()
+            cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s WHERE ID=%s'''
+                           , (0, ID))
+            db.commit()
 
             # Verificar se é médico ou paciente e redirecionar para a página correta
             cursor.execute("SELECT ID FROM Medico WHERE ID = %s", (params_dict["id"],))
@@ -235,7 +289,7 @@ def patient_prescription_details():
         prescription = cursor.fetchall()
 
         if len(prescription) == 0:
-            flash("There is no prescription with that code")
+            flash("You don't have access to a prescription with that code!")
             return redirect(url_for("logged"))
 
         for (Code, ID_Pac, Data, Cod_Medic) in prescription:
@@ -267,11 +321,19 @@ def patient_exam_details():
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s", (exam_code, ))
         exam = cursor.fetchall()
-        cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s", (exam_code, ))
-        User = cursor.fetchone()
 
         if len(exam) == 0:
-            flash("That exam code is not associated with your account!")
+            flash("You don't have access to an exam with that code!")
+            cursor.close()
+            return redirect(url_for("logged"))
+
+        cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac "
+                       "WHERE A.Codigo = %s AND Id_Pac = %s ", (exam_code,session['user_id'] ))
+        User = cursor.fetchone()
+
+        if User is None:
+            flash("You don't have access to an exam with that code!")
+            cursor.close()
             return redirect(url_for("logged"))
 
         params_dict = {
