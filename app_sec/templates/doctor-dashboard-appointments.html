@@ -76,7 +76,10 @@
                     </div>
                   </td>
                     <td class="align-middle text-center text-sm">
-                            <a href={{ url_for('doctor_dashboard_appointment_info', **appointment.id) }}><i class="fa fa-search"></i></a>
+                      <form action="{{url_for('doctor_dashboard_appointment_info')}}" method="POST">
+                        <input type="hidden" name="appointment_id" value="{{ appointment.id._id }}">
+                        <button type="submit" class="fa fa-search"></button>
+                      <form>
                     </td>
                 </tr>
               {% endfor %}

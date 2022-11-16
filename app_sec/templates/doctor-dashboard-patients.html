@@ -61,7 +61,10 @@
                   <span class="text-xs font-weight-bold"> {{ patient.last_appointment }} </span>
                 </td>
                   <td class="align-middle text-center text-sm">
-                          <a href={{ url_for('doctor_dashboard_patient_info', **patient.id) }}><i class="fa fa-search"></i></a>
+                      <form action="{{url_for('doctor_dashboard_patient_info')}}" method="POST">
+                        <input type="hidden" name="patient_id" value="{{ patient.id._id }}">
+                        <button type="submit" class="fa fa-search"></button>
+                      <form>
                   </td>
               </tr>
             {% endfor %}
