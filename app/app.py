@@ -15,13 +15,13 @@ db = mysql.connector.connect(
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    #database="eHealthCorp",
-    #user="bruna",
-    #password="12345678",
+    database="eHealthCorp",
+    user="bruna",
+    password="12345678",
     #database="sio_db"
-    user='andre',
-    password='Password123#@!',
-    database='db2',
+    #user='andre',
+    #password='Password123#@!',
+    #database='db2',
 )
 
 '''
@@ -52,7 +52,10 @@ def login():
         cursor = db.cursor(buffered=True)
         print(params_dict["email"])
         print(params_dict["password"])
-        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" + str(params_dict["email"]) + "' AND Password='" + str(params_dict["password"]) + "'")
+        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" \
+            + str(params_dict["email"]) + \
+            "' AND Password='" \
+            + str(params_dict["password"]) + "'")
         user_data = cursor.fetchone()
         print(user_data)
         if user_data is None:
@@ -64,7 +67,7 @@ def login():
 
             session['user_id'] = params_dict["id"]
             session['email'] = user_data[1]
-            print("We are are in.")
+            print("We are in.")
             print(params_dict["id"])
             # Verificar se é médico ou paciente e redirecionar para a página correta
             cursor.execute("SELECT ID FROM Medico WHERE ID = " + str(params_dict["id"]))
