@@ -9,19 +9,19 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3306,
-    #user="root",
-    #password="1904",
+    port=3306,
+    user="root",
+    password="1904",
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    #database="eHealthCorp",
+    database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    user='andre',
-    password='Password123#@!',
-    database='db2',
+    #user='andre',
+    #password='Password123#@!',
+    #database='db2',
 )
 
 '''
@@ -454,8 +454,8 @@ def doctor_dashboard_patients():
                     {"name": Nome, "niss": Num_Utente, "id": {"_id": ID_Pac}, "last_appointment": "17/4/2019"})
                 params_dict["total_patients"] += 1
         else:
-            flash("No results found")
-            return redirect(url_for("doctor_dashboard_patients"))
+            error = "No result for %s" % request.form["filter"]
+            return render_template('doctor-dashboard-patients.html', params=params_dict, error=error)
 
         cursor.close()
 
@@ -544,8 +544,8 @@ def doctor_dashboard_appointments():
 
         if len(pacientes) == 0:
             cursor.close()
-            flash("No results found")
-            return redirect(url_for("doctor_dashboard_appointments"))
+            error = "No result for %s" % request.form["filter"]
+            return render_template('doctor-dashboard-appointments.html', params=params_dict, error=error)
 
         for (ID_Pac, Nome) in pacientes:
             cursor.execute("SELECT Num_Cons, Nome, Data "
@@ -647,8 +647,8 @@ def doctor_dashboard_exams():
 
         if len(exams) == 0:
             cursor.close()
-            flash("No results found")
-            return redirect(url_for("doctor_dashboard_exams"))
+            error = "No result for %s" % request.form["filter"]
+            return render_template('doctor-dashboard-exams.html', params=params_dict, error=error)
 
         for (Code, ID_Med, ID_Pac, Emi, Val, Nome) in exams:
             if ID_Med != doctor_id:
