@@ -47,12 +47,15 @@ def login():
     if request.method == 'GET' and len(request.args) > 0:
         params_dict["email"] = request.args['email']
         params_dict["password"] = request.args['password']
-        print(params_dict)
+
         # Buscar email e pass à base de dados
         cursor = db.cursor(buffered=True)
         print(params_dict["email"])
         print(params_dict["password"])
-        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" + str(params_dict["email"]) + "' AND Password='" + str(params_dict["password"]) + "'")
+        cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" \
+            + str(params_dict["email"]) + \
+            "' AND Password='" \
+            + str(params_dict["password"]) + "'")
         user_data = cursor.fetchone()
         print(user_data)
         if user_data is None:
@@ -64,7 +67,7 @@ def login():
 
             session['user_id'] = params_dict["id"]
             session['email'] = user_data[1]
-            print("We are are in.")
+            print("We are in.")
             print(params_dict["id"])
             # Verificar se é médico ou paciente e redirecionar para a página correta
             cursor.execute("SELECT ID FROM Medico WHERE ID = " + str(params_dict["id"]))
@@ -236,6 +239,7 @@ def patient_prescription_details():
 
         if len(prescription) == 0:
             flash("There is no prescription with that code")
+            cursor.close()
             return redirect(url_for("logged"))
 
         for (Code, ID_Pac, Data, Cod_Medic) in prescription:
@@ -272,6 +276,7 @@ def patient_exam_details():
 
         if len(exam) == 0:
             flash("That exam code is not associated with your account!")
+            cursor.close()
             return redirect(url_for("logged"))
 
         params_dict = {
