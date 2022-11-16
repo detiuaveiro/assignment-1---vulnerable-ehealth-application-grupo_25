@@ -147,10 +147,7 @@ def reviews():
             return redirect(url_for("reviews"))
         else:
             cursor = db.cursor()
-            cursor.execute('''
-                INSERT INTO Comentario (Autor, Texto) 
-                VALUES (%s, %s)''',
-                           (name, review))
+            cursor.execute("INSERT INTO Comentario (Autor, Texto) VALUES ('" + str(name) + "', '" + str(review) + "')")
             db.commit()
             cursor.close()
             flash("Review posted successfully")
@@ -187,19 +184,19 @@ def logged():
         } 
 
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM  Pac_User_View WHERE ID = %s", (session.get('user_id'),))
+        cursor.execute("SELECT * FROM  Pac_User_View WHERE ID =" + str(session.get('user_id')))
         ctx['pacient_info'] = cursor.fetchone()
 
-        cursor.execute("SELECT * FROM Consulta WHERE ID_Pac = %s AND Data >= %s", (session.get('user_id'), todays_date[0]))
+        cursor.execute("SELECT * FROM Consulta WHERE ID_Pac =" + str(session.get('user_id')) + " AND Data >= '" + str(todays_date[0]) + "'")
         appointment_db_data = cursor.fetchall() 
         print(appointment_db_data)
         for appointment in appointment_db_data:
             medic_id = appointment[1]
-            cursor.execute("SELECT Nome, Cod_Esp FROM Med_User_View WHERE ID = %s", (medic_id,))
+            cursor.execute("SELECT Nome, Cod_Esp FROM Med_User_View WHERE ID =" + str(medic_id))
             medic_data = cursor.fetchone()
             nome_medico = medic_data[0]
             cod_esp = medic_data[1]
-            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo = %s", (cod_esp,))
+            cursor.execute("SELECT Nome FROM Especialidade WHERE Codigo ='" + str(cod_esp) + "'")
             especialidade = cursor.fetchone()[0]
             datetime = str(appointment[4])
             data = datetime.split(" ")[0]
@@ -224,7 +221,7 @@ def patient_prescription_details():
         pharmaceuticals = []
 
         cursor = db.cursor()
-        cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (prescription_code,))
+        cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = '" + str(prescription_code) + "'")
 
         prescription = cursor.fetchall()
 
@@ -234,11 +231,11 @@ def patient_prescription_details():
 
         for (Code, ID_Pac, Data, Cod_Medic) in prescription:
             # Buscar o nome do Paciente
-            cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = %s", (ID_Pac, ))
+            cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = " + str(ID_Pac))
             name = cursor.fetchone()
 
             # Buscar os Faramacêuticos
-            cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = %s", (Cod_Medic, ))
+            cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = " + str(Cod_Medic))
             pharma = cursor.fetchone()
 
             pharmaceuticals.append(pharma[0])
@@ -259,9 +256,9 @@ def patient_exam_details():
     if request.method == 'POST':
         exam_code = request.form["exam_code"]
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s", (exam_code, ))
+        cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = '" + str(exam_code) + "'")
         exam = cursor.fetchall()
-        cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s", (exam_code, ))
+        cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = '" + str(exam_code) + "'")
         User = cursor.fetchone()
 
         if len(exam) == 0:
@@ -322,13 +319,10 @@ def appointment():
             pacient_id = session["user_id"]
             query_date = str(date) + " " +  str(hour)
 
-            cursor.execute("SELECT Cod_Esp FROM Medico JOIN Especialidade E on E.Codigo = Medico.Cod_Esp WHERE ID=%s", (id_medico, ))
+            cursor.execute("SELECT Cod_Esp FROM Medico JOIN Especialidade E on E.Codigo = Medico.Cod_Esp WHERE ID=" + str(id_medico))
             cod_esp = cursor.fetchone()
 
-            cursor.execute('''
-                        INSERT INTO Consulta (ID_Med, ID_Pac, Cod_Esp, Data) 
-                        VALUES (%s, %s, %s, %s)''',
-                           (id_medico, pacient_id, cod_esp[0], query_date))
+            cursor.execute("INSERT INTO Consulta (ID_Med, ID_Pac, Cod_Esp, Data) VALUES (" + str(id_medico) + ", " + str(pacient_id) + ", " + str(cod_esp[0]) + ", '" +  str(query_date) + "')")
             db.commit()
             cursor.close()
             flash("Appointment scheduled successfully!")
@@ -348,12 +342,12 @@ def doctor_dashboard():
     doctor_id = session["user_id"]
     cursor = db.cursor()
 
-    cursor.execute("SELECT Nome FROM Utilizador WHERE ID=%s", (doctor_id,))
+    cursor.execute("SELECT Nome FROM Utilizador WHERE ID=" + str(doctor_id))
     params_dict['doctor_name'] = cursor.fetchone()[0]
 
     cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
                    "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
-                   "WHERE ID_Med = %s AND Data BETWEEN %s AND %s", (doctor_id, todays_date[0], todays_date[1]))
+                   "WHERE ID_Med = " + str(doctor_id) + " AND Data BETWEEN '" + str(todays_date[0]) + "' AND '" + str(todays_date[1]) + "'")
 
     consultas = cursor.fetchall()
     params_dict['total_todays_appointments'] = 0
@@ -364,7 +358,7 @@ def doctor_dashboard():
         dia, hora = str(Data).split(" ")
 
         # Buscar info do Nome do Paciente à tabela de Utilizadores
-        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=" + str(ID_Pac))
         name = cursor.fetchone()
 
         # Adicionar info ao params_dict
@@ -375,9 +369,7 @@ def doctor_dashboard():
 
         params_dict['next_appointment'] = params_dict['todays_appointments'][0]
 
-    cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
-                   "ON Prescricao.Num_Consulta = C.Num_Cons "
-                   "WHERE C.ID_Med=%s AND Data BETWEEN %s AND %s", (doctor_id, todays_date[0], todays_date[1], ))
+    cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C ON Prescricao.Num_Consulta = C.Num_Cons WHERE C.ID_Med=" + str(doctor_id) + " AND Data BETWEEN '" + str(todays_date[0]) + "' AND '" + str(todays_date[1]) + "'")
 
     prescriptions = cursor.fetchall()
     params_dict["prescriptions"] = []
@@ -390,7 +382,7 @@ def doctor_dashboard():
         dia, hora = str(Data).split(" ")
 
         # Buscar info do Nome do Paciente à tabela de Utilizadores
-        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+        cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=" + str(ID_Pac))
         name = cursor.fetchone()
 
         # Adicionar info ao params_dict
@@ -414,26 +406,27 @@ def doctor_dashboard_patients():
 
     if request.method == "GET":
         cursor = db.cursor()
-        cursor.execute("SELECT ID_Pac FROM Med_Pac WHERE ID_Med=%s", (doctor_id,))
+        cursor.execute("SELECT ID_Pac FROM Med_Pac WHERE ID_Med=" + str(doctor_id))
 
         patients_id = cursor.fetchall()
 
-        for (ID_Pac) in patients_id:
-            cursor.execute("SELECT U.ID, Nome, Num_Utente "
-                                 "FROM (Paciente JOIN Utilizador U on U.ID = Paciente.ID) "
-                                 "WHERE U.ID=%s LIMIT 1", tuple(ID_Pac))
+        for ID_Pac in patients_id:
+            print("SELECT U.ID, Nome, Num_Utente FROM (Paciente JOIN Utilizador U on U.ID = Paciente.ID) WHERE U.ID=" + str(ID_Pac[0]) + " LIMIT 1")
+
+            cursor.execute("SELECT U.ID, Nome, Num_Utente FROM (Paciente JOIN Utilizador U on U.ID = Paciente.ID) WHERE U.ID=" + str(ID_Pac[0]) + " LIMIT 1")
 
             patient = cursor.fetchone()
-
-            cursor.execute("SELECT Data FROM Consulta WHERE ID_Pac=%s ORDER BY Data LIMIT 1", tuple(ID_Pac))
+            print(patient)
+            cursor.execute("SELECT Data FROM Consulta WHERE ID_Pac=" + str(ID_Pac[0]) + " ORDER BY Data LIMIT 1")
 
             data = cursor.fetchone()
-
+            print(data)
             if data is not None:
                 last_appointment = data[0]
             else:
                 last_appointment = "Nenhum"
 
+            print(last_appointment)
             # Adicionar info ao params_dict
             params_dict["patients"].append({"name": patient[1], "niss": patient[-1], "id": {"_id": ID_Pac[0]}, "last_appointment": last_appointment})
             params_dict["total_patients"] += 1
@@ -444,7 +437,7 @@ def doctor_dashboard_patients():
         filter = "%" + request.form["filter"] + "%"
 
         cursor = db.cursor()
-        cursor.execute("SELECT ID_Pac, Nome, Num_Utente FROM Med_Pac JOIN Pac_User_View ON ID_Pac=ID WHERE ID_Med=%s AND Nome LIKE %s", (doctor_id, filter, ))
+        cursor.execute("SELECT ID_Pac, Nome, Num_Utente FROM Med_Pac JOIN Pac_User_View ON ID_Pac=ID WHERE ID_Med=" + str(doctor_id) + " AND Nome LIKE '" + str(filter) + "'")
 
         patients = cursor.fetchall()
 
@@ -472,7 +465,7 @@ def doctor_dashboard_patient_info(_id):
     # Get personal info about the patient
     cursor = db.cursor()
     cursor.execute("SELECT Num_Utente, Nome, Email, Tel, Idade, Morada, NIF FROM Paciente JOIN Utilizador U "
-                   "on Paciente.ID = U.ID WHERE Paciente.ID = %s", (_id, ))
+                   "on Paciente.ID = U.ID WHERE Paciente.ID =" + str(_id))
 
     patient = cursor.fetchone()
 
@@ -484,7 +477,7 @@ def doctor_dashboard_patient_info(_id):
     diseases = []
 
     cursor.execute("SELECT Nome FROM Diagnostico JOIN Doenca D "
-                   "on D.Codigo = Diagnostico.Cod_Doenca WHERE Id_Pac = %s", (_id, ))
+                   "on D.Codigo = Diagnostico.Cod_Doenca WHERE Id_Pac = " + str(_id))
 
     for Nome in cursor:
         diseases.append(Nome[0])
@@ -512,7 +505,7 @@ def doctor_dashboard_appointments():
         cursor = db.cursor()
         cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
                        "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
-                       "WHERE ID_Med = %s", (doctor_id, ))
+                       "WHERE ID_Med = " + str(doctor_id))
 
         consultas = cursor.fetchall()
 
@@ -523,7 +516,7 @@ def doctor_dashboard_appointments():
             # Buscar info do Nome do Paciente à tabela de Utilizadores
             cursor = db.cursor()
 
-            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=" + str(ID_Pac))
             name = cursor.fetchone()
 
             # Adicionar info ao params_dict
@@ -537,8 +530,7 @@ def doctor_dashboard_appointments():
 
         cursor = db.cursor()
         cursor.execute(
-            "SELECT ID_Pac, Nome FROM Med_Pac JOIN Pac_User_View ON ID_Pac=ID WHERE ID_Med=%s AND Nome LIKE %s",
-            (doctor_id, filter,))
+            "SELECT ID_Pac, Nome FROM Med_Pac JOIN Pac_User_View ON ID_Pac=ID WHERE ID_Med=" + str(doctor_id) + " AND Nome LIKE '" + str(filter) + "'")
 
         pacientes = cursor.fetchall()
 
@@ -550,7 +542,7 @@ def doctor_dashboard_appointments():
         for (ID_Pac, Nome) in pacientes:
             cursor.execute("SELECT Num_Cons, Nome, Data "
                            "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
-                           "WHERE ID_Med = %s AND ID_Pac=%s", (doctor_id, ID_Pac, ))
+                           "WHERE ID_Med = " + str(doctor_id) + " AND ID_Pac=" + str(ID_Pac))
 
             consultas = cursor.fetchall()
 
@@ -584,16 +576,16 @@ def doctor_dashboard_appointment_info(_id):
 
     cursor = db.cursor()
     cursor.execute("SELECT Num_Cons, ID_Med, ID_Pac, Nome, Data "
-                   "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo WHERE Num_Cons = %s", (_id, ))
+                   "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo WHERE Num_Cons =" + str(_id))
 
     dados_consulta = cursor.fetchone()
 
     ## Buscar nome do Médico e do Paciente
 
-    cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID=%s", (dados_consulta[2], ))
+    cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID=" + str(dados_consulta[2]))
     nome_paciente = cursor.fetchone()
 
-    cursor.execute("SELECT Nome FROM Med_User_View WHERE ID=%s", (dados_consulta[1],))
+    cursor.execute("SELECT Nome FROM Med_User_View WHERE ID=" + str(dados_consulta[1]))
     nome_medico = cursor.fetchone()
 
     # Separar Data da Hora
@@ -625,7 +617,7 @@ def doctor_dashboard_exams():
                 continue
 
             # Buscar info do Nome do Paciente à tabela de Utilizadores
-            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=" +str(ID_Pac))
             name = cursor.fetchone()
 
             # Adicionar info ao params_dict
@@ -641,7 +633,7 @@ def doctor_dashboard_exams():
         cursor.execute("SELECT Codigo, ID_Med, MP.ID_Pac, Data_Emi, Data_Val, Nome FROM "
                        "(Analise JOIN Med_Pac MP on Analise.Id_Pac = MP.ID_Pac)"
                        "JOIN Pac_User_View ON MP.ID_Pac = ID "
-                       "WHERE Nome LIKE %s ",(filter, ))
+                       "WHERE Nome LIKE '" + str(filter) + "'")
 
         exams = cursor.fetchall()
 
@@ -677,11 +669,9 @@ def doctor_dashboard_exam_info(_id):
 
     exam_code = _id
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s",
-                   (exam_code,))
+    cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = '" + str(exam_code) + "'")
     exam = cursor.fetchall()
-    cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s",
-                   (exam_code,))
+    cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = '" + str(exam_code) + "'")
     User = cursor.fetchone()
 
     params_dict = {
@@ -713,7 +703,7 @@ def doctor_dashboard_prescriptions():
         cursor = db.cursor()
         cursor.execute("SELECT Code, Data, ID_Pac FROM Prescricao JOIN Consulta C "
                        "ON Prescricao.Num_Consulta = C.Num_Cons "
-                       "WHERE C.ID_Med=%s", (doctor_id,))
+                       "WHERE C.ID_Med=" + str(doctor_id))
 
         prescriptions = cursor.fetchall()
 
@@ -729,7 +719,7 @@ def doctor_dashboard_prescriptions():
             # Buscar info do Nome do Paciente à tabela de Utilizadores
             cursor = db.cursor()
 
-            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=%s", (ID_Pac,))
+            cursor.execute("SELECT Nome FROM Paciente JOIN Utilizador U on U.ID = Paciente.ID WHERE U.ID=" + str(ID_Pac))
             name = cursor.fetchone()
 
             # Adicionar info ao params_dict
@@ -748,21 +738,20 @@ def doctor_dashboard_prescription_info(_id):
         flash("You must login to access this page!")
         return redirect(url_for('login'))
 
-    print(_id)
     pharmaceuticals = []
 
     cursor = db.cursor()
-    cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = %s", (_id, ))
+    cursor.execute("SELECT Code, ID_Pac, Data, Cod_Medic FROM Prescricao JOIN Consulta C on C.Num_Cons = Prescricao.Num_Consulta WHERE Code = '" + str(_id) + "'")
 
     prescription = cursor.fetchall()
 
     for (Code, ID_Pac, Data, Cod_Medic) in prescription:
         # Buscar o nome do Paciente
-        cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = %s", (ID_Pac, ))
+        cursor.execute("SELECT Nome FROM Pac_User_View WHERE ID = " + str(ID_Pac))
         name = cursor.fetchone()
 
         # Buscar os Faramacêuticos
-        cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = %s", (Cod_Medic, ))
+        cursor.execute("SELECT Nome FROM Medicamento WHERE Codigo = " + str(Cod_Medic))
         pharma = cursor.fetchone()
 
         pharmaceuticals.append(pharma[0])
@@ -793,10 +782,7 @@ def doctor_dashboard_prescription_form():
         else:
             cursor = db.cursor()
             for id_medicamento in id_medicamentos:
-                cursor.execute('''
-                    INSERT INTO Prescricao (Cod_Medic, Num_Consulta, Id_Med, Code) 
-                    VALUES (%s, %s, %s, %s)''', 
-                    (id_medicamento, appointment_id, id_medico, prescription_code))
+                cursor.execute("INSERT INTO Prescricao (Cod_Medic, Num_Consulta, Id_Med, Code) VALUES (" + str(id_medicamento) + ", " + str(appointment_id) + ", " + str(id_medico) + ", '" + str(prescription_code) + "')")
             db.commit()
             cursor.close()
             flash("Prescription created successfully")
@@ -818,7 +804,7 @@ def doctor_dashboard_prescription_form():
 
         cursor.execute("SELECT Num_Cons, ID_Pac, Nome, Data "
                        "FROM Consulta JOIN Especialidade ON Cod_Esp=Especialidade.Codigo "
-                       "WHERE ID_Med = %s", (doctor_id,))
+                       "WHERE ID_Med =" + str(doctor_id))
 
         consultas = cursor.fetchall()
         cursor.close()
@@ -856,20 +842,16 @@ def admin():
                 flash("Please fill all the fields")
                 return redirect(url_for("admin"))
             else:
-                cursor.execute('''
-                    INSERT INTO Utilizador (ID, Nome, Email, Tel, Password, Idade, Morada, NIF) 
-                        VALUES (NULL, %s, %s, %s, %s, %s, %s, %s)''', (nome, email, tel, password, idade, morada, nif,))
+                cursor.execute("INSERT INTO Utilizador (ID, Nome, Email, Tel, Password, Idade, Morada, NIF) VALUES (NULL, '" + str(nome) + "', '" + str(email) + "', '" + str(tel) + "', '" + str(password) + "', " + str(idade) + ", '" + str(morada) + "', '" + str(nif) + "')")
                 db.commit()
-                cursor.execute('''
-                    INSERT INTO Medico (ID, Num_Medico, Cod_Esp) 
-                        VALUES (NULL, %s, %s)''', (num_medic, cod_esp,))
+                cursor.execute("INSERT INTO Medico (ID, Num_Medico, Cod_Esp) VALUES (NULL, " + str(num_medic) + ", " + str(cod_esp) + ")")
                 db.commit()
                 print(request.form)
                 print(request.args.get('form_id', 1, type=int))
                 return redirect(url_for('admin'))
         elif form_id == 2:
             medic_id = request.form.get('medic_id')
-            cursor.execute('''DELETE FROM Medico WHERE ID=%s''', (medic_id,))
+            cursor.execute("DELETE FROM Medico WHERE ID=" + str(medic_id))
             db.commit()
             return redirect(url_for('admin'))
         elif form_id == 3:
