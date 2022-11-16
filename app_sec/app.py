@@ -7,7 +7,7 @@ import mysql.connector
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
-app.config['UPLOAD_FOLDER'] = '/static/'
+app.config['UPLOAD_FOLDER'] = 'exams'
 
 
 db = mysql.connector.connect(
@@ -284,7 +284,7 @@ def patient_exam_details():
     if request.method == 'POST':
         exam_code = request.form["exam_code"]
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s", (exam_code, ))
+        cursor.execute("SELECT * FROM Analise AS A JOIN Teste AS T ON A.Codigo = T.Cod_Anal WHERE A.Codigo = %s AND A.ID_Pac = %s", (exam_code, session['user_id'], ))
         exam = cursor.fetchall()
         cursor.execute("SELECT Nome FROM Pac_User_View AS P JOIN Analise A ON P.ID = A.Id_Pac WHERE A.Codigo = %s", (exam_code, ))
         User = cursor.fetchone()
@@ -924,10 +924,14 @@ def admin():
 
 @app.route('/download/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
-    print(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    uploads = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    return send_from_directory(directory='static', path=filename, as_attachment=True)
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Analise WHERE Codigo = %s AND ID_Pac = %s", (filename, session['user_id'], ))
+    exam = cursor.fetchall()
+    if len(exam) == 0:
+        flash("That exam code is not associated with your account!")
+        return redirect(url_for("logged")) 
 
+    return send_from_directory(directory=app.config['UPLOAD_FOLDER'], path=filename, as_attachment=True)
 
 # Auxilliary Functions
 def get_random_code():

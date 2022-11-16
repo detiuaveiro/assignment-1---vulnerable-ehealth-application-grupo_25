@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, send_file
 import random
 import string
 import mysql.connector
@@ -9,19 +9,19 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3306,
-    #user="root",
-    #password="1904",
+    port=3306,
+    user="root",
+    password="1904",
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    #database="eHealthCorp",
+    database="eHealthCorp",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
-    user='andre',
-    password='Password123#@!',
-    database='db2',
+    #user='andre',
+    #password='Password123#@!',
+    #database='db2',
 )
 
 '''
@@ -880,6 +880,11 @@ def admin():
             dict_params['espec'].append(especialidade)
         print(dict_params['espec'])
     return render_template('admin-dashboard.html', params=dict_params)
+
+@app.route('/download/<path:path>', methods=['GET', 'POST'])
+def download(path):
+    return send_file(path, as_attachment=True)
+
 
 # Auxilliary Functions
 def get_random_code():

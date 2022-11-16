@@ -26,6 +26,7 @@
     - Bloquear login após 3 tentativas de password erradas (Procurar qual a CWE)
 
 ## CWE-552: Files or Directories Accessible to External Parties (Artur)
+DONE
 - Ambas
     - Botão HTML para fazer download de Exames
     - Função para criar .txt (num caminho separado)

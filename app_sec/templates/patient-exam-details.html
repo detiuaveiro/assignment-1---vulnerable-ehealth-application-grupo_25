@@ -9,6 +9,9 @@
               <div class="row">
                 <div class="col-12">
                   <h2>Exam Details</h2>
+                  <form action="{{url_for('download', filename=params.Codigo)}}" type="GET">
+                        <button class="btn btn-primary">Download</button>
+                  </form>
                     <div class="row">
                         <div class="col-12">
                             <h5>ID<p>{{ params.Codigo }}</p></h5>
