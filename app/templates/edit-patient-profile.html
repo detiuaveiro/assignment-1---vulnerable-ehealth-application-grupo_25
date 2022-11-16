@@ -1,0 +1,144 @@
+<!--
+=========================================================
+* Soft UI Dashboard - v1.0.6
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard
+* Copyright 2022 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="../static/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="../static/img/favicon.png">
+  <title>
+    User Dashboard
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nucleo-icons.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nucleo-svg.css') }}"/>
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- CSS Files -->
+    <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='css/soft-ui-dashboard.css') }}" />
+    <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='style.css') }}" />
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  </head>
+
+<body class="g-sidenav-show  bg-gray-100">
+  {% include 'navbar-logged.html' %}
+  <main class="main-content position-relative max-height-vh-100 border-radius-lg ">
+    {% for message in get_flashed_messages() %}
+      <div class="alert alert-danger alert-dismissible">
+          {{ message }}
+      </div>
+    {% endfor %}
+    <div class="col-12 py-4">
+      <div class="col-12 py-4">
+      <div class="row mt-4">
+        <div class="col-12 mb-lg-0 mb-4 center_op">
+          <div class="card overflow-hidden position-relative border-radius-lg h-100 col-12 center_op">
+            <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3 col-8">
+              <div class="row">
+                <div class="d-flex flex-column h-100">
+                    <h5 class="pl-4 font-weight-bolder pb-2" style="text-align: center">Edit profile</h5>
+                    <form class="col-12">
+                        <div class="form-container">
+                            <div class="col-12">
+                            <label class="form-labelca" for="name" id="labelca"><b>Name</b></label>
+                            <input class="form-inputca" type="text" value="{{ ctx.pacient_info[1]}}" name="name" required>
+                        </div>
+                            <div class="col-12">
+                            <label class="form-labelca" for="age" id="labelca"><b>Age</b></label>
+                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[5]}}" name="age" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="email" id="labelca"><b>E-mail</b></label>
+                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[2]}}" name="email" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="utente" id="labelca"><b>Nr utente:</b></label>
+                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[-1]}}" name="utente" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="nif" id="labelca"><b>NIF</b></label>
+                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[-2]}}" name="nif" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="tel" id="labelca"><b>Phone: </b></label>
+                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[3]}}" name="tel">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="morada" id="labelca"><b>Address: </b></label>
+                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[6]}}" name="morada">
+                        </div>
+                            <div class="col-12">
+                            <label class="form-labelca" for="morada" id="labelca"><b>Change photo: </b></label>
+                            <input class="form-inputca" type="file" value="{{ctx.pacient_info[6]}}" name="morada">
+                        </div>
+                            <div class="col-12">
+                                <h4 style="text-align: center">Change password</h4>
+                            </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="psw" id="labelca"><b>New password</b></label>
+                            <input class="form-inputca" id="inputca" type="password" placeholder="Password" name="psw" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-labelca" for="psw" id="labelca"><b>Confirm password</b></label>
+                            <input class="form-inputca" type="password" placeholder="Password" name="pswc" required>
+                        </div>
+                            <div class="col-12 butaoc">
+                        <div class="button-containerc">
+                            <button class="login-button" type="submit">Change password</button>
+                        </div>
+                        </div>
+                            <div class="col-12 butaoc center_op">
+                        <div class="button-containerc">
+                            <button class="login-button" type="submit">Update profile</button>
+                        </div>
+                        </div>
+                    </div>
+                    </form>
+                  <p class="pl-4 text-white"><b>Name: </b>{{ctx.pacient_info[1]}}</p>
+                  <p class="pl-4 text-white"><b>Age: </b>{{ctx.pacient_info[5]}}</p>
+                  <p class="pl-4 text-white"><b>E-mail: </b>{{ctx.pacient_info[2]}}</p>
+                  <p class="pl-4 text-white"><b>NIF: </b>{{ctx.pacient_info[-2]}}</p>
+                  <p class="pl-4 text-white"><b>Nr utente: </b>{{ctx.pacient_info[-1]}}</p>
+                  <p class="pl-4 text-white"><b>Phone number: </b>{{ctx.pacient_info[3]}}</p>
+                  <p class="pl-4 text-white"><b>Address: </b>{{ctx.pacient_info[6]}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {% include 'footer.html' %}
+  </main>
+
+  <!--   Core JS Files   -->
+  <script src="../static/js/core/popper.min.js"></script>
+  <script src="../static/js/core/bootstrap.min.js"></script>
+  <script src="../static/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="../static/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="../static/js/plugins/chartjs.min.js"></script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../static/js/soft-ui-dashboard.min.js?v=1.0.6"></script>
+</body>

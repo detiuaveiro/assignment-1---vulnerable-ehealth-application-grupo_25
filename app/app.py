@@ -47,7 +47,7 @@ def login():
     if request.method == 'GET' and len(request.args) > 0:
         params_dict["email"] = request.args['email']
         params_dict["password"] = request.args['password']
-
+        print(params_dict)
         # Buscar email e pass à base de dados
         cursor = db.cursor(buffered=True)
         print(params_dict["email"])
@@ -209,6 +209,15 @@ def logged():
 
     return render_template('logged.html')
 
+@app.route('/logged/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    ctx = dict()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM  Pac_User_View WHERE ID =" + str(session.get('user_id')))
+    ctx['pacient_info'] = cursor.fetchone()
+    print(ctx['pacient_info'])
+    cursor.close()
+    return render_template('edit-patient-profile.html', ctx=ctx)
 
 @app.route('/patient-prescription-details', methods=['GET', 'POST'])
 def patient_prescription_details():
