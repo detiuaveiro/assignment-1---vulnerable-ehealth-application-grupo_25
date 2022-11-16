@@ -2,12 +2,12 @@
 --
 -- Host: 127.0.0.1    Database: eHealthCorp
 -- ------------------------------------------------------
--- Server version	8.0.31
+-- Server version	8.0.31-0ubuntu0.22.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -178,6 +178,29 @@ LOCK TABLES `Especialidade` WRITE;
 /*!40000 ALTER TABLE `Especialidade` DISABLE KEYS */;
 INSERT INTO `Especialidade` VALUES (1,'Medicina Interna'),(2,'Cardiologia'),(3,'Dermatologia'),(4,'Medicina Dentária'),(5,'Ortopedia');
 /*!40000 ALTER TABLE `Especialidade` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Login_Attempts`
+--
+
+DROP TABLE IF EXISTS `Login_Attempts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `Login_Attempts` (
+  `IP` varchar(100) NOT NULL,
+  `Num_Tentativas` int DEFAULT '0',
+  `Ult_tentativa` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Login_Attempts`
+--
+
+LOCK TABLES `Login_Attempts` WRITE;
+/*!40000 ALTER TABLE `Login_Attempts` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Login_Attempts` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -399,10 +422,11 @@ CREATE TABLE `Utilizador` (
   `Nome` varchar(100) NOT NULL,
   `Email` varchar(100) NOT NULL,
   `Tel` char(9) DEFAULT NULL,
-  `Password` varchar(100) NOT NULL,
+  `Password` varchar(150) NOT NULL,
   `Idade` int DEFAULT NULL,
   `Morada` varchar(100) DEFAULT NULL,
   `NIF` char(9) NOT NULL,
+  `Image_path` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -413,7 +437,7 @@ CREATE TABLE `Utilizador` (
 
 LOCK TABLES `Utilizador` WRITE;
 /*!40000 ALTER TABLE `Utilizador` DISABLE KEYS */;
-INSERT INTO `Utilizador` VALUES (1,'Artur Correia','art.afo@ua.pt','930577403','1904',20,'Quinta do Bosque, Lote 110, 2ºEsq','262190185'),(2,'Ana Filipa Gomes','afgomes@mail.pt',NULL,'1234',NULL,NULL,'112773456'),(3,'Daniel Carvalho','dl.carvalho@ua.pt','962368016','0000',25,'Sever do Vouga','222222222'),(4,'Andreia Soares','andreia@mail.pt','234555039','0000',27,'Porto','294953959'),(5,'Antero Lobo','lobao@mail.pt','934683895','1234',67,'Leiria','847294990');
+INSERT INTO `Utilizador` VALUES (1,'Artur Correia','art.afo@ua.pt','930577403','pbkdf2:sha256:260000$9LZDpzAPcCbAYFLO$165569c5876dcc098bac6a3cb27ca41db09d776148513020b669b6effb6cfa33',20,'Quinta do Bosque, Lote 110, 2ºEsq','262190185',NULL),(2,'Ana Filipa Gomes','afgomes@mail.pt',NULL,'pbkdf2:sha256:260000$NK60HwDwYykX1ERw$8bab0036dfca0d2899bd40f3fcb5e58f98c8979368bbaeb07ebe5d9d53a0a753',NULL,NULL,'112773456',NULL),(3,'Daniel Carvalho','dl.carvalho@ua.pt','962368016','pbkdf2:sha256:260000$F2MubtH4ht1oOZtB$2bf3436b5edd50ee4020b9ae9731fee7cbfa39f045c9e0c98352da82e2f9d553',25,'Sever do Vouga','222222222',NULL),(4,'Andreia Soares','andreia@mail.pt','234555039','pbkdf2:sha256:260000$F2MubtH4ht1oOZtB$2bf3436b5edd50ee4020b9ae9731fee7cbfa39f045c9e0c98352da82e2f9d553',27,'Porto','294953959',NULL),(5,'Antero Lobo','lobao@mail.pt','934683895','pbkdf2:sha256:260000$J0O9XNOsJ2qhZt7D$14ec859cd33c3f77a16070ace280fb783df007c7aa10c2729ec143a5a68149de',67,'Leiria','847294990',NULL);
 /*!40000 ALTER TABLE `Utilizador` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,6 +453,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`daniel`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `Med_User_View` AS select `U`.`ID` AS `ID`,`U`.`Nome` AS `Nome`,`U`.`Email` AS `Email`,`U`.`Tel` AS `Tel`,`U`.`Password` AS `Password`,`U`.`Idade` AS `Idade`,`U`.`Morada` AS `Morada`,`U`.`NIF` AS `NIF`,`M`.`Num_Medico` AS `Num_Medico`,`M`.`Cod_Esp` AS `Cod_Esp` from (`Medico` `M` join `Utilizador` `U` on((`M`.`ID` = `U`.`ID`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -446,6 +471,7 @@ UNLOCK TABLES;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`daniel`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `Pac_User_View` AS select `U`.`ID` AS `ID`,`U`.`Nome` AS `Nome`,`U`.`Email` AS `Email`,`U`.`Tel` AS `Tel`,`U`.`Password` AS `Password`,`U`.`Idade` AS `Idade`,`U`.`Morada` AS `Morada`,`U`.`NIF` AS `NIF`,`P`.`Num_Utente` AS `Num_Utente` from (`Paciente` `P` join `Utilizador` `U` on((`P`.`ID` = `U`.`ID`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
@@ -460,4 +486,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-15  0:48:14
+-- Dump completed on 2022-11-16 20:49:03

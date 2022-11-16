@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, send_from_directory
 import random
 import string
 import os
@@ -17,8 +17,8 @@ db = mysql.connector.connect(
     #user="root",
     #password="1904",
     get_warnings=True,
-    #user="daniel",
-    #password="8495",
+    user="daniel",
+    password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
@@ -32,10 +32,13 @@ db = mysql.connector.connect(
 Accounts:
 -> Médico: afgomes@mail.pt pass: 1234
 -> Paciente: art.afo@ua.pt pass: 1904
+-> Paciente: dl.carvalho@ua.pt pass: 0000
+-> Paciente: andreia@mail.pt pass: 0000
+-> Paciente: lobao@mail.pt pass: 1234
 '''
 
 todays_date = ("2022-11-15 00:00:00", "2022-11-15 23:59:59")
-
+print(generate_password_hash('0000'))
 
 # Index Pages
 @app.route('/')
@@ -52,31 +55,54 @@ def login():
         params_dict["email"] = request.form['email']
         params_dict["password"] = request.form['password']
 
-        # Buscar email e pass à base de dados
+        user_IP = request.remote_addr
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Verificar se o IP está bloqueado
         cursor = db.cursor()
 
-        cursor.execute("SELECT Utilizador.ID, Email, Password, Num_Tentativas, Ult_tentativa FROM Utilizador JOIN Login_Attempts LA on Utilizador.ID = LA.ID WHERE Email = %s", (params_dict["email"],))
+        cursor.execute("SELECT * FROM Login_Attempts WHERE IP=%s", (user_IP, ))
+        data = cursor.fetchone()
+
+        if data is not None:
+            # Caso o IP já tenha anteriormente errado nas credenciais de login
+            attempts = data[1]
+            last_attempt = data[2]
+
+            duration = datetime.now() - last_attempt
+            duration_in_min = divmod(duration.total_seconds(), 60)[0]
+
+            if attempts >= 5 and duration_in_min < 1:
+                flash('You will not be able to attempt a login into this profile for the next 5 minutes.')
+
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE IP=%s'''
+                               , (attempts + 1, current_time, user_IP))
+                db.commit()
+                cursor.close()
+                return redirect(url_for('login'))
+        else:
+            attempts = 0
+
+        cursor.execute("SELECT Utilizador.ID, Email, Password FROM Utilizador WHERE Email = %s", (params_dict["email"],))
         user_data = cursor.fetchone()
-        ID = user_data[0]
-        email = user_data[1]
-        password = user_data[2]
-        attempts = user_data[3]
-        last_attempt = user_data[4]
 
-        if user_data is None:
-            flash("Email incorrect!")
-            cursor.close()
-            return redirect(url_for('login'))
-        elif not check_password_hash(password, params_dict["password"]):
-            ## Password errada
-            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        if user_data is None or not check_password_hash(user_data[2], params_dict["password"]) :
+            # Caso o E-Mail ou a Pass estejam errados
+            if attempts == 0:
+                flash(f'Password is incorrect! You have 4 attempts remaining.')
 
-            if attempts < 3:
+                cursor.execute('''INSERT INTO Login_Attempts (IP, Num_Tentativas, Ult_tentativa) VALUES (%s, 1, %s)'''
+                               , (user_IP, current_time))
+                db.commit()
+
+                cursor.close()
+                return redirect(url_for('login'))
+            elif attempts < 3:
                 rem = 5 - (attempts + 1)
                 flash(f'Password is incorrect! You have {rem} attempts remaining.')
 
-                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE ID=%s'''
-                               , (attempts+1, current_time, ID))
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE IP=%s'''
+                               , (attempts+1, current_time, user_IP))
                 db.commit()
 
                 cursor.close()
@@ -84,55 +110,47 @@ def login():
             elif attempts == 3:
                 flash('Password is incorrect! This is your last login attempt before you are blocked for 5 minutes!')
 
-                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE ID=%s'''
-                               , (attempts + 1, current_time, ID))
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE IP=%s'''
+                               , (attempts + 1, current_time, user_IP))
                 db.commit()
 
                 cursor.close()
                 return redirect(url_for('login'))
             else:
-                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE ID=%s'''
-                               , (attempts + 1, current_time, ID))
+                cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE IP=%s'''
+                               , (attempts + 1, current_time, user_IP))
                 db.commit()
 
-                flash('You will not be able to attempt a login into this profile for the next minute.')
-                cursor.close()
-
+                flash('You will not be able to attempt a login into this profile for the next 5 minutes.')
                 return redirect(url_for('login'))
-
         else:
-            params_dict["id"] = ID
+            ID = user_data[0]
+            email = user_data[1]
 
-            session['user_id'] = params_dict["id"]
-            session['email'] = email
+        session['user_id'] = ID
+        session['email'] = email
 
-            # Verificar se número de tentativas foi ultrapassado
-            duration = datetime.now() - last_attempt
-            duration_in_min = divmod(duration.total_seconds(), 60)[0]
+        cursor.execute("SELECT * FROM Login_Attempts WHERE IP=%s", (user_IP,))
+        data = cursor.fetchone()
 
-
-            if attempts >= 4 and duration_in_min < 1:
-                flash(f'You will not be able to attempt a login into this profile for the next minute.')
-                cursor.close()
-                return redirect(url_for('login'))
-
-            cursor = db.cursor()
-            cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s WHERE ID=%s'''
-                           , (0, ID))
+        if data is not None:
+            # Caso o IP já tenha anteriormente errado nas credenciais de login
+            cursor.execute('''DELETE FROM Login_Attempts WHERE IP=%s'''
+                           ,  (user_IP, ))
             db.commit()
 
-            # Verificar se é médico ou paciente e redirecionar para a página correta
-            cursor.execute("SELECT ID FROM Medico WHERE ID = %s", (params_dict["id"],))
-            medico_data = cursor.fetchone()
+        # Verificar se é médico ou paciente e redirecionar para a página correta
+        cursor.execute("SELECT ID FROM Medico WHERE ID = %s", (ID,))
+        medico_data = cursor.fetchone()
 
-            if medico_data is None:
-                # É paciente
-                cursor.close()
-                return redirect(url_for('logged'))
-            else:
-                # É médico
-                cursor.close()
-                return redirect(url_for('doctor_dashboard'))
+        if medico_data is None:
+            # É paciente
+            cursor.close()
+            return redirect(url_for('logged'))
+        else:
+            # É médico
+            cursor.close()
+            return redirect(url_for('doctor_dashboard'))
             
     return render_template('login.html')
 
@@ -140,8 +158,7 @@ def login():
 @app.route('/logout')
 def logout():
     if session.get('user_id') is not None:
-        session.pop('user_id', None)
-        session.pop('email', None)
+        session.clear()
 
     return redirect(url_for('index'))
 
