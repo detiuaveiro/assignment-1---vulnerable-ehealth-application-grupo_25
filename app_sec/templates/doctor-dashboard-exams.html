@@ -71,8 +71,7 @@
                   </td>
                     <td class="align-middle text-center text-sm">
                       <form action="{{url_for('doctor_dashboard_exam_info')}}" method="POST">
-                        <input type="hidden" name="exam_code" value="{{ exam.code }}">
-                        <button type="submit" class="fa fa-search"></button>
+                        <button type="submit" class="fa fa-search" name="exam_code" value="{{ exam.code }}" id="{{ exam.code }}"></button>
                       <form>
                     </td>
                 </tr>

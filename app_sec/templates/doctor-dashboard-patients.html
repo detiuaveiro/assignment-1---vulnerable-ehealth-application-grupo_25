@@ -62,8 +62,7 @@
                 </td>
                   <td class="align-middle text-center text-sm">
                       <form action="{{url_for('doctor_dashboard_patient_info')}}" method="POST">
-                        <input type="hidden" name="patient_id" value="{{ patient.id._id }}">
-                        <button type="submit" class="fa fa-search"></button>
+                        <button type="submit" class="fa fa-search" name="patient_id" value="{{ patient.id._id }}" id="{{ patient.id._id }}"></button>
                       <form>
                   </td>
               </tr>
