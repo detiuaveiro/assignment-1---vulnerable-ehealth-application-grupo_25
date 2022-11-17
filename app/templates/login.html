@@ -11,24 +11,25 @@
                     <h3 class="mb-5" spellcheck="false">Login</h3>
                 </div>
                 <div class="col-12">
-                    <form class="modal-content animate" action="{{ url_for('login')}}">
-                        <div class="col-12">
+                    <form class="" action="{{ url_for('login')}}">
+                    <div class="col-12 center_op">
+                        <div class="col-lg-4 col-md-6 col-sm-8">
                           <label class="form-label" for="email"><b>Email</b></label>
-                          <input class="form-input" type="text" placeholder="Enter Email" name="email" required>
+                          <input class="form-control" type="text" placeholder="Enter Email" name="email" required>
                         </div>
-                        <div class="col-12">
+                    </div>
+                    <div class="col-12 center_op">
+                        <div class="col-lg-4 col-md-6 col-sm-8">
                           <label class="form-label" for="psw"><b>Password</b></label>
-                          <input class="form-input" type="password" placeholder="Enter Password" name="password" required>
+                          <input class="form-control" type="password" placeholder="Enter Password" name="password" required>
                         </div>
+                    </div>
                         {% with messages = get_flashed_messages() %}
                             {% if messages %}
                                 <p>{{ messages[0] }}</p>
                             {%  endif %}
                         {%  endwith %}
-                        <div class="col-12">
-                            <span class="psw"><a href="#">Forgot password?</a></span>
-                        </div>
-                        <div class="col-12">
+                        <div class="col-12" style="padding-top: 15px">
                             <div class="button-container">
                                 <button class="login-button" type="submit">Login</button>
                             </div>
