@@ -1,55 +1,35 @@
-## SQL INJECTION (CWE-89) (Butuc)
-- Versão Insegura:
-    - Desparametrizar as queries **DONE**
-    - Login a partir de método GET em vez de POST? **DONE**
+Neste trabalho foi proposta a exploração de várias vulnerabilidades num website de uma empresa de gerenciamento de pacientes e médicos, ehealthCorp, com o objetivo de explorar as causas e os efeitos que estas inseguranças têm no bom funcionamento e desenvolvimento de uma aplicação, bem como as metodologias e as boas práticas que devem ser aplicadas para evitar a sua ocorrência. 
 
-## XSS (CWE-79) (Artur)
-### Stored XSS
--**DONE**
+Com estes objetivos em mente, foram exploradas 10 vulnerabilidades diferentes numa versão insegura do website, sendo essas mesmo corrigidas numa versão semelhante, mas mais segura, do projeto. Ambas as aplicações foram desenvolvidas com recurso à framework web Flask, escrita em Python, utilizada tanto para a implementação do frontend como backend, com a base de dados relacional a ser implementada com recurso ao MySQL.
 
-### Reflected XSS
--**DONE**
+## Autores
 
-## Improper Input Validation (CWE-20) (Daniel)
-- Versão Segura: **DONE** 
-    - Verificar que código de Exam é do Utilizador Logged In
+- Artur Correia (nº mec 102477)
+- André Butuc (nº mec 103530)
+- Bruna Simões (nº mec 103453)
+- Daniel Carvalho (nº mec 77036)
 
-## Missing Encryption of Sensitive Data (CWE-311) (Butuc) DONE
-- Versão Segura
-    - Encriptar password na BD
+## Lista de Vulnerabilidades (CWE's) Implementadas
 
-## CWE-598: Use of GET Request Method With Sensitive Query Strings + CWE-200: Exposure of Sensitive Information to an Unauthorized Actor (Artur)
--**DONE**
+- CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
+- CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')
+- CWE-20: Improper Input Validation
+- CWE-311: Missing Encryption of Sensitive Data
+- CWE-598: Use of GET Request Method With Sensitive Query Strings 
+- CWE-200: Exposure of Sensitive Information to an Unauthorized Actor
+- CWE-307: Improper Restriction of Excessive Authentication Attempts 
+- CWE-522: Insufficiently Protected Credentials 
+- CWE-434: Unrestricted Upload of File with Dangerous Type
+- CWE-552: Files or Directories Accessible to External Parties
 
-## CWE-307: Improper Restriction of Excessive Authentication Attempts (Daniel)
-- Versão Segura
-    - Bloquear login após 5 tentativas de password erradas 
+## Como Correr o Projeto
 
-## CWE-552: Files or Directories Accessible to External Parties (Artur)
-DONE
-- Ambas
-    - Botão HTML para fazer download de Exames
-    - Função para criar .txt (num caminho separado)
+## Credenciais de Acesso para Testar as Aplicações
 
-- Versão Segura:
-    - Verificar que o código do Exame pertence ao utilizador que está a fazer download
-
-## CWE-522 + CWE-434 (Artur + Daniel)
-- Ambas (Butuc)
-    - Criar um ficheiro HTML para editar informações do perfil **Done**
-    - Página deve ter opção para mudar pass e foto de perfil **Done**
-
-- Versão Insegura:
-    - No caminho URL, apresentar o ID do utilizador
-    - Não verificar que a conta logged in é a conta da pessoa que está a editar o perfil
-
-- Versão Segura:
-    - Verificar terminação do ficheiro da foto (deve ser .png)
-    -  Fazer verificações anteriores
-    - Não apresentar ID no URL
-
-
-## Relatório
-    - Listar vulnerabilidades
-    - Explicar o que elas são
-    - Pensar nos ataques para cada uma
+- Conta do Paciente:
+    - E-Mail: art.afo@ua.pt / Pass: 1904
+    - Códigos de Prescrição a Testar: AXF03, AXF05, 0QAT8
+    - Códigos de Levantamento de Exames a Testar: HGK10
+    
+- Conta do Médico:
+    - E-Mail: afgomes@mail.pt / Pass: 1234
