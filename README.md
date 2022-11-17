@@ -24,7 +24,7 @@ Com estes objetivos em mente, foram exploradas 10 vulnerabilidades diferentes nu
 
 ## Como Correr o Projeto
 
-1. Instalar o docker-compose
+1. Instalar o docker-compose:
 https://docs.docker.com/compose/
 
 2. Abrir um terminal na pasta da versão do site que se pretende correr e executar o comando:
