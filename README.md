@@ -24,6 +24,18 @@ Com estes objetivos em mente, foram exploradas 10 vulnerabilidades diferentes nu
 
 ## Como Correr o Projeto
 
+1. Instalar o docker-compose
+https://docs.docker.com/compose/
+
+2. Abrir um terminal na pasta da versão do site que se pretende correr e executar o comando:
+
+```
+docker compose up
+```
+
+3. Aceder ao site pelo link:
+http://localhost:5000/
+
 ## Credenciais de Acesso para Testar as Aplicações
 
 - Conta do Paciente:
