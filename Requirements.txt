@@ -1,7 +1,0 @@
-Entidades: 
-- Utilizadores (Pacientes)
-- Médicos
-- Consultas
-- Análise
-- Medicamentos
-- Prescrições
