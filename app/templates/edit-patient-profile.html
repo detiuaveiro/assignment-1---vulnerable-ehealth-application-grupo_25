@@ -56,7 +56,7 @@
               <div class="row">
                 <div class="d-flex flex-column h-100">
                     <h5 class="pl-4 font-weight-bolder pb-2" style="text-align: center">Edit profile</h5>
-                    <form class="col-12">
+                    <form class="col-12" method="POST" action="{{ url_for('edit_profile_details', **ctx.user_id) }}">
                         <div class="form-container">
                             <div class="col-12">
                             <label class="form-labelca" for="name" id="labelca"><b>Name</b></label>
@@ -88,11 +88,15 @@
                         </div>
                             <div class="col-12">
                             <label class="form-labelca" for="morada" id="labelca"><b>Change photo: </b></label>
-                            <input class="form-inputca" type="file" value="{{ctx.pacient_info[6]}}" name="morada">
+                            <input class="form-inputca" type="file" value="{{ctx.pacient_info[6]}}" name="photo">
                         </div>
-                            <div class="col-12">
-                                <h4 style="text-align: center">Change password</h4>
+                        </div>
+                    </form>
+                     <div class="col-12 ">
+                                <h5 class="font-weight-bolder" style="text-align: center">Change password</h5>
                             </div>
+                    <form class="col-12" method="POST" action="{{ url_for('edit_profile_password', **ctx.user_id) }}">
+                        <div class="form-container">
                         <div class="col-12">
                             <label class="form-labelca" for="psw" id="labelca"><b>New password</b></label>
                             <input class="form-inputca" id="inputca" type="password" placeholder="Password" name="psw" required>
@@ -125,6 +129,7 @@
             </div>
           </div>
         </div>
+      </div>
       </div>
 
     </div>

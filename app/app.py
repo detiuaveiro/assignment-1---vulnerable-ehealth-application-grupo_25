@@ -181,7 +181,7 @@ def logged():
     
     if request.method == 'GET':
         ctx = {
-            'user_id': session.get('user_id'),
+            'user_id': {"_id": session.get('user_id')},
             'pacient_info': [],
             'appointments': [],
         } 
@@ -212,15 +212,59 @@ def logged():
 
     return render_template('logged.html')
 
-@app.route('/logged/edit-profile', methods=['GET', 'POST'])
-def edit_profile():
+@app.route('/logged/edit-profile/<_id>', methods=['GET', 'POST'])
+def edit_profile(_id):
+    ctx = {
+        'user_id': {"_id": session.get('user_id')},
+        'pacient_info': [],
+    }
+
+    if request.method == "GET":
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Pac_User_View WHERE ID =" + str(_id))
+        ctx['pacient_info'] = cursor.fetchone()
+        print(ctx['pacient_info'])
+        cursor.close()
+    return render_template('edit-patient-profile.html', ctx=ctx)
+
+
+@app.route('/logged/edit-profile-details', methods=['POST'])
+def edit_profile_details(_id):
     ctx = dict()
+
+    ID = _id
+    name = request.form.get("name")
+    age = request.form.get("age")
+    email = request.form.get("email")
+    utente = request.form.get("utente")
+    nif = request.form.get("nif")
+    tel = request.form.get("tel")
+    morada = request.form.get("morada")
+    photo = request.form.get("photo")
+
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM  Pac_User_View WHERE ID =" + str(session.get('user_id')))
+    #cursor.execute("UPDATE Utilizador SET Nome = %s, Idade = %s, Email = %s, NIF = %s, Tel = %s, Morada = %s, Image_path = %s")
+    cursor.execute(
+        "UPDATE Utilizador SET Nome = %s, Idade = %s, Email = %s, NIF = %s, Tel = %s, Morada = %s, Image_path = %s")
     ctx['pacient_info'] = cursor.fetchone()
     print(ctx['pacient_info'])
     cursor.close()
+
     return render_template('edit-patient-profile.html', ctx=ctx)
+
+
+@app.route('/logged/edit-profile-password', methods=['POST'])
+def edit_profile_password(_id):
+    ctx = dict()
+
+    if request.method == "GET":
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Pac_User_View WHERE ID =" + str(_id))
+        ctx['pacient_info'] = cursor.fetchone()
+        print(ctx['pacient_info'])
+        cursor.close()
+    return render_template('edit-patient-profile.html', ctx=ctx)
+
 
 @app.route('/patient-prescription-details', methods=['GET', 'POST'])
 def patient_prescription_details():
