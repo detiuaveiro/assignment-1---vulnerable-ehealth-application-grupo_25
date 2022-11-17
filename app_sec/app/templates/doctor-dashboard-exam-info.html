@@ -1,17 +1,16 @@
-{% extends 'layout-logged.html' %}
+{% extends 'layout-doctor.html' %}
+{% set active_page = "doctor_dashboard_exams" %}
 {% block content %}
         <div class="container-fluid py-4">
+        <a href="{{ url_for('doctor_dashboard_exams') }}"><p style="padding-top: 10px; padding-left: 5px ;font-size: 14px; font-weight: bold; text-align: center"><i class="fa fa-arrow-left"></i> Go Back</p></a>
         <!-- Patient Name Card -->
         <div class="row my-4">
-        <div class="col-lg-12 col-md-12 mb-md-0 mb-4">
+            <div class="col-12 mb-md-0 mb-4">
           <div class="card">
             <div class="card-header pb-4">
               <div class="row">
                 <div class="col-12">
                   <h2>Exam Details</h2>
-                  <form action="{{url_for('download', filename=params.Codigo)}}" type="GET">
-                        <button class="btn btn-primary">Download</button>
-                  </form>
                     <div class="row">
                         <div class="col-12">
                             <h5>ID<p>{{ params.Codigo }}</p></h5>
@@ -82,13 +81,12 @@
                     </table>
                     </div>
                 </div>
-                        </div>
-                    </div>
                 </div>
-                </div>
-              </div>
             </div>
-          </div>
-            
         </div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
 {% endblock %}

@@ -13,26 +13,20 @@ app.config['UPLOAD_EXAMS'] = 'exams'
 app.config['UPLOAD_PHOTOS'] = 'photos/'
 app.config['SAFE_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif'])
 
+generate_password_hash('secure')
+
 
 db = mysql.connector.connect(
-    host="localhost",
+    host="db",
     port=3306,
     user="root",
-    password="1904",
-    get_warnings=True,
-    #user="daniel",
-    #password="8495",
+    password="root",
     database="eHealthCorp",
-    #user="bruna",
-    #password="12345678",
-    #database="sio_db"
-    #user='andre',
-    #password='Password123#@!',
-    #database='db1',
 )
 
 '''
 Accounts:
+-> Admin: admin@admin.pt pass: secure
 -> Médico: afgomes@mail.pt pass: 1234
 -> Paciente: art.afo@ua.pt pass: 1904
 -> Paciente: dl.carvalho@ua.pt pass: 0000
@@ -41,7 +35,6 @@ Accounts:
 '''
 
 todays_date = ("2022-11-15 00:00:00", "2022-11-15 23:59:59")
-print(generate_password_hash('0000'))
 
 # Index Pages
 @app.route('/')
@@ -75,7 +68,7 @@ def login():
             duration = datetime.now() - last_attempt
             duration_in_min = divmod(duration.total_seconds(), 60)[0]
 
-            if attempts >= 5 and duration_in_min < 1:
+            if attempts >= 5 and duration_in_min < 5:
                 flash('You will not be able to attempt a login into this profile for the next 5 minutes.')
 
                 cursor.execute('''UPDATE Login_Attempts SET Num_Tentativas = %s, Ult_tentativa = %s WHERE IP=%s'''
@@ -132,6 +125,7 @@ def login():
 
         session['user_id'] = ID
         session['email'] = email
+        session['type'] = 'user'
 
         cursor.execute("SELECT * FROM Login_Attempts WHERE IP=%s", (user_IP,))
         data = cursor.fetchone()
@@ -145,6 +139,12 @@ def login():
         # Verificar se é médico ou paciente e redirecionar para a página correta
         cursor.execute("SELECT ID FROM Medico WHERE ID = %s", (ID,))
         medico_data = cursor.fetchone()
+
+        # Verificar se é admin
+        if ID == 7:
+            session['type'] = 'admin'
+            cursor.close()
+            return redirect(url_for('admin'))
 
         if medico_data is None:
             # É paciente
@@ -224,7 +224,6 @@ def reviews():
     if request.method == "POST":
         name = request.form.get('name')
         review = request.form.get('review')
-        print(name, review)
 
         if not name or not review:
             flash("Please fill all the fields")
@@ -276,7 +275,6 @@ def logged():
 
         cursor.execute("SELECT * FROM Consulta WHERE ID_Pac = %s AND Data >= %s", (session.get('user_id'), todays_date[0]))
         appointment_db_data = cursor.fetchall() 
-        print(appointment_db_data)
         for appointment in appointment_db_data:
             medic_id = appointment[1]
             cursor.execute("SELECT Nome, Cod_Esp FROM Med_User_View WHERE ID = %s", (medic_id,))
@@ -307,7 +305,6 @@ def edit_profile():
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Utilizador WHERE ID =" + str(session.get('user_id')))
         ctx['pacient_info'] = cursor.fetchone()
-        print(ctx['pacient_info'])
         cursor.close()
     return render_template('edit-patient-profile.html', ctx=ctx)
 
@@ -437,7 +434,6 @@ def patient_exam_details():
         for test in exam:
             params_dict["Tests"].append((test[-5], test[-4], test[-3], test[-2], test[-1]))
 
-        print(params_dict)
 
         cursor.close()
         
@@ -1004,6 +1000,12 @@ def admin():
     dict_params['espec'] = []
     cursor = db.cursor()
 
+    if session["user_id"] is None:
+        return redirect(url_for('login'))
+    elif session["type"] != "admin":
+        return redirect(url_for('index')) 
+
+
     if request.method == "POST":
         form_id = request.args.get('form_id', 1, type=int)
         if form_id == 1:
@@ -1029,8 +1031,6 @@ def admin():
                     INSERT INTO Medico (ID, Num_Medico, Cod_Esp) 
                         VALUES (NULL, %s, %s)''', (num_medic, cod_esp,))
                 db.commit()
-                print(request.form)
-                print(request.args.get('form_id', 1, type=int))
                 return redirect(url_for('admin'))
         elif form_id == 2:
             medic_id = request.form.get('medic_id')
@@ -1038,21 +1038,17 @@ def admin():
             db.commit()
             return redirect(url_for('admin'))
         elif form_id == 3:
-            print(request.form)
-            print(request.args.get('form_id', 1, type=int))
             return redirect(url_for('admin'))
     else:
         cursor.execute("SELECT * FROM Medico LEFT JOIN Utilizador ON Utilizador.ID = Medico.ID")
         medics = cursor.fetchall()
         for medic in medics:
-            print(medic)
             dict_params['medics'].append(medic)
 
         cursor.execute("SELECT Codigo FROM Especialidade")
         especialidades = cursor.fetchall()
         for especialidade in especialidades:
             dict_params['espec'].append(especialidade)
-        print(dict_params['espec'])
     return render_template('admin-dashboard.html', params=dict_params)
 
 @app.route('/download/<path:filename>', methods=['GET', 'POST'])
@@ -1074,4 +1070,4 @@ def get_random_code():
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=True, debug=True)
+    app.run(host='0.0.0.0')

@@ -10,24 +10,16 @@ app.config['UPLOAD_FOLDER'] = 'photos/'
 
 
 db = mysql.connector.connect(
-    host="localhost",
+    host="db",
     port=3306,
     user="root",
-    password="1904",
-    get_warnings=True,
-    #user="daniel",
-    #password="8495",
-    database="eHealthCorpInsecure",
-    #user="bruna",
-    #password="12345678",
-    #database="sio_db"
-    #user='andre',
-    #password='Password123#@!',
-    #database='db2',
+    password="root",
+    database="eHealthCorp",
 )
 
 '''
 Accounts:
+-> Admin: admin@admin.pt   pass: insecure
 -> Médico: afgomes@mail.pt pass: 1234
 -> Paciente: art.afo@ua.pt pass: 1904
 '''
@@ -52,25 +44,23 @@ def login():
 
         # Buscar email e pass à base de dados
         cursor = db.cursor(buffered=True)
-        print(params_dict["email"])
-        print(params_dict["password"])
         cursor.execute("SELECT ID, Email, Password FROM Utilizador WHERE Email ='" \
             + str(params_dict["email"]) + \
             "' AND Password='" \
             + str(params_dict["password"]) + "'")
         user_data = cursor.fetchone()
-        print(user_data)
         if user_data is None:
             flash("Email or password incorrect")
             cursor.close()
             return redirect(url_for('login'))
+        elif user_data[0] == 6:
+            cursor.close()
+            return redirect(url_for('admin'))
         else:
             params_dict["id"] = user_data[0]
 
             session['user_id'] = params_dict["id"]
             session['email'] = user_data[1]
-            print("We are in.")
-            print(params_dict["id"])
             # Verificar se é médico ou paciente e redirecionar para a página correta
             cursor.execute("SELECT ID FROM Medico WHERE ID = " + str(params_dict["id"]))
             medico_data = cursor.fetchone()
@@ -145,7 +135,6 @@ def reviews():
     if request.method == "POST":
         name = request.form.get('name')
         review = request.form.get('review')
-        print(name, review)
 
         if not name or not review:
             flash("Please fill all the fields")
@@ -194,7 +183,6 @@ def logged():
 
         cursor.execute("SELECT * FROM Consulta WHERE ID_Pac =" + str(session.get('user_id')) + " AND Data >= '" + str(todays_date[0]) + "'")
         appointment_db_data = cursor.fetchall() 
-        print(appointment_db_data)
         for appointment in appointment_db_data:
             medic_id = appointment[1]
             cursor.execute("SELECT Nome, Cod_Esp FROM Med_User_View WHERE ID =" + str(medic_id))
@@ -225,7 +213,6 @@ def edit_profile(_id):
         cursor = db.cursor()
         cursor.execute("SELECT * FROM Utilizador WHERE ID =" + str(_id))
         ctx['pacient_info'] = cursor.fetchone()
-        print(ctx['pacient_info'])
         cursor.close()
     return render_template('edit-patient-profile.html', ctx=ctx)
 
@@ -348,7 +335,6 @@ def patient_exam_details():
         for test in exam:
             params_dict["Tests"].append((test[-5], test[-4], test[-3], test[-2], test[-1]))
 
-        print(params_dict)
 
         cursor.close()
         
@@ -483,22 +469,17 @@ def doctor_dashboard_patients():
         patients_id = cursor.fetchall()
 
         for ID_Pac in patients_id:
-            print("SELECT U.ID, Nome, Num_Utente FROM (Paciente JOIN Utilizador U on U.ID = Paciente.ID) WHERE U.ID=" + str(ID_Pac[0]) + " LIMIT 1")
-
             cursor.execute("SELECT U.ID, Nome, Num_Utente FROM (Paciente JOIN Utilizador U on U.ID = Paciente.ID) WHERE U.ID=" + str(ID_Pac[0]) + " LIMIT 1")
 
             patient = cursor.fetchone()
-            print(patient)
             cursor.execute("SELECT Data FROM Consulta WHERE ID_Pac=" + str(ID_Pac[0]) + " ORDER BY Data LIMIT 1")
 
             data = cursor.fetchone()
-            print(data)
             if data is not None:
                 last_appointment = data[0]
             else:
                 last_appointment = "Nenhum"
 
-            print(last_appointment)
             # Adicionar info ao params_dict
             params_dict["patients"].append({"name": patient[1], "niss": patient[-1], "id": {"_id": ID_Pac[0]}, "last_appointment": last_appointment})
             params_dict["total_patients"] += 1
@@ -918,8 +899,6 @@ def admin():
                 db.commit()
                 cursor.execute("INSERT INTO Medico (ID, Num_Medico, Cod_Esp) VALUES (NULL, " + str(num_medic) + ", " + str(cod_esp) + ")")
                 db.commit()
-                print(request.form)
-                print(request.args.get('form_id', 1, type=int))
                 return redirect(url_for('admin'))
         elif form_id == 2:
             medic_id = request.form.get('medic_id')
@@ -927,22 +906,19 @@ def admin():
             db.commit()
             return redirect(url_for('admin'))
         elif form_id == 3:
-            print(request.form)
-            print(request.args.get('form_id', 1, type=int))
             return redirect(url_for('admin'))
     else:
         cursor.execute("SELECT * FROM Medico LEFT JOIN Utilizador ON Utilizador.ID = Medico.ID")
         medics = cursor.fetchall()
         for medic in medics:
-            print(medic)
             dict_params['medics'].append(medic)
 
         cursor.execute("SELECT Codigo FROM Especialidade")
         especialidades = cursor.fetchall()
         for especialidade in especialidades:
             dict_params['espec'].append(especialidade)
-        print(dict_params['espec'])
     return render_template('admin-dashboard.html', params=dict_params)
+
 
 @app.route('/download/<path:path>', methods=['GET', 'POST'])
 def download(path):
@@ -957,4 +933,4 @@ def get_random_code():
 
 
 if __name__ == '__main__':
-    app.run(use_reloader=True, debug=True)
+    app.run(host='0.0.0.0')
