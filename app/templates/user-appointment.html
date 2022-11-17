@@ -31,19 +31,22 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- CSS Files -->
       <link rel="stylesheet" id="pagestyle" href="{{ url_for('static', filename='css/soft-ui-dashboard.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
   </head>
   
   <body class="g-sidenav-show  bg-gray-100">
     {% include 'navbar-logged.html' %}
     <main class="main-content position-relative max-height-vh-100 border-radius-lg ">
         <div class="container-fluid py-4">
-            <div class="container-fluid py-4">
+            <p style="text-align: center"><a href="{{ url_for('logged') }}"><i class="fa fa-arrow-left"></i> Go back</a></p>
+            <div class="container-fluid py-4 center_op">
                 <form  action="#" method="POST">
                     <fieldset>
                         <legend>Schedule an appointment</legend>
                         <div class="row mb-3">
                             <div class="row pt-4">
-                              <div class="col-md-5 col-lg-3">
+                              <div class="col-12">
                                   <label for="doctorSelect" class="form-label">Escolha um médico</label>
                                   <select id="doctorSelect" name="doctorSelect" class="form-select">
                                       {% for doctor in params.doctors %}
@@ -53,18 +56,18 @@
                               </div>
                             </div>
                             <div class="row pt-4">
-                                <div class="col-md-5 col-lg-3">
+                                <div class="col-lg-6 col-md-12 col-sm-12">
                                     <label for="dataSelect" class="form-label">Escolha uma data:</label>
                                     <input type="date" class="form-control" id="date" name="date" placeholder="MM/DD/YYY" min="2022-11-15"
                                     max="2023-12-31"/>
                                 </div>
-                                <div class="col-md-5 col-lg-3">
+                                <div class="col-lg-6 col-md-12 col-sm-12">
                                     <label for="dataSelect" class="form-label">Escolha uma hora:</label>
                                     <input type="time" class="form-control" id="hour" name="hour" min="09:00" max="18:00"/>
                                 </div>
                             </div>
                     </fieldset>
-                    <div class="col-auto">
+                    <div class="col-auto center_op">
                        <button type="submit" class="btn btn-primary mb-2" id="finishedBut" data-toggle="modal" data-target="#sucessModal">Submit</button>
                     </div>
                 </form>
@@ -88,17 +91,6 @@
               </div>
             </div>
           </div>
-        <footer class="footer pt-3  ">
-          <div class="container-fluid">
-            <div class="row align-items-center justify-content-lg-between">
-              <div class="col-lg-12 mb-lg-0 mb-4">
-                <div class="copyright text-lg-end text-sm text-muted text-lg">
-                  Grupo 25 [SIO 2022]
-                </div>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
       </div>
       {% include 'footer.html' %}
