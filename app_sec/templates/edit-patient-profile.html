@@ -49,6 +49,7 @@
     {% endfor %}
     <div class="col-12 py-4">
       <div class="col-12 py-4">
+          <p style="text-align: center"><a href="{{ url_for('logged') }}"><i class="fa fa-arrow-left"></i> Go back</a></p>
       <div class="row mt-4">
         <div class="col-12 mb-lg-0 mb-4 center_op">
           <div class="card overflow-hidden position-relative border-radius-lg h-100 col-12 center_op">
@@ -57,61 +58,93 @@
                 <div class="d-flex flex-column h-100">
                     <h5 class="pl-4 font-weight-bolder pb-2" style="text-align: center">Edit profile</h5>
                     <form class="col-12" method="POST" action="{{ url_for('edit_profile_details') }}" enctype = "multipart/form-data">
-                        <div class="form-container">
-                            <div class="col-12">
-                            <label class="form-labelca" for="name" id="labelca"><b>Name</b></label>
-                            <input class="form-inputca" type="text" value="{{ ctx.pacient_info[1]}}" name="name">
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="name" id="label_name" style="text-align: left; font-size: 16px"><b>Name</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" type="text" name="name" id="name" value="{{ ctx.pacient_info[1] }}">
+                            </div>
                         </div>
-                            <div class="col-12">
-                            <label class="form-labelca" for="age" id="labelca"><b>Age</b></label>
-                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[5]}}" name="age">
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="age" id="label_age" style="text-align: left; font-size: 16px"><b>Age</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" type="text" name="age" id="age" value="{{ ctx.pacient_info[5] }}">
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-labelca" for="email" id="labelca"><b>E-mail</b></label>
-                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[2]}}" name="email" >
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="email" id="label_email" style="text-align: left; font-size: 16px"><b>Email</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" type="text" name="email" id="email" value="{{ ctx.pacient_info[2] }}">
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-labelca" for="tel" id="labelca"><b>Phone: </b></label>
-                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[3]}}" name="tel">
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="tel" id="label_tel" style="text-align: left; font-size: 16px"><b>Phone</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" type="text" name="tel" id="tel" value="{{ ctx.pacient_info[3] }}">
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-labelca" for="morada" id="labelca"><b>Address: </b></label>
-                            <input class="form-inputca" type="text" value="{{ctx.pacient_info[6]}}" name="morada">
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="morada" id="label_morada" style="text-align: left; font-size: 16px"><b>Address</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" type="text" name="morada" id="morada" value="{{ ctx.pacient_info[6] }}">
+                            </div>
                         </div>
-                            <div class="col-12">
-                            <label class="form-labelca" for="morada" id="labelca"><b>Change photo: </b></label>
-                            <input class="form-inputca" type="file" value="{{ctx.pacient_info[6]}}" name="photo">
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="photo" id="label_photo" style="text-align: left ; font-size: 16px"><b>Change photo</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" type="file" name="photo" id="photo">
+                            </div>
                         </div>
-                        </div>
-                        <div class="col-12 butaoc center_op">
-                          <div class="button-containerc">
-                              <button class="login-button" type="submit">Update profile</button>
-                          </div>
+                        <div class="row">
+                            <div class="col-12 center_op">
+                                <button class="login-button" type="submit">Update profile</button>
+                            </div>
                         </div>
                     </form>
                      <div class="col-12 ">
-                                <h5 class="font-weight-bolder" style="text-align: center">Change password</h5>
+                                <h5 class="font-weight-bolder" style="text-align: center; padding-top: 30px">Change password</h5>
                             </div>
                     <form class="col-12" method="POST" action="{{ url_for('edit_profile_password') }}">
-                        <div class="form-container">
-                        <div class="col-12">
-                            <label class="form-labelca" for="oldpw" id="labelnpw"><b>Current password</b></label>
-                            <input class="form-inputca" id="oldpw" type="password" placeholder="Password" name="oldpsw" >
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="oldpw" id="labeloldpw" style="text-align: left; font-size: 16px"><b>Current password</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" id="oldpw" type="password" placeholder="Password" name="oldpsw" >
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-labelca" for="newpw" id="labelnpw"><b>New password</b></label>
-                            <input class="form-inputca" id="newpw" type="password" placeholder="Password" name="psw" >
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="psw" id="labelnpw" style="text-align: left; font-size: 16px"><b>New password</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" id="newpw" type="password" placeholder="Password" name="psw" >
+                            </div>
                         </div>
-                        <div class="col-12">
-                            <label class="form-labelca" for="psw" id="labelpw"><b>Confirm password</b></label>
-                            <input class="form-inputca" id="psw" type="password" placeholder="Password" name="pswc" >
+                        <div class="row">
+                            <div class="col-25">
+                               <label class="form-label col-12" for="pswc" id="labelnpwc" style="text-align: left ; font-size: 16px"><b>Confirm password</b></label>
+                            </div>
+                            <div class="col-75">
+                                <input class="form-control" id="cnewpw" type="password" placeholder="Password" name="pswc" >
+                            </div>
                         </div>
-                            <div class="col-12 butaoc">
-                        <div class="button-containerc">
-                            <button class="login-button" type="submit">Change password</button>
+                        <div class="row">
+                            <div class="col-12 center_op">
+                                <button class="login-button" type="submit">Change password</button>
+                            </div>
                         </div>
-                        </div>
-                    </div>
                   </form>
                   <p class="pl-4 text-white"><b>Name: </b>{{ctx.pacient_info[1]}}</p>
                   <p class="pl-4 text-white"><b>Age: </b>{{ctx.pacient_info[5]}}</p>
