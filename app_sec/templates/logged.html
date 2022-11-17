@@ -88,7 +88,7 @@
             <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
               <div class="row">
                 <div class="d-flex flex-column h-100">
-                  <h5 class="pl-4 font-weight-bolder text-white pb-2">Your information: </h5>
+                  <h5 class="pl-4 font-weight-bolder text-white pb-2">Your information <a href="{{ url_for('edit_profile')}}" style="color: white"><i class="fa fa-pencil"></i></a></h5>
                   <p class="pl-4 text-white"><b>Name: </b>{{ctx.pacient_info[1]}}</p>
                   <p class="pl-4 text-white"><b>Age: </b>{{ctx.pacient_info[5]}}</p>
                   <p class="pl-4 text-white"><b>E-mail: </b>{{ctx.pacient_info[2]}}</p>

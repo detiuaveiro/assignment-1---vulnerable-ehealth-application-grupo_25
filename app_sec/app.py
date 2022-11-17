@@ -5,20 +5,23 @@ import os
 import mysql.connector
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
-app.config['UPLOAD_FOLDER'] = 'exams'
+app.config['UPLOAD_EXAMS'] = 'exams'
+app.config['UPLOAD_PHOTOS'] = 'photos/'
+app.config['SAFE_EXTENSIONS'] = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 db = mysql.connector.connect(
     host="localhost",
-    #port=3306,
-    #user="root",
-    #password="1904",
+    port=3306,
+    user="root",
+    password="1904",
     get_warnings=True,
-    user="daniel",
-    password="8495",
+    #user="daniel",
+    #password="8495",
     database="eHealthCorp",
     #user="bruna",
     #password="12345678",
@@ -292,6 +295,72 @@ def logged():
         return render_template('logged.html', ctx=ctx)
 
     return render_template('logged.html')
+
+@app.route('/logged/edit-profile', methods=['GET', 'POST'])
+def edit_profile():
+    ctx = {
+        'user_id': {"_id": session.get('user_id')},
+        'pacient_info': [],
+    }
+
+    if request.method == "GET":
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM Utilizador WHERE ID =" + str(session.get('user_id')))
+        ctx['pacient_info'] = cursor.fetchone()
+        print(ctx['pacient_info'])
+        cursor.close()
+    return render_template('edit-patient-profile.html', ctx=ctx)
+
+
+@app.route('/logged/edit-profile-details/', methods=['POST'])
+def edit_profile_details():
+
+    ID = session.get('user_id')
+    name = request.form.get("name")
+    age = request.form.get("age")
+    email = request.form.get("email")
+    tel = request.form.get("tel")
+    morada = request.form.get("morada")
+    photo = request.files["photo"]
+    secure_photo = None
+
+    if photo:
+        secure_photo = secure_filename(photo.filename)
+        if secure_photo.split(".")[-1] not in app.config["SAFE_EXTENSIONS"]:
+            flash("Invalid file type")
+            return redirect(url_for('edit_profile'))
+
+        photo.save(os.path.join(app.config['UPLOAD_PHOTOS'], secure_photo))
+
+    cursor = db.cursor()
+    cursor.execute("UPDATE Utilizador SET Nome = %s, Idade = %s, Email = %s, Tel = %s, Morada = %s, Image_Path = %s WHERE ID = %s",(name, age, email, tel, morada, secure_photo, ID))
+    db.commit()
+
+    return redirect(url_for('edit_profile'))
+
+
+@app.route('/logged/edit-profile-password/', methods=['POST'])
+def edit_profile_password():
+    id = session.get('user_id')
+
+    current_password = str(request.form.get("oldpsw"))
+    new_password = str(request.form.get("psw"))
+    confirm_password = str(request.form.get("pswc"))
+
+    cursor = db.cursor()
+    cursor.execute("SELECT Password FROM Utilizador WHERE ID = %s", (id,))
+    db_password = cursor.fetchone()
+
+    if not check_password_hash(db_password[0], current_password):
+        flash("Incorrect Current Password")
+    elif new_password != confirm_password:
+        flash("Passwords do not match")
+    else:
+        cursor.execute("UPDATE Utilizador SET Password = %s WHERE ID = %s", (generate_password_hash(new_password), id,))
+        db.commit()
+        cursor.close()
+
+    return redirect(url_for('edit_profile'))
 
 
 @app.route('/patient-prescription-details', methods=['GET', 'POST'])
@@ -995,7 +1064,7 @@ def download(filename):
         flash("That exam code is not associated with your account!")
         return redirect(url_for("logged")) 
 
-    return send_from_directory(directory=app.config['UPLOAD_FOLDER'], path=filename, as_attachment=True)
+    return send_from_directory(directory=app.config['UPLOAD_EXAMS'], path=filename, as_attachment=True)
 
 # Auxilliary Functions
 def get_random_code():

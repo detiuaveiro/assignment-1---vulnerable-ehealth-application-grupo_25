@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session, send_file
 import random
+import os
 import string
 import mysql.connector
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['UPLOAD_FOLDER'] = 'photos/'
 
 
 db = mysql.connector.connect(
@@ -15,7 +17,7 @@ db = mysql.connector.connect(
     get_warnings=True,
     #user="daniel",
     #password="8495",
-    database="eHealthCorp",
+    database="eHealthCorpInsecure",
     #user="bruna",
     #password="12345678",
     #database="sio_db"
@@ -221,48 +223,60 @@ def edit_profile(_id):
 
     if request.method == "GET":
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM Pac_User_View WHERE ID =" + str(_id))
+        cursor.execute("SELECT * FROM Utilizador WHERE ID =" + str(_id))
         ctx['pacient_info'] = cursor.fetchone()
         print(ctx['pacient_info'])
         cursor.close()
     return render_template('edit-patient-profile.html', ctx=ctx)
 
 
-@app.route('/logged/edit-profile-details', methods=['POST'])
-def edit_profile_details(_id):
+@app.route('/logged/edit-profile-details/<id>', methods=['POST'])
+def edit_profile_details(id):
     ctx = dict()
 
-    ID = _id
+    ID = id
     name = request.form.get("name")
     age = request.form.get("age")
     email = request.form.get("email")
-    utente = request.form.get("utente")
-    nif = request.form.get("nif")
     tel = request.form.get("tel")
     morada = request.form.get("morada")
-    photo = request.form.get("photo")
+    photo = request.files["photo"]
+
+    if photo:
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo.filename))
 
     cursor = db.cursor()
-    #cursor.execute("UPDATE Utilizador SET Nome = %s, Idade = %s, Email = %s, NIF = %s, Tel = %s, Morada = %s, Image_path = %s")
-    cursor.execute(
-        "UPDATE Utilizador SET Nome = %s, Idade = %s, Email = %s, NIF = %s, Tel = %s, Morada = %s, Image_path = %s")
-    ctx['pacient_info'] = cursor.fetchone()
-    print(ctx['pacient_info'])
+    cursor.execute("UPDATE Utilizador SET Nome = '" + name + "', Idade = '" + age + "', Email = '" + email + "', Tel = '" + tel + "', Morada = '" + morada + "', Image_path = '" + photo.filename + "' WHERE ID = '" + ID + "';")
+    db.commit()
+
+    ctx = {
+        'user_id': {"_id": id},
+        'pacient_info': [],
+    }
+    cursor.execute("SELECT * FROM Utilizador WHERE ID =" + str(id))
+    ctx["pacient_info"] = cursor.fetchone()
+
     cursor.close()
 
     return render_template('edit-patient-profile.html', ctx=ctx)
 
 
-@app.route('/logged/edit-profile-password', methods=['POST'])
-def edit_profile_password(_id):
-    ctx = dict()
+@app.route('/logged/edit-profile-password/<id>', methods=['GET'])
+def edit_profile_password(id):
+    new_password = str(request.args.get("psw"))
 
-    if request.method == "GET":
-        cursor = db.cursor()
-        cursor.execute("SELECT * FROM Pac_User_View WHERE ID =" + str(_id))
-        ctx['pacient_info'] = cursor.fetchone()
-        print(ctx['pacient_info'])
-        cursor.close()
+    cursor = db.cursor()
+    cursor.execute("UPDATE Utilizador SET Password=" + new_password + " WHERE ID=" + str(id) + ";")
+    db.commit()
+
+    cursor.execute("SELECT * FROM Utilizador WHERE ID =" + str(id))
+
+    ctx = {
+        'user_id': {"_id": id},
+        'pacient_info': [],
+    }
+    ctx["pacient_info"] = cursor.fetchone()
+
     return render_template('edit-patient-profile.html', ctx=ctx)
 
 
